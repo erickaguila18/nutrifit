@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriFit - Clinical Dashboard</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Flaticon UIcons -->
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+    
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { min-height: 100vh; background-color: #2c3e50; color: white; padding-top: 20px; }
+        .nav-link { color: #aeb6bf; margin-bottom: 10px; border-radius: 5px; cursor: pointer; }
+        .nav-link:hover, .nav-link.active { background-color: #1abc9c; color: white; }
+        .nav-link i { margin-right: 10px; }
+        .card-stat { border-left: 4px solid #1abc9c; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .section-view { display: none; }
+        .section-view.active { display: block; }
+        .brand-logo { font-size: 1.5rem; font-weight: bold; color: #1abc9c; text-align: center; margin-bottom: 30px;}
+        
+        /* Estilos personalizados para los tabs del modal */
+        .nav-tabs .nav-link { color: #2c3e50; font-weight: 500; }
+        .nav-tabs .nav-link.active { color: #1abc9c; border-bottom: 3px solid #1abc9c; font-weight: bold; }
+        .form-section-title { color: #1abc9c; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 15px; margin-bottom: 15px; font-size: 1.1rem;}
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-2 sidebar shadow-sm">
+            <div class="brand-logo">
+                <i class="fi fi-ss-apple-whole"></i> NutriFit
+            </div>
+            <ul class="nav flex-column px-2">
+                <li class="nav-item">
+                    <a class="nav-link active" data-target="dashboard"><i class="fi fi-ss-apps"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-target="pacientes"><i class="fi fi-ss-users"></i> Pacientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-target="citas"><i class="fi fi-ss-calendar"></i> Agenda / Citas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-target="alimentos"><i class="fi fi-ss-restaurant"></i> Alimentos</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10 p-4">
+            
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section-view active">
+                <h2 class="mb-4">Resumen Clínico</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card card-stat p-3 mb-3 bg-white">
+                            <h5><i class="fi fi-ss-users text-success"></i> Pacientes Activos</h5>
+                            <h2 id="total-pacientes">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pacientes Section -->
+            <div id="pacientes" class="section-view">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Expedientes Clínicos</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPaciente" style="background-color: #1abc9c; border:none;">
+                        <i class="fi fi-ss-user-add"></i> Nuevo Paciente
+                    </button>
+                </div>
+                
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Edad</th>
+                                        <th>Teléfono</th>
+                                        <th>Ocupación</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-pacientes">
+                                    <!-- Renderizado por Firestore -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sections Placeholder for Citas & Alimentos -->
+            <div id="citas" class="section-view"><h2>Agenda (En desarrollo)</h2></div>
+            <div id="alimentos" class="section-view"><h2>Base de datos de Alimentos (En desarrollo)</h2></div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Expediente Clínico Completo -->
+<div class="modal fade" id="modalPaciente" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl"> <!-- Tamaño extra grande para comodidad -->
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: #2c3e50;">
+        <h5 class="modal-title"><i class="fi fi-ss-book-medical"></i> Expediente Clínico Integral</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body bg-light">
+        <form id="form-paciente">
+            
+            <!-- Navegación por Tabs -->
+            <ul class="nav nav-tabs mb-3" id="pacienteTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="datos-tab" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button" role="tab"><i class="fi fi-ss-id-card"></i> Datos Personales</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="clinica-tab" data-bs-toggle="tab" data-bs-target="#tab-clinica" type="button" role="tab"><i class="fi fi-ss-stethoscope"></i> Historia Clínica</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="antropo-tab" data-bs-toggle="tab" data-bs-target="#tab-antropo" type="button" role="tab"><i class="fi fi-ss-tape"></i> Antropometría</button>
+                </li>
+            </ul>
+
+            <!-- Contenido de los Tabs -->
+            <div class="tab-content" id="pacienteTabsContent">
+                
+                <!-- TAB 1: DATOS PERSONALES -->
+                <div class="tab-pane fade show active p-3 bg-white border rounded" id="tab-datos" role="tabpanel">
+                    <h6 class="form-section-title">Información de Contacto e Identificación</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label>Nombre Completo</label><input type="text" id="p-nombre" class="form-control" required></div>
+                        <div class="col-md-3"><label>Fecha de Nacimiento</label><input type="date" id="p-fnac" class="form-control"></div>
+                        <div class="col-md-3"><label>Edad</label><input type="number" id="p-edad" class="form-control" required></div>
+                        <div class="col-md-3">
+                            <label>Sexo</label>
+                            <select id="p-sexo" class="form-select" required>
+                                <option value="">Seleccione...</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4"><label>Teléfono</label><input type="tel" id="p-tel" class="form-control"></div>
+                        <div class="col-md-5"><label>Correo Electrónico</label><input type="email" id="p-email" class="form-control"></div>
+                        <div class="col-md-6"><label>Ocupación</label><input type="text" id="p-ocupacion" class="form-control"></div>
+                        <div class="col-md-6"><label>Motivo de Consulta</label><input type="text" id="p-motivo" class="form-control"></div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: HISTORIA CLÍNICA & RIESGOS -->
+                <div class="tab-pane fade p-3 bg-white border rounded" id="tab-clinica" role="tabpanel">
+                    <h6 class="form-section-title">Antecedentes Médicos</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label>Antecedentes Heredofamiliares (AHF)</label>
+                            <textarea id="hc-ahf" class="form-control" rows="2" placeholder="Ej. Diabetes abuela materna, HTA padre..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Antecedentes Personales Patológicos (APP)</label>
+                            <textarea id="hc-app" class="form-control" rows="2" placeholder="Enfermedades diagnosticadas, cirugías..."></textarea>
+                        </div>
+                        <div class="col-md-6"><label>Medicamentos Actuales</label><input type="text" id="hc-medicamentos" class="form-control"></div>
+                        <div class="col-md-6"><label>Alergias (Alimentarias/Fármacos)</label><input type="text" id="hc-alergias" class="form-control"></div>
+                    </div>
+
+                    <h6 class="form-section-title">Estilo de Vida y Factores de Riesgo</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label>Tabaquismo</label>
+                            <select id="fr-tabaco" class="form-select"><option value="No">No</option><option value="Sí">Sí</option><option value="Ocasional">Ocasional</option></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Consumo de Alcohol</label>
+                            <select id="fr-alcohol" class="form-select"><option value="No">No</option><option value="Sí">Sí</option><option value="Ocasional">Ocasional</option></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Nivel de Estrés</label>
+                            <select id="fr-estres" class="form-select"><option value="Bajo">Bajo</option><option value="Moderado">Moderado</option><option value="Alto">Alto</option></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Actividad Física / Deporte</label>
+                            <input type="text" id="fr-actividad" class="form-control" placeholder="Tipo, frecuencia y duración">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Tránsito Intestinal / Digestión</label>
+                            <input type="text" id="hc-digestion" class="form-control" placeholder="Ej. Estreñimiento, gastritis, colitis...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: ANTROPOMETRÍA -->
+                <div class="tab-pane fade p-3 bg-white border rounded" id="tab-antropo" role="tabpanel">
+                    <h6 class="form-section-title">Composición Corporal Básica</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3"><label>Peso (kg)</label><input type="number" step="0.1" id="m-peso" class="form-control" required></div>
+                        <div class="col-md-3"><label>Talla (cm)</label><input type="number" step="0.01" id="m-talla" class="form-control" required></div>
+                    </div>
+
+                    <h6 class="form-section-title">Circunferencias (cm)</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3"><label>Cintura</label><input type="number" step="0.1" id="c-cintura" class="form-control"></div>
+                        <div class="col-md-3"><label>Cadera</label><input type="number" step="0.1" id="c-cadera" class="form-control"></div>
+                        <div class="col-md-3"><label>Brazo Relajado</label><input type="number" step="0.1" id="c-brazo-rel" class="form-control"></div>
+                        <div class="col-md-3"><label>Brazo Contraído</label><input type="number" step="0.1" id="c-brazo-con" class="form-control"></div>
+                        <div class="col-md-3"><label>Muslo Medial</label><input type="number" step="0.1" id="c-muslo" class="form-control"></div>
+                        <div class="col-md-3"><label>Pantorrilla</label><input type="number" step="0.1" id="c-pantorrilla" class="form-control"></div>
+                        <div class="col-md-3"><label>Muñeca</label><input type="number" step="0.1" id="c-muneca" class="form-control"></div>
+                    </div>
+
+                    <h6 class="form-section-title">Pliegues Cutáneos (mm) - ISAK / Palafox</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3"><label>Tricipital</label><input type="number" step="0.1" id="pl-tricipital" class="form-control"></div>
+                        <div class="col-md-3"><label>Bicipital</label><input type="number" step="0.1" id="pl-bicipital" class="form-control"></div>
+                        <div class="col-md-3"><label>Subescapular</label><input type="number" step="0.1" id="pl-subescapular" class="form-control"></div>
+                        <div class="col-md-3"><label>Suprailiaco</label><input type="number" step="0.1" id="pl-suprailiaco" class="form-control"></div>
+                        <div class="col-md-3"><label>Supraespinal</label><input type="number" step="0.1" id="pl-supraespinal" class="form-control"></div>
+                        <div class="col-md-3"><label>Abdominal</label><input type="number" step="0.1" id="pl-abdominal" class="form-control"></div>
+                        <div class="col-md-3"><label>Muslo Frontal</label><input type="number" step="0.1" id="pl-muslo" class="form-control"></div>
+                        <div class="col-md-3"><label>Pantorrilla</label><input type="number" step="0.1" id="pl-pantorrilla" class="form-control"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mb-3">
+                        <button type="button" id="btn-calcular" class="btn btn-outline-success">
+                            <i class="fi fi-ss-calculator"></i> Ejecutar Fórmulas (Palafox)
+                        </button>
+                    </div>
+
+                    <!-- Panel de Resultados Clínicos -->
+                    <div class="alert alert-info d-none shadow-sm" id="resultados-clinicos">
+                        <h5 class="alert-heading"><i class="fi fi-ss-chart-pie-alt"></i> Diagnóstico Metabólico y Corporal</h5>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>GEB (Harris-Benedict):</strong> <span id="res-geb" class="text-primary fw-bold"></span> kcal<br>
+                                <strong>Índice de Masa Corporal (IMC):</strong> <span id="res-imc" class="text-primary fw-bold"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Masa Grasa (Durnin-Womersley + Siri):</strong> <span id="res-grasa" class="text-danger fw-bold"></span> %<br>
+                                <strong>Índice Cintura-Cadera (ICC):</strong> <span id="res-icc" class="text-danger fw-bold"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary" style="background-color: #1abc9c; border:none;">
+            <i class="fi fi-ss-disk"></i> Guardar Expediente Completo
+        </button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Lógica SPA & Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-analytics.js";
+  import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDOG2Xf3OSBKiD5YUHuka2j112g5GmS4gw",
+    authDomain: "nutrifit-3de4c.firebaseapp.com",
+    projectId: "nutrifit-3de4c",
+    storageBucket: "nutrifit-3de4c.firebasestorage.app",
+    messagingSenderId: "676074955836",
+    appId: "1:676074955836:web:40c2f879aebb0a3f714f39",
+    measurementId: "G-GGR9DZZ1YV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+
+  // Navegación SPA
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.section-view');
+  navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+          e.preventDefault();
+          navLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          const target = link.getAttribute('data-target');
+          sections.forEach(sec => sec.classList.remove('active'));
+          document.getElementById(target).classList.add('active');
+      });
+  });
+
+  // Utilidad para extraer valores numéricos de los inputs de forma segura
+  const getNumVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+  const getStrVal = (id) => document.getElementById(id).value || "";
+
+  // Fórmulas Clínicas
+  document.getElementById('btn-calcular').addEventListener('click', () => {
+      const peso = getNumVal('m-peso');
+      const talla = getNumVal('m-talla'); // en cm
+      const edad = getNumVal('p-edad');
+      const sexo = getStrVal('p-sexo');
+      const cintura = getNumVal('c-cintura');
+      const cadera = getNumVal('c-cadera');
+      
+      const bicipital = getNumVal('pl-bicipital');
+      const tricipital = getNumVal('pl-tricipital');
+      const subescapular = getNumVal('pl-subescapular');
+      const suprailiaco = getNumVal('pl-suprailiaco');
+
+      if(!peso || !talla || !edad || !sexo) {
+          alert("Faltan datos básicos en la pestaña 'Datos Personales' o 'Antropometría' (Peso, Talla, Edad, Sexo).");
+          return;
+      }
+
+      // 1. IMC
+      const tallaMts = talla / 100;
+      const imc = peso / (tallaMts * tallaMts);
+      document.getElementById('res-imc').innerText = imc.toFixed(2);
+
+      // 2. ICC (Índice Cintura Cadera)
+      let icc = "N/A";
+      if(cintura > 0 && cadera > 0) {
+          icc = (cintura / cadera).toFixed(2);
+      }
+      document.getElementById('res-icc').innerText = icc;
+
+      // 3. Harris-Benedict (GEB)
+      let geb = 0;
+      if (sexo === 'M') {
+          geb = 66.5 + (13.75 * peso) + (5.003 * talla) - (6.75 * edad);
+      } else {
+          geb = 655.1 + (9.563 * peso) + (1.85 * talla) - (4.676 * edad);
+      }
+      document.getElementById('res-geb').innerText = geb.toFixed(2);
+
+      // 4. Durnin-Womersley & Siri (% Grasa)
+      let porcentajeGrasa = "N/A (Faltan los 4 pliegues básicos)";
+      const suma4Pliegues = bicipital + tricipital + subescapular + suprailiaco;
+      
+      // Validamos que se hayan ingresado los 4 pliegues básicos
+      if(bicipital > 0 && tricipital > 0 && subescapular > 0 && suprailiaco > 0) {
+          const logSuma = Math.log10(suma4Pliegues);
+          let densidad = 0;
+          
+          // Ecuaciones generales estimadas
+          if(sexo === 'M') {
+              densidad = 1.1620 - (0.0630 * logSuma);
+          } else {
+              densidad = 1.1549 - (0.0678 * logSuma);
+          }
+          porcentajeGrasa = (((4.95 / densidad) - 4.5) * 100).toFixed(2);
+      }
+      document.getElementById('res-grasa').innerText = porcentajeGrasa;
+
+      document.getElementById('resultados-clinicos').classList.remove('d-none');
+  });
+
+  // Guardar Expediente Completo en Firestore
+  const formPaciente = document.getElementById('form-paciente');
+  const modalObj = new bootstrap.Modal(document.getElementById('modalPaciente'));
+
+  formPaciente.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Estructuramos el payload de forma anidada para mejor orden en Firestore
+      const pacienteData = {
+          personales: {
+              nombre: getStrVal('p-nombre'),
+              fechaNacimiento: getStrVal('p-fnac'),
+              edad: getNumVal('p-edad'),
+              sexo: getStrVal('p-sexo'),
+              telefono: getStrVal('p-tel'),
+              email: getStrVal('p-email'),
+              ocupacion: getStrVal('p-ocupacion'),
+              motivoConsulta: getStrVal('p-motivo')
+          },
+          historiaClinica: {
+              ahf: getStrVal('hc-ahf'),
+              app: getStrVal('hc-app'),
+              medicamentos: getStrVal('hc-medicamentos'),
+              alergias: getStrVal('hc-alergias'),
+              digestion: getStrVal('hc-digestion')
+          },
+          factoresRiesgo: {
+              tabaco: getStrVal('fr-tabaco'),
+              alcohol: getStrVal('fr-alcohol'),
+              estres: getStrVal('fr-estres'),
+              actividadFisica: getStrVal('fr-actividad')
+          },
+          antropometria: {
+              basicas: {
+                  peso: getNumVal('m-peso'),
+                  talla: getNumVal('m-talla')
+              },
+              circunferencias: {
+                  cintura: getNumVal('c-cintura'),
+                  cadera: getNumVal('c-cadera'),
+                  brazoRelajado: getNumVal('c-brazo-rel'),
+                  brazoContraido: getNumVal('c-brazo-con'),
+                  muslo: getNumVal('c-muslo'),
+                  pantorrilla: getNumVal('c-pantorrilla'),
+                  muneca: getNumVal('c-muneca')
+              },
+              pliegues: {
+                  tricipital: getNumVal('pl-tricipital'),
+                  bicipital: getNumVal('pl-bicipital'),
+                  subescapular: getNumVal('pl-subescapular'),
+                  suprailiaco: getNumVal('pl-suprailiaco'),
+                  supraespinal: getNumVal('pl-supraespinal'),
+                  abdominal: getNumVal('pl-abdominal'),
+                  musloFrontal: getNumVal('pl-muslo'),
+                  pantorrilla: getNumVal('pl-pantorrilla')
+              }
+          },
+          registro: serverTimestamp()
+      };
+
+      try {
+          await addDoc(collection(db, "pacientes"), pacienteData);
+          formPaciente.reset();
+          document.getElementById('resultados-clinicos').classList.add('d-none');
+          
+          // Regresar al primer tab por defecto para el siguiente registro
+          const firstTab = new bootstrap.Tab(document.getElementById('datos-tab'));
+          firstTab.show();
+
+          modalObj.hide();
+          alert("Expediente clínico completo guardado con éxito.");
+      } catch (error) {
+          console.error("Error guardando el expediente: ", error);
+          alert("Hubo un error al guardar. Revisa la consola.");
+      }
+  });
+
+  // Leer Pacientes en tiempo real para la tabla
+  onSnapshot(collection(db, "pacientes"), (snapshot) => {
+      const tabla = document.getElementById('tabla-pacientes');
+      document.getElementById('total-pacientes').innerText = snapshot.size;
+      tabla.innerHTML = ""; 
+      
+      snapshot.forEach((doc) => {
+          const data = doc.data();
+          // Accedemos a los datos anidados
+          const personales = data.personales || {};
+          const tr = document.createElement('tr');
+          
+          tr.innerHTML = `
+              <td><strong>${personales.nombre || 'Sin Nombre'}</strong></td>
+              <td>${personales.edad || '-'} años</td>
+              <td>${personales.telefono || '-'}</td>
+              <td>${personales.ocupacion || '-'}</td>
+              <td>
+                  <button class="btn btn-sm btn-outline-info" title="Ver Expediente"><i class="fi fi-ss-eye"></i></button>
+                  <button class="btn btn-sm btn-outline-success" title="Nueva Consulta"><i class="fi fi-ss-add-document"></i></button>
+              </td>
+          `;
+          tabla.appendChild(tr);
+      });
+  });
+</script>
+</body>
+</html>
