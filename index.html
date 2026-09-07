@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
     
-    <!-- Librerías Externas -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -46,7 +45,6 @@
             </ul>
         </div>
 
-        <!-- Contenido Principal -->
         <div class="col-md-10 p-4">
             
             <!-- Dashboard -->
@@ -62,7 +60,7 @@
             <div id="pacientes" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Expedientes Clínicos</h2>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPaciente" style="background-color: #1abc9c; border:none;">
+                    <button class="btn btn-primary" id="btn-nuevo-paciente" data-bs-toggle="modal" data-bs-target="#modalPaciente" style="background-color: #1abc9c; border:none;">
                         <i class="fi fi-ss-user-add"></i> Nuevo Paciente
                     </button>
                 </div>
@@ -135,7 +133,7 @@
                 </div>
             </div>
 
-            <!-- Dieta Rápida (7 Días) -->
+            <!-- Dieta Rápida -->
             <div id="dieta-rapida" class="section-view">
                 <h2>Generador de Dieta Rápida (7 Días)</h2>
                 <div class="card shadow-sm border-0 p-4 mt-3">
@@ -167,11 +165,13 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header text-white" style="background-color: #2c3e50;">
-        <h5 class="modal-title"><i class="fi fi-ss-book-medical"></i> Expediente Clínico Integral</h5>
+        <h5 class="modal-title" id="modalPacienteLabel"><i class="fi fi-ss-book-medical"></i> Nuevo Expediente Clínico</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body bg-light">
         <form id="form-paciente">
+            <input type="hidden" id="p-id" value=""> <!-- Input oculto para identificar actualización -->
+            
             <ul class="nav nav-tabs mb-3" role="tablist">
                 <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button">Datos Personales</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-clinica" type="button">Historia Clínica</button></li>
@@ -181,24 +181,25 @@
             <div class="tab-content">
                 <!-- Datos Personales -->
                 <div class="tab-pane fade show active p-3 bg-white border rounded" id="tab-datos">
-                    <div class="alert alert-warning"><i class="fi fi-ss-info"></i> El <strong>Email</strong> se usará como identificador único.</div>
+                    <div class="alert alert-warning"><i class="fi fi-ss-info"></i> El <strong>Email</strong> es el identificador único del paciente en la base de datos.</div>
                     <div class="row g-3">
                         <div class="col-md-6"><label>Nombre Completo *</label><input type="text" id="p-nombre" class="form-control" required></div>
                         <div class="col-md-3"><label>Edad *</label><input type="number" id="p-edad" class="form-control" required></div>
                         <div class="col-md-3"><label>Sexo</label><select id="p-sexo" class="form-select"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
                         <div class="col-md-6"><label>Teléfono *</label><input type="tel" id="p-tel" class="form-control" required></div>
                         <div class="col-md-6"><label>Email * (Único)</label><input type="email" id="p-email" class="form-control" required></div>
-                        <div class="col-md-6"><label>Ocupación</label><input type="text" id="p-ocupacion" class="form-control"></div>
-                        <div class="col-md-6"><label>Motivo Consulta</label><input type="text" id="p-motivo" class="form-control"></div>
+                        <div class="col-md-3"><label>Fecha de Nac.</label><input type="date" id="p-fnac" class="form-control"></div>
+                        <div class="col-md-4"><label>Ocupación</label><input type="text" id="p-ocupacion" class="form-control"></div>
+                        <div class="col-md-5"><label>Motivo Consulta</label><input type="text" id="p-motivo" class="form-control"></div>
                     </div>
                 </div>
 
                 <!-- Historia Clínica -->
                 <div class="tab-pane fade p-3 bg-white border rounded" id="tab-clinica">
                     <div class="row g-3">
-                        <div class="col-md-6"><label>AHF</label><textarea id="hc-ahf" class="form-control" rows="2"></textarea></div>
-                        <div class="col-md-6"><label>APP</label><textarea id="hc-app" class="form-control" rows="2"></textarea></div>
-                        <div class="col-md-6"><label>Medicamentos</label><input type="text" id="hc-medicamentos" class="form-control"></div>
+                        <div class="col-md-6"><label>AHF (Heredofamiliares)</label><textarea id="hc-ahf" class="form-control" rows="2"></textarea></div>
+                        <div class="col-md-6"><label>APP (Personales Patológicos)</label><textarea id="hc-app" class="form-control" rows="2"></textarea></div>
+                        <div class="col-md-6"><label>Medicamentos Actuales</label><input type="text" id="hc-medicamentos" class="form-control"></div>
                         <div class="col-md-6"><label>Alergias</label><input type="text" id="hc-alergias" class="form-control"></div>
                     </div>
                 </div>
@@ -216,6 +217,10 @@
                         <div class="col-md-3"><label>Pl. Bicipital</label><input type="number" step="0.1" id="pl-bicipital" class="form-control"></div>
                         <div class="col-md-3"><label>Pl. Subescapular</label><input type="number" step="0.1" id="pl-subescapular" class="form-control"></div>
                         <div class="col-md-3"><label>Pl. Suprailiaco</label><input type="number" step="0.1" id="pl-suprailiaco" class="form-control"></div>
+                    </div>
+                    <button type="button" id="btn-calcular-antropo" class="btn btn-outline-success"><i class="fi fi-ss-calculator"></i> Ejecutar Fórmulas Clínicas</button>
+                    <div class="alert alert-info d-none mt-3" id="resultados-clinicos">
+                        <strong>GEB:</strong> <span id="res-geb"></span> kcal | <strong>IMC:</strong> <span id="res-imc"></span> | <strong>Masa Grasa:</strong> <span id="res-grasa"></span> %
                     </div>
                 </div>
             </div>
@@ -257,7 +262,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, setDoc, doc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDOG2Xf3OSBKiD5YUHuka2j112g5GmS4gw",
@@ -274,7 +279,7 @@
   const getNumVal = (id) => parseFloat(document.getElementById(id).value) || 0;
   const getStrVal = (id) => document.getElementById(id).value || "";
 
-  // Navegación SPA
+  // Navegación
   document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', (e) => {
           e.preventDefault();
@@ -307,7 +312,7 @@
       alcohol: { kcal: 140, prot: 0, lip: 0, hc: 20 }
   };
 
-  // Motor Cálculo SMAE
+  // Cálculo SMAE
   let dietTotals = { kcal: 0, prot: 0, lip: 0, hc: 0 };
   document.querySelectorAll('.smae-input').forEach(input => {
       input.addEventListener('input', () => {
@@ -328,7 +333,7 @@
       });
   });
 
-  // Guardar Distribución SMAE
+  // Guardar SMAE
   document.getElementById('btn-guardar-dist').addEventListener('click', async () => {
       const pacienteId = document.getElementById('smae-paciente').value;
       if(!pacienteId) return alert("Selecciona un paciente primero.");
@@ -340,24 +345,44 @@
       } catch(e) { console.error(e); alert("Error al guardar."); }
   });
 
-  // Calendar
-  let calendar;
-  document.addEventListener('DOMContentLoaded', () => {
-    calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-      initialView: 'timeGridWeek', locale: 'es',
-      headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
-      eventClick: (info) => { if(info.event.extendedProps.meetLink) window.open(info.event.extendedProps.meetLink, '_blank'); }
-    });
-    document.getElementById('nav-citas').addEventListener('click', () => setTimeout(() => calendar.render(), 100));
+  // Antropometría Palafox
+  document.getElementById('btn-calcular-antropo').addEventListener('click', () => {
+      const peso = getNumVal('m-peso'), talla = getNumVal('m-talla'), edad = getNumVal('p-edad'), sexo = getStrVal('p-sexo');
+      const bicipital = getNumVal('pl-bicipital'), tricipital = getNumVal('pl-tricipital'), subescapular = getNumVal('pl-subescapular'), suprailiaco = getNumVal('pl-suprailiaco');
+      
+      if(!peso || !talla || !edad || !sexo) return alert("Faltan datos en la pestaña Personales o Antropometría.");
+
+      const imc = peso / Math.pow(talla/100, 2);
+      document.getElementById('res-imc').innerText = imc.toFixed(2);
+      let geb = sexo === 'M' ? 66.5 + (13.75*peso) + (5.003*talla) - (6.75*edad) : 655.1 + (9.563*peso) + (1.85*talla) - (4.676*edad);
+      document.getElementById('res-geb').innerText = geb.toFixed(2);
+
+      let grasa = "N/A";
+      const suma = bicipital + tricipital + subescapular + suprailiaco;
+      if(suma > 0) {
+          const logSuma = Math.log10(suma);
+          const densidad = sexo === 'M' ? 1.1620 - (0.0630*logSuma) : 1.1549 - (0.0678*logSuma);
+          grasa = (((4.95/densidad) - 4.5) * 100).toFixed(2);
+      }
+      document.getElementById('res-grasa').innerText = grasa;
+      document.getElementById('resultados-clinicos').classList.remove('d-none');
   });
 
-  // Pacientes CRUD - Limpieza de ID y Manejo de Errores Firebase
+  // Limpiar Formulario Modal al Crear Nuevo
+  document.getElementById('btn-nuevo-paciente').addEventListener('click', () => {
+      document.getElementById('form-paciente').reset();
+      document.getElementById('p-id').value = "";
+      document.getElementById('p-email').readOnly = false;
+      document.getElementById('modalPacienteLabel').innerHTML = '<i class="fi fi-ss-user-add"></i> Nuevo Expediente Clínico';
+  });
+
+  // Guardar Paciente (Crear o Actualizar)
   const formPaciente = document.getElementById('form-paciente');
   formPaciente.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('btn-guardar-paciente');
-      // .trim() evita errores si se ingresan espacios antes o después del correo
       const email = getStrVal('p-email').toLowerCase().trim();
+      const pId = document.getElementById('p-id').value; // Detecta si es actualización
       
       if(!email) return alert("El correo es obligatorio.");
       
@@ -366,22 +391,31 @@
 
       try {
           const docRef = doc(db, "pacientes", email);
-          const docSnap = await getDoc(docRef);
-          
-          if(docSnap.exists()){
-              alert("Ya existe un paciente registrado con este correo electrónico.");
-              btn.disabled = false; btn.innerHTML = '<i class="fi fi-ss-disk"></i> Guardar Expediente';
-              return;
-          }
-
           const pacienteData = {
-              personales: { nombre: getStrVal('p-nombre'), edad: getNumVal('p-edad'), sexo: getStrVal('p-sexo'), telefono: getStrVal('p-tel'), email: email, ocupacion: getStrVal('p-ocupacion'), motivo: getStrVal('p-motivo') },
+              personales: { nombre: getStrVal('p-nombre'), fnac: getStrVal('p-fnac'), edad: getNumVal('p-edad'), sexo: getStrVal('p-sexo'), telefono: getStrVal('p-tel'), email: email, ocupacion: getStrVal('p-ocupacion'), motivo: getStrVal('p-motivo') },
               historiaClinica: { ahf: getStrVal('hc-ahf'), app: getStrVal('hc-app'), medicamentos: getStrVal('hc-medicamentos'), alergias: getStrVal('hc-alergias') },
-              antropometria: { peso: getNumVal('m-peso'), talla: getNumVal('m-talla'), cintura: getNumVal('c-cintura'), cadera: getNumVal('c-cadera') },
-              registro: serverTimestamp()
+              antropometria: { 
+                  peso: getNumVal('m-peso'), talla: getNumVal('m-talla'), cintura: getNumVal('c-cintura'), cadera: getNumVal('c-cadera'),
+                  tricipital: getNumVal('pl-tricipital'), bicipital: getNumVal('pl-bicipital'), subescapular: getNumVal('pl-subescapular'), suprailiaco: getNumVal('pl-suprailiaco') 
+              },
+              actualizado: serverTimestamp()
           };
+
+          if(pId) {
+              // Actualizar
+              await updateDoc(docRef, pacienteData);
+          } else {
+              // Crear (Validar que no exista)
+              const docSnap = await getDoc(docRef);
+              if(docSnap.exists()){
+                  alert("Ya existe un paciente registrado con este correo electrónico.");
+                  btn.disabled = false; btn.innerHTML = '<i class="fi fi-ss-disk"></i> Guardar Expediente';
+                  return;
+              }
+              pacienteData.registro = serverTimestamp();
+              await setDoc(docRef, pacienteData);
+          }
           
-          await setDoc(docRef, pacienteData);
           formPaciente.reset();
           bootstrap.Modal.getInstance(document.getElementById('modalPaciente')).hide();
       } catch(error) {
@@ -392,7 +426,60 @@
       }
   });
 
-  // Cargar Listas
+  // Delegación de Eventos Tabla (Editar y Eliminar Paciente)
+  document.getElementById('tabla-pacientes').addEventListener('click', async (e) => {
+      const btnEdit = e.target.closest('.btn-edit');
+      const btnDel = e.target.closest('.btn-delete');
+
+      if(btnDel) {
+          const id = btnDel.getAttribute('data-id');
+          if(confirm("¿Estás seguro de eliminar este paciente? Esta acción no se puede deshacer.")) {
+              try {
+                  await deleteDoc(doc(db, "pacientes", id));
+              } catch(err) { alert("Error al eliminar: " + err.message); }
+          }
+      }
+
+      if(btnEdit) {
+          const id = btnEdit.getAttribute('data-id');
+          try {
+              const docSnap = await getDoc(doc(db, "pacientes", id));
+              if(docSnap.exists()) {
+                  const d = docSnap.data();
+                  document.getElementById('p-id').value = id;
+                  document.getElementById('p-email').value = id;
+                  document.getElementById('p-email').readOnly = true;
+                  
+                  document.getElementById('p-nombre').value = d.personales?.nombre || "";
+                  document.getElementById('p-fnac').value = d.personales?.fnac || "";
+                  document.getElementById('p-edad').value = d.personales?.edad || "";
+                  document.getElementById('p-sexo').value = d.personales?.sexo || "M";
+                  document.getElementById('p-tel').value = d.personales?.telefono || "";
+                  document.getElementById('p-ocupacion').value = d.personales?.ocupacion || "";
+                  document.getElementById('p-motivo').value = d.personales?.motivo || "";
+                  
+                  document.getElementById('hc-ahf').value = d.historiaClinica?.ahf || "";
+                  document.getElementById('hc-app').value = d.historiaClinica?.app || "";
+                  document.getElementById('hc-medicamentos').value = d.historiaClinica?.medicamentos || "";
+                  document.getElementById('hc-alergias').value = d.historiaClinica?.alergias || "";
+                  
+                  document.getElementById('m-peso').value = d.antropometria?.peso || "";
+                  document.getElementById('m-talla').value = d.antropometria?.talla || "";
+                  document.getElementById('c-cintura').value = d.antropometria?.cintura || "";
+                  document.getElementById('c-cadera').value = d.antropometria?.cadera || "";
+                  document.getElementById('pl-tricipital').value = d.antropometria?.tricipital || "";
+                  document.getElementById('pl-bicipital').value = d.antropometria?.bicipital || "";
+                  document.getElementById('pl-subescapular').value = d.antropometria?.subescapular || "";
+                  document.getElementById('pl-suprailiaco').value = d.antropometria?.suprailiaco || "";
+
+                  document.getElementById('modalPacienteLabel').innerHTML = '<i class="fi fi-ss-pencil"></i> Modificar Expediente';
+                  bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPaciente')).show();
+              }
+          } catch(err) { alert("Error al cargar datos: " + err.message); }
+      }
+  });
+
+  // Cargar Listas en Tiempo Real
   onSnapshot(collection(db, "pacientes"), (snapshot) => {
       const tabla = document.getElementById('tabla-pacientes');
       const sCita = document.getElementById('c-paciente');
@@ -403,10 +490,31 @@
       
       snapshot.forEach((doc) => {
           const p = doc.data().personales || {};
-          tabla.innerHTML += `<tr><td>${p.nombre || ''}</td><td>${p.email || ''}</td><td>${p.telefono || ''}</td><td>${p.ocupacion || ''}</td><td><button class='btn btn-sm btn-info'><i class='fi fi-ss-eye'></i></button></td></tr>`;
+          tabla.innerHTML += `
+            <tr>
+              <td>${p.nombre || ''}</td>
+              <td>${p.email || doc.id}</td>
+              <td>${p.telefono || ''}</td>
+              <td>${p.ocupacion || ''}</td>
+              <td>
+                  <button class='btn btn-sm btn-info btn-edit text-white' data-id='${doc.id}' title='Modificar'><i class='fi fi-ss-pencil'></i></button>
+                  <button class='btn btn-sm btn-danger btn-delete' data-id='${doc.id}' title='Eliminar'><i class='fi fi-ss-trash'></i></button>
+              </td>
+            </tr>`;
           const opt = `<option value="${doc.id}">${p.nombre || doc.id}</option>`;
           sCita.innerHTML += opt; sSmae.innerHTML += opt;
       });
+  });
+
+  // Calendar
+  let calendar;
+  document.addEventListener('DOMContentLoaded', () => {
+    calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+      initialView: 'timeGridWeek', locale: 'es',
+      headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
+      eventClick: (info) => { if(info.event.extendedProps.meetLink) window.open(info.event.extendedProps.meetLink, '_blank'); }
+    });
+    document.getElementById('nav-citas').addEventListener('click', () => setTimeout(() => calendar.render(), 100));
   });
 
   // Citas Guardar
