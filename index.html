@@ -7,7 +7,11 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+    
+    <!-- Librerías Externas -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
         body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -23,32 +27,38 @@
         .form-section-title { color: #1abc9c; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 15px; margin-bottom: 15px; font-size: 1.1rem;}
         #calendar { background: white; padding: 15px; border-radius: 8px; min-height: 600px; }
         .smae-input { max-width: 80px; text-align: center; }
+        .menu-table th { background-color: #2c3e50; color: white; }
     </style>
 </head>
 <body>
 
 <div class="container-fluid">
     <div class="row">
+        <!-- Menú Lateral -->
         <div class="col-md-2 sidebar shadow-sm">
             <div class="brand-logo"><i class="fi fi-ss-apple-whole"></i> NutriFit</div>
             <ul class="nav flex-column px-2">
                 <li class="nav-item"><a class="nav-link active" data-target="dashboard"><i class="fi fi-ss-apps"></i> Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" data-target="pacientes"><i class="fi fi-ss-users"></i> Pacientes</a></li>
                 <li class="nav-item"><a class="nav-link" id="nav-citas" data-target="citas"><i class="fi fi-ss-calendar"></i> Agenda</a></li>
-                <li class="nav-item"><a class="nav-link" data-target="menus"><i class="fi fi-ss-restaurant"></i> Menús (SMAE)</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="menus"><i class="fi fi-ss-calculator"></i> SMAE</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="dieta-rapida"><i class="fi fi-ss-restaurant"></i> Dieta Rápida</a></li>
             </ul>
         </div>
 
+        <!-- Contenido Principal -->
         <div class="col-md-10 p-4">
             
+            <!-- Dashboard -->
             <div id="dashboard" class="section-view active">
                 <h2 class="mb-4">Resumen Clínico</h2>
-                <div class="card p-3 mb-3 bg-white" style="border-left: 4px solid #1abc9c; width: 300px;">
+                <div class="card p-3 mb-3 bg-white shadow-sm" style="border-left: 4px solid #1abc9c; width: 300px;">
                     <h5><i class="fi fi-ss-users text-success"></i> Pacientes Activos</h5>
                     <h2 id="total-pacientes">0</h2>
                 </div>
             </div>
 
+            <!-- Pacientes -->
             <div id="pacientes" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Expedientes Clínicos</h2>
@@ -59,13 +69,14 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-body table-responsive">
                         <table class="table table-hover align-middle">
-                            <thead class="table-light"><tr><th>Nombre</th><th>Edad</th><th>Teléfono</th><th>Ocupación</th><th>Acciones</th></tr></thead>
+                            <thead class="table-light"><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Ocupación</th><th>Acciones</th></tr></thead>
                             <tbody id="tabla-pacientes"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
+            <!-- Agenda -->
             <div id="citas" class="section-view">
                 <div class="d-flex justify-content-between mb-3">
                     <h2>Agenda de Consultas</h2>
@@ -76,8 +87,9 @@
                 <div id="calendar" class="shadow-sm border-0"></div>
             </div>
 
+            <!-- SMAE -->
             <div id="menus" class="section-view">
-                <h2>Cálculo Dietosintético (SMAE Completo)</h2>
+                <h2>Cálculo Dietosintético (SMAE)</h2>
                 <div class="row mt-4">
                     <div class="col-md-8">
                         <div class="card p-3 shadow-sm border-0 table-responsive">
@@ -89,16 +101,16 @@
                                     <tr><td>Cereales y tubérculos sin grasa</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="cerSinGrasa" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Cereales y tubérculos con grasa</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="cerConGrasa" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Leguminosas</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="leguminosas" value="0" min="0" step="0.5"></td></tr>
-                                    <tr><td>AOA - Muy bajo aporte de grasa</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aoaMuyBajo" value="0" min="0" step="0.5"></td></tr>
-                                    <tr><td>AOA - Bajo aporte de grasa</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aoaBajo" value="0" min="0" step="0.5"></td></tr>
-                                    <tr><td>AOA - Moderado aporte de grasa</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aoaMod" value="0" min="0" step="0.5"></td></tr>
-                                    <tr><td>AOA - Alto aporte de grasa</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aoaAlto" value="0" min="0" step="0.5"></td></tr>
+                                    <tr><td>AOA - Muy bajo aporte</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aoaMuyBajo" value="0" min="0" step="0.5"></td></tr>
+                                    <tr><td>AOA - Bajo aporte</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aoaBajo" value="0" min="0" step="0.5"></td></tr>
+                                    <tr><td>AOA - Moderado aporte</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aoaMod" value="0" min="0" step="0.5"></td></tr>
+                                    <tr><td>AOA - Alto aporte</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aoaAlto" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Leche descremada</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="lecDes" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Leche semidescremada</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="lecSemi" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Leche entera</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="lecEnt" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Leche con azúcar</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="lecAzu" value="0" min="0" step="0.5"></td></tr>
-                                    <tr><td>Aceites y grasas sin proteína</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aceSinProt" value="0" min="0" step="0.5"></td></tr>
-                                    <tr><td>Aceites y grasas con proteína</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aceConProt" value="0" min="0" step="0.5"></td></tr>
+                                    <tr><td>Aceites y grasas s/proteína</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aceSinProt" value="0" min="0" step="0.5"></td></tr>
+                                    <tr><td>Aceites y grasas c/proteína</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="aceConProt" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Azúcares sin grasa</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="azuSinGrasa" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Azúcares con grasa</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="azuConGrasa" value="0" min="0" step="0.5"></td></tr>
                                     <tr><td>Bebidas alcohólicas</td><td><input type="number" class="form-control form-control-sm smae-input" data-grupo="alcohol" value="0" min="0" step="0.5"></td></tr>
@@ -108,14 +120,41 @@
                     </div>
                     <div class="col-md-4">
                         <div class="card p-3 shadow-sm border-0 bg-light sticky-top" style="top: 20px;">
-                            <h5 class="text-primary"><i class="fi fi-ss-calculator"></i> Totales de la Dieta</h5><hr>
+                            <h5 class="text-primary"><i class="fi fi-ss-calculator"></i> Totales y Guardado</h5><hr>
+                            <div class="mb-3">
+                                <label class="form-label">Paciente Asignado:</label>
+                                <select id="smae-paciente" class="form-select"></select>
+                            </div>
                             <p><strong>Energía:</strong> <span id="tot-kcal" class="text-success fw-bold">0</span> kcal</p>
                             <p><strong>Proteína:</strong> <span id="tot-prot" class="fw-bold">0</span> g</p>
                             <p><strong>Lípidos:</strong> <span id="tot-lip" class="fw-bold">0</span> g</p>
-                            <p><strong>Hidratos de Carbono:</strong> <span id="tot-hc" class="fw-bold">0</span> g</p>
-                            <button class="btn btn-primary w-100 mt-3" style="background-color: #1abc9c; border:none;"><i class="fi fi-ss-disk"></i> Guardar Distribución</button>
+                            <p><strong>H. Carbono:</strong> <span id="tot-hc" class="fw-bold">0</span> g</p>
+                            <button class="btn btn-primary w-100 mt-3" id="btn-guardar-dist" style="background-color: #1abc9c; border:none;"><i class="fi fi-ss-disk"></i> Guardar Distribución</button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Dieta Rápida (7 Días) -->
+            <div id="dieta-rapida" class="section-view">
+                <h2>Generador de Dieta Rápida (7 Días)</h2>
+                <div class="card shadow-sm border-0 p-4 mt-3">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label>Calorías Mínimas (kcal)</label>
+                            <input type="number" id="dr-kcal-min" class="form-control" placeholder="Ej. 1500" value="1500" step="50">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Calorías Máximas (kcal)</label>
+                            <input type="number" id="dr-kcal-max" class="form-control" placeholder="Ej. 1800" value="1800" step="50">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="btn-generar-dieta" style="background-color: #1abc9c; border:none;">
+                                <i class="fi fi-ss-magic-wand"></i> Generar Menú Rápido
+                            </button>
+                        </div>
+                    </div>
+                    <div id="dr-resultado" class="table-responsive"></div>
                 </div>
             </div>
 
@@ -124,98 +163,68 @@
 </div>
 
 <!-- Modal Paciente Integral -->
-<div class="modal fade" id="modalPaciente" tabindex="-1" aria-labelledby="modalPacienteLabel" aria-hidden="true">
+<div class="modal fade" id="modalPaciente" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header text-white" style="background-color: #2c3e50;">
-        <h5 class="modal-title" id="modalPacienteLabel"><i class="fi fi-ss-book-medical"></i> Expediente Clínico Integral</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <h5 class="modal-title"><i class="fi fi-ss-book-medical"></i> Expediente Clínico Integral</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body bg-light">
-        <!-- Pestañas de Navegación -->
-        <ul class="nav nav-tabs mb-3" id="pacienteTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="datos-tab" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button" role="tab" aria-controls="tab-datos" aria-selected="true">Datos Personales</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="clinica-tab" data-bs-toggle="tab" data-bs-target="#tab-clinica" type="button" role="tab" aria-controls="tab-clinica" aria-selected="false">Historia Clínica</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="antropo-tab" data-bs-toggle="tab" data-bs-target="#tab-antropo" type="button" role="tab" aria-controls="tab-antropo" aria-selected="false">Antropometría</button>
-            </li>
-        </ul>
-
-        <!-- Formulario (Envuelve todo el contenido de las pestañas) -->
         <form id="form-paciente">
-            <div class="tab-content" id="pacienteTabsContent">
-                <!-- Pestaña 1: Datos Personales -->
-                <div class="tab-pane fade show active p-3 bg-white border rounded" id="tab-datos" role="tabpanel" aria-labelledby="datos-tab">
-                    <h6 class="form-section-title">Información de Contacto</h6>
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button">Datos Personales</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-clinica" type="button">Historia Clínica</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-antropo" type="button">Antropometría</button></li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Datos Personales -->
+                <div class="tab-pane fade show active p-3 bg-white border rounded" id="tab-datos">
+                    <div class="alert alert-warning"><i class="fi fi-ss-info"></i> El <strong>Email</strong> se usará como identificador único.</div>
                     <div class="row g-3">
-                        <div class="col-md-6"><label>Nombre Completo</label><input type="text" id="p-nombre" class="form-control" required></div>
-                        <div class="col-md-3"><label>Nacimiento</label><input type="date" id="p-fnac" class="form-control"></div>
-                        <div class="col-md-3"><label>Edad</label><input type="number" id="p-edad" class="form-control" required></div>
-                        <div class="col-md-3">
-                            <label>Sexo</label><select id="p-sexo" class="form-select" required><option value="M">Masculino</option><option value="F">Femenino</option></select>
-                        </div>
-                        <div class="col-md-4"><label>Teléfono</label><input type="tel" id="p-tel" class="form-control"></div>
-                        <div class="col-md-5"><label>Email</label><input type="email" id="p-email" class="form-control"></div>
+                        <div class="col-md-6"><label>Nombre Completo *</label><input type="text" id="p-nombre" class="form-control" required></div>
+                        <div class="col-md-3"><label>Edad *</label><input type="number" id="p-edad" class="form-control" required></div>
+                        <div class="col-md-3"><label>Sexo</label><select id="p-sexo" class="form-select"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
+                        <div class="col-md-6"><label>Teléfono *</label><input type="tel" id="p-tel" class="form-control" required></div>
+                        <div class="col-md-6"><label>Email * (Único)</label><input type="email" id="p-email" class="form-control" required></div>
                         <div class="col-md-6"><label>Ocupación</label><input type="text" id="p-ocupacion" class="form-control"></div>
                         <div class="col-md-6"><label>Motivo Consulta</label><input type="text" id="p-motivo" class="form-control"></div>
                     </div>
                 </div>
 
-                <!-- Pestaña 2: Historia Clínica -->
-                <div class="tab-pane fade p-3 bg-white border rounded" id="tab-clinica" role="tabpanel" aria-labelledby="clinica-tab">
-                    <h6 class="form-section-title">Antecedentes Médicos</h6>
+                <!-- Historia Clínica -->
+                <div class="tab-pane fade p-3 bg-white border rounded" id="tab-clinica">
                     <div class="row g-3">
                         <div class="col-md-6"><label>AHF</label><textarea id="hc-ahf" class="form-control" rows="2"></textarea></div>
                         <div class="col-md-6"><label>APP</label><textarea id="hc-app" class="form-control" rows="2"></textarea></div>
                         <div class="col-md-6"><label>Medicamentos</label><input type="text" id="hc-medicamentos" class="form-control"></div>
                         <div class="col-md-6"><label>Alergias</label><input type="text" id="hc-alergias" class="form-control"></div>
                     </div>
-                    <h6 class="form-section-title mt-3">Estilo de Vida</h6>
-                    <div class="row g-3">
-                        <div class="col-md-4"><label>Tabaco</label><select id="fr-tabaco" class="form-select"><option>No</option><option>Sí</option></select></div>
-                        <div class="col-md-4"><label>Alcohol</label><select id="fr-alcohol" class="form-select"><option>No</option><option>Sí</option></select></div>
-                        <div class="col-md-4"><label>Estrés</label><select id="fr-estres" class="form-select"><option>Bajo</option><option>Alto</option></select></div>
-                        <div class="col-md-6"><label>Actividad Física</label><input type="text" id="fr-actividad" class="form-control"></div>
-                        <div class="col-md-6"><label>Digestión</label><input type="text" id="hc-digestion" class="form-control"></div>
-                    </div>
                 </div>
 
-                <!-- Pestaña 3: Antropometría -->
-                <div class="tab-pane fade p-3 bg-white border rounded" id="tab-antropo" role="tabpanel" aria-labelledby="antropo-tab">
-                    <h6 class="form-section-title">Medidas Básicas y Circunferencias (cm)</h6>
+                <!-- Antropometría -->
+                <div class="tab-pane fade p-3 bg-white border rounded" id="tab-antropo">
                     <div class="row g-3 mb-3">
-                        <div class="col-md-2"><label>Peso (kg)</label><input type="number" step="0.1" id="m-peso" class="form-control" required></div>
-                        <div class="col-md-2"><label>Talla (cm)</label><input type="number" step="0.01" id="m-talla" class="form-control" required></div>
+                        <div class="col-md-2"><label>Peso (kg)</label><input type="number" step="0.1" id="m-peso" class="form-control"></div>
+                        <div class="col-md-2"><label>Talla (cm)</label><input type="number" step="0.01" id="m-talla" class="form-control"></div>
                         <div class="col-md-2"><label>Cintura</label><input type="number" step="0.1" id="c-cintura" class="form-control"></div>
                         <div class="col-md-2"><label>Cadera</label><input type="number" step="0.1" id="c-cadera" class="form-control"></div>
-                        <div class="col-md-2"><label>Br. Relajado</label><input type="number" step="0.1" id="c-brazo-rel" class="form-control"></div>
-                        <div class="col-md-2"><label>Pantorrilla</label><input type="number" step="0.1" id="c-pantorrilla" class="form-control"></div>
                     </div>
-                    <h6 class="form-section-title">Pliegues Cutáneos (mm)</h6>
                     <div class="row g-3 mb-3">
-                        <div class="col-md-3"><label>Tricipital</label><input type="number" step="0.1" id="pl-tricipital" class="form-control"></div>
-                        <div class="col-md-3"><label>Bicipital</label><input type="number" step="0.1" id="pl-bicipital" class="form-control"></div>
-                        <div class="col-md-3"><label>Subescapular</label><input type="number" step="0.1" id="pl-subescapular" class="form-control"></div>
-                        <div class="col-md-3"><label>Suprailiaco</label><input type="number" step="0.1" id="pl-suprailiaco" class="form-control"></div>
-                        <div class="col-md-3"><label>Supraespinal</label><input type="number" step="0.1" id="pl-supraespinal" class="form-control"></div>
-                        <div class="col-md-3"><label>Abdominal</label><input type="number" step="0.1" id="pl-abdominal" class="form-control"></div>
-                        <div class="col-md-3"><label>Muslo</label><input type="number" step="0.1" id="pl-muslo" class="form-control"></div>
-                        <div class="col-md-3"><label>Pantorrilla</label><input type="number" step="0.1" id="pl-pantorrilla" class="form-control"></div>
-                    </div>
-                    <button type="button" id="btn-calcular" class="btn btn-outline-success"><i class="fi fi-ss-calculator"></i> Ejecutar Fórmulas</button>
-                    <div class="alert alert-info d-none mt-3" id="resultados-clinicos">
-                        <strong>GEB:</strong> <span id="res-geb"></span> kcal | <strong>IMC:</strong> <span id="res-imc"></span> | <strong>ICC:</strong> <span id="res-icc"></span> | <strong>Masa Grasa:</strong> <span id="res-grasa"></span> %
+                        <div class="col-md-3"><label>Pl. Tricipital</label><input type="number" step="0.1" id="pl-tricipital" class="form-control"></div>
+                        <div class="col-md-3"><label>Pl. Bicipital</label><input type="number" step="0.1" id="pl-bicipital" class="form-control"></div>
+                        <div class="col-md-3"><label>Pl. Subescapular</label><input type="number" step="0.1" id="pl-subescapular" class="form-control"></div>
+                        <div class="col-md-3"><label>Pl. Suprailiaco</label><input type="number" step="0.1" id="pl-suprailiaco" class="form-control"></div>
                     </div>
                 </div>
             </div>
             
             <div class="modal-footer bg-light mt-3 border-top pt-3">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" style="background-color: #1abc9c; border:none;"><i class="fi fi-ss-disk"></i> Guardar Expediente</button>
+                <button type="submit" id="btn-guardar-paciente" class="btn btn-primary" style="background-color: #1abc9c; border:none;">
+                    <i class="fi fi-ss-disk"></i> Guardar Expediente
+                </button>
             </div>
         </form>
       </div>
@@ -248,7 +257,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, setDoc, doc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDOG2Xf3OSBKiD5YUHuka2j112g5GmS4gw",
@@ -266,19 +275,17 @@
   const getStrVal = (id) => document.getElementById(id).value || "";
 
   // Navegación SPA
-  const navLinks = document.querySelectorAll('.nav-link');
-  const sections = document.querySelectorAll('.section-view');
-  navLinks.forEach(link => {
+  document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', (e) => {
           e.preventDefault();
-          navLinks.forEach(l => l.classList.remove('active'));
+          document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
           link.classList.add('active');
-          sections.forEach(sec => sec.classList.remove('active'));
+          document.querySelectorAll('.section-view').forEach(sec => sec.classList.remove('active'));
           document.getElementById(link.getAttribute('data-target')).classList.add('active');
       });
   });
 
-  // Base SMAE Dinámica Completa
+  // Base SMAE
   const dbSMAE = {
       verduras: { kcal: 25, prot: 2, lip: 0, hc: 4 },
       frutas: { kcal: 60, prot: 0, lip: 0, hc: 15 },
@@ -300,23 +307,20 @@
       alcohol: { kcal: 140, prot: 0, lip: 0, hc: 20 }
   };
 
-  // Motor de Cálculo SMAE
+  // Motor Cálculo SMAE
+  let dietTotals = { kcal: 0, prot: 0, lip: 0, hc: 0 };
   document.querySelectorAll('.smae-input').forEach(input => {
       input.addEventListener('input', () => {
           let tKcal = 0, tProt = 0, tLip = 0, tHc = 0;
-          
           document.querySelectorAll('.smae-input').forEach(inp => {
               const raciones = parseFloat(inp.value) || 0;
-              const grupo = inp.getAttribute('data-grupo');
-              
-              if(dbSMAE[grupo]) {
-                  tKcal += raciones * dbSMAE[grupo].kcal;
-                  tProt += raciones * dbSMAE[grupo].prot;
-                  tLip += raciones * dbSMAE[grupo].lip;
-                  tHc += raciones * dbSMAE[grupo].hc;
+              const g = inp.getAttribute('data-grupo');
+              if(dbSMAE[g]) {
+                  tKcal += raciones * dbSMAE[g].kcal; tProt += raciones * dbSMAE[g].prot;
+                  tLip += raciones * dbSMAE[g].lip; tHc += raciones * dbSMAE[g].hc;
               }
           });
-
+          dietTotals = { kcal: tKcal, prot: tProt, lip: tLip, hc: tHc };
           document.getElementById('tot-kcal').innerText = tKcal.toFixed(1);
           document.getElementById('tot-prot').innerText = tProt.toFixed(1);
           document.getElementById('tot-lip').innerText = tLip.toFixed(1);
@@ -324,94 +328,96 @@
       });
   });
 
-  // Antropometría Palafox
-  document.getElementById('btn-calcular').addEventListener('click', () => {
-      const peso = getNumVal('m-peso'), talla = getNumVal('m-talla'), edad = getNumVal('p-edad'), sexo = getStrVal('p-sexo');
-      const cintura = getNumVal('c-cintura'), cadera = getNumVal('c-cadera');
-      const bicipital = getNumVal('pl-bicipital'), tricipital = getNumVal('pl-tricipital'), subescapular = getNumVal('pl-subescapular'), suprailiaco = getNumVal('pl-suprailiaco');
-
-      if(!peso || !talla || !edad || !sexo) return alert("Faltan datos básicos en la pestaña Personales/Antropometría.");
-
-      const imc = peso / Math.pow(talla/100, 2);
-      document.getElementById('res-imc').innerText = imc.toFixed(2);
-      document.getElementById('res-icc').innerText = (cintura && cadera) ? (cintura/cadera).toFixed(2) : "N/A";
-
-      let geb = sexo === 'M' ? 66.5 + (13.75*peso) + (5.003*talla) - (6.75*edad) : 655.1 + (9.563*peso) + (1.85*talla) - (4.676*edad);
-      document.getElementById('res-geb').innerText = geb.toFixed(2);
-
-      let grasa = "N/A";
-      const suma = bicipital + tricipital + subescapular + suprailiaco;
-      if(bicipital && tricipital && subescapular && suprailiaco) {
-          const logSuma = Math.log10(suma);
-          const densidad = sexo === 'M' ? 1.1620 - (0.0630*logSuma) : 1.1549 - (0.0678*logSuma);
-          grasa = (((4.95/densidad) - 4.5) * 100).toFixed(2);
-      }
-      document.getElementById('res-grasa').innerText = grasa;
-      document.getElementById('resultados-clinicos').classList.remove('d-none');
+  // Guardar Distribución SMAE
+  document.getElementById('btn-guardar-dist').addEventListener('click', async () => {
+      const pacienteId = document.getElementById('smae-paciente').value;
+      if(!pacienteId) return alert("Selecciona un paciente primero.");
+      try {
+          const raciones = {};
+          document.querySelectorAll('.smae-input').forEach(inp => raciones[inp.getAttribute('data-grupo')] = parseFloat(inp.value) || 0);
+          await addDoc(collection(db, "menus"), { pacienteId, raciones, totales: dietTotals, fecha: serverTimestamp() });
+          alert("Distribución guardada en el expediente.");
+      } catch(e) { console.error(e); alert("Error al guardar."); }
   });
 
-  // Calendar Init
+  // Calendar
   let calendar;
   document.addEventListener('DOMContentLoaded', () => {
-    const calendarEl = document.getElementById('calendar');
-    calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'timeGridWeek',
-      locale: 'es',
+    calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+      initialView: 'timeGridWeek', locale: 'es',
       headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
-      eventClick: (info) => {
-          if(info.event.extendedProps.meetLink) window.open(info.event.extendedProps.meetLink, '_blank');
-      }
+      eventClick: (info) => { if(info.event.extendedProps.meetLink) window.open(info.event.extendedProps.meetLink, '_blank'); }
     });
     document.getElementById('nav-citas').addEventListener('click', () => setTimeout(() => calendar.render(), 100));
   });
 
-  // Pacientes CRUD Integral
+  // Pacientes CRUD - Limpieza de ID y Manejo de Errores Firebase
   const formPaciente = document.getElementById('form-paciente');
-  const selectPacientes = document.getElementById('c-paciente');
-  
   formPaciente.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const pacienteData = {
-          personales: { nombre: getStrVal('p-nombre'), fnac: getStrVal('p-fnac'), edad: getNumVal('p-edad'), sexo: getStrVal('p-sexo'), telefono: getStrVal('p-tel'), email: getStrVal('p-email'), ocupacion: getStrVal('p-ocupacion'), motivo: getStrVal('p-motivo') },
-          historiaClinica: { ahf: getStrVal('hc-ahf'), app: getStrVal('hc-app'), medicamentos: getStrVal('hc-medicamentos'), alergias: getStrVal('hc-alergias'), digestion: getStrVal('hc-digestion') },
-          factoresRiesgo: { tabaco: getStrVal('fr-tabaco'), alcohol: getStrVal('fr-alcohol'), estres: getStrVal('fr-estres'), actividad: getStrVal('fr-actividad') },
-          antropometria: {
-              peso: getNumVal('m-peso'), talla: getNumVal('m-talla'), cintura: getNumVal('c-cintura'), cadera: getNumVal('c-cadera'), brazoRel: getNumVal('c-brazo-rel'), pantorrillaC: getNumVal('c-pantorrilla'),
-              tricipital: getNumVal('pl-tricipital'), bicipital: getNumVal('pl-bicipital'), subescapular: getNumVal('pl-subescapular'), suprailiaco: getNumVal('pl-suprailiaco'), supraespinal: getNumVal('pl-supraespinal'), abdominal: getNumVal('pl-abdominal'), muslo: getNumVal('pl-muslo'), pantorrilla: getNumVal('pl-pantorrilla')
-          },
-          registro: serverTimestamp()
-      };
+      const btn = document.getElementById('btn-guardar-paciente');
+      // .trim() evita errores si se ingresan espacios antes o después del correo
+      const email = getStrVal('p-email').toLowerCase().trim();
       
-      await addDoc(collection(db, "pacientes"), pacienteData);
-      formPaciente.reset();
-      document.getElementById('resultados-clinicos').classList.add('d-none');
-      bootstrap.Tab.getInstance(document.getElementById('datos-tab')).show();
-      bootstrap.Modal.getInstance(document.getElementById('modalPaciente')).hide();
+      if(!email) return alert("El correo es obligatorio.");
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fi fi-ss-spinner"></i> Procesando...';
+
+      try {
+          const docRef = doc(db, "pacientes", email);
+          const docSnap = await getDoc(docRef);
+          
+          if(docSnap.exists()){
+              alert("Ya existe un paciente registrado con este correo electrónico.");
+              btn.disabled = false; btn.innerHTML = '<i class="fi fi-ss-disk"></i> Guardar Expediente';
+              return;
+          }
+
+          const pacienteData = {
+              personales: { nombre: getStrVal('p-nombre'), edad: getNumVal('p-edad'), sexo: getStrVal('p-sexo'), telefono: getStrVal('p-tel'), email: email, ocupacion: getStrVal('p-ocupacion'), motivo: getStrVal('p-motivo') },
+              historiaClinica: { ahf: getStrVal('hc-ahf'), app: getStrVal('hc-app'), medicamentos: getStrVal('hc-medicamentos'), alergias: getStrVal('hc-alergias') },
+              antropometria: { peso: getNumVal('m-peso'), talla: getNumVal('m-talla'), cintura: getNumVal('c-cintura'), cadera: getNumVal('c-cadera') },
+              registro: serverTimestamp()
+          };
+          
+          await setDoc(docRef, pacienteData);
+          formPaciente.reset();
+          bootstrap.Modal.getInstance(document.getElementById('modalPaciente')).hide();
+      } catch(error) {
+          console.error("Detalle del error en Firebase:", error); 
+          alert(`Fallo al guardar en base de datos: ${error.message}`);
+      } finally {
+          btn.disabled = false; btn.innerHTML = '<i class="fi fi-ss-disk"></i> Guardar Expediente';
+      }
   });
 
+  // Cargar Listas
   onSnapshot(collection(db, "pacientes"), (snapshot) => {
       const tabla = document.getElementById('tabla-pacientes');
+      const sCita = document.getElementById('c-paciente');
+      const sSmae = document.getElementById('smae-paciente');
+      
       document.getElementById('total-pacientes').innerText = snapshot.size;
-      tabla.innerHTML = ""; selectPacientes.innerHTML = "";
+      tabla.innerHTML = ""; sCita.innerHTML = ""; sSmae.innerHTML = "<option value=''>Selecciona un paciente...</option>";
+      
       snapshot.forEach((doc) => {
           const p = doc.data().personales || {};
-          tabla.innerHTML += `<tr><td>${p.nombre || 'Sin Nombre'}</td><td>${p.edad || '-'}</td><td>${p.telefono || '-'}</td><td>${p.ocupacion || '-'}</td><td><button class='btn btn-sm btn-info'><i class='fi fi-ss-eye'></i></button></td></tr>`;
-          selectPacientes.innerHTML += `<option value="${doc.id}">${p.nombre}</option>`;
+          tabla.innerHTML += `<tr><td>${p.nombre || ''}</td><td>${p.email || ''}</td><td>${p.telefono || ''}</td><td>${p.ocupacion || ''}</td><td><button class='btn btn-sm btn-info'><i class='fi fi-ss-eye'></i></button></td></tr>`;
+          const opt = `<option value="${doc.id}">${p.nombre || doc.id}</option>`;
+          sCita.innerHTML += opt; sSmae.innerHTML += opt;
       });
   });
 
-  // Citas CRUD
-  const formCita = document.getElementById('form-cita');
-  formCita.addEventListener('submit', async (e) => {
+  // Citas Guardar
+  document.getElementById('form-cita').addEventListener('submit', async (e) => {
       e.preventDefault();
       const pSel = document.getElementById('c-paciente');
       await addDoc(collection(db, "citas"), {
-          pacienteId: pSel.value,
-          title: `Consulta: ${pSel.options[pSel.selectedIndex].text}`,
-          start: document.getElementById('c-fecha').value,
-          meetLink: document.getElementById('c-link').value
+          pacienteId: pSel.value, title: `Consulta: ${pSel.options[pSel.selectedIndex].text}`,
+          start: document.getElementById('c-fecha').value, meetLink: document.getElementById('c-link').value
       });
-      formCita.reset();
+      document.getElementById('form-cita').reset();
       bootstrap.Modal.getInstance(document.getElementById('modalCita')).hide();
   });
 
@@ -419,6 +425,73 @@
       const eventos = [];
       snapshot.forEach(doc => { const d = doc.data(); eventos.push({ id: doc.id, title: d.title, start: d.start, extendedProps: { meetLink: d.meetLink } }); });
       calendar.removeAllEvents(); calendar.addEventSource(eventos);
+  });
+
+  // Generador Dieta Rápida
+  const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+  const bases = [
+      { des: "Chilaquiles verdes con pollo deshebrado y frijoles de la olla", com: "Bistec a la mexicana con arroz integral y tortillas", cen: "Quesadillas de champiñones con pico de gallo" },
+      { des: "Huevos revueltos con ejotes y tortilla de maíz", com: "Pechuga asada con ensalada de nopales y aguacate", cen: "Enfrijoladas espolvoreadas con queso panela" },
+      { des: "Avena cocida con manzana, canela y almendras", com: "Sopa de lentejas y pescado a la plancha con verduras al vapor", cen: "Sándwich de pavo con pan integral y vegetales" },
+      { des: "Huevos a la mexicana con frijoles refritos s/grasa", com: "Salpicón de res con tostadas horneadas y aguacate", cen: "Tacos de rajas con queso panela en tortilla de maíz" },
+      { des: "Yogurt natural con papaya picada y granola s/azúcar", com: "Albóndigas en caldillo de tomate con calabacitas y arroz", cen: "Ensalada de atún con verduras y galletas habaneras" },
+      { des: "Omelette de espinacas con pan tostado integral", com: "Tacos de pollo asado con guacamole y salsa", cen: "Tlacoyos de haba asados al comal con nopales" },
+      { des: "Licuado de plátano con nuez y sándwich de queso", com: "Mixiote de pollo con verduras y frijoles enteros", cen: "Sincronizada de jamón de pavo con ensalada verde" }
+  ];
+
+  document.getElementById('btn-generar-dieta').addEventListener('click', () => {
+      const minKcal = parseInt(document.getElementById('dr-kcal-min').value) || 1500;
+      const maxKcal = parseInt(document.getElementById('dr-kcal-max').value) || 1800;
+      
+      let html = `
+      <div id="tabla-dieta-render" class="bg-white p-3">
+          <h4 class="text-center mb-3" style="color:#2c3e50;">Menú Sugerido (${minKcal} - ${maxKcal} kcal)</h4>
+          <table class="table table-bordered menu-table text-center mt-3">
+              <thead><tr><th>Día</th><th>Desayuno</th><th>Comida</th><th>Cena</th></tr></thead>
+              <tbody>`;
+      
+      dias.forEach((dia, i) => {
+          const extra = maxKcal >= 2000 ? " + 1 colación" : "";
+          html += `<tr>
+                      <td class="fw-bold align-middle">${dia}</td>
+                      <td>${bases[i].des}${extra}</td>
+                      <td>${bases[i].com}</td>
+                      <td>${bases[i].cen}</td>
+                   </tr>`;
+      });
+      
+      html += `</tbody></table></div>
+      <div class="d-flex justify-content-end gap-2 mt-3">
+          <button class="btn btn-outline-danger" id="btn-descargar-pdf"><i class="fi fi-ss-file-pdf"></i> Guardar PDF</button>
+          <button class="btn btn-outline-primary" id="btn-descargar-png"><i class="fi fi-ss-picture"></i> Guardar PNG</button>
+      </div>`;
+      
+      document.getElementById('dr-resultado').innerHTML = html;
+  });
+
+  // Exportar PNG/PDF con delegación de eventos
+  document.getElementById('dr-resultado').addEventListener('click', (e) => {
+      if(e.target.closest('#btn-descargar-png')) {
+          html2canvas(document.getElementById('tabla-dieta-render'), { scale: 2 }).then(canvas => {
+              const link = document.createElement('a');
+              link.download = 'Menu_NutriFit.png';
+              link.href = canvas.toDataURL('image/png');
+              link.click();
+          });
+      }
+      
+      if(e.target.closest('#btn-descargar-pdf')) {
+          html2canvas(document.getElementById('tabla-dieta-render'), { scale: 2 }).then(canvas => {
+              const imgData = canvas.toDataURL('image/png');
+              const { jsPDF } = window.jspdf;
+              const pdf = new jsPDF('l', 'mm', 'a4');
+              const imgProps = pdf.getImageProperties(imgData);
+              const pdfWidth = pdf.internal.pageSize.getWidth();
+              const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+              pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+              pdf.save('Menu_NutriFit.pdf');
+          });
+      }
   });
 </script>
 </body>
