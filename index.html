@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
     
+    <!-- Librerías Externas -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -27,6 +28,7 @@
         #calendar { background: white; padding: 15px; border-radius: 8px; min-height: 600px; }
         .smae-input { max-width: 80px; text-align: center; }
         .menu-table th { background-color: #2c3e50; color: white; }
+        .range-slider-val { display: inline-block; width: 40px; text-align: center; font-weight: bold; color: #1abc9c; }
     </style>
 </head>
 <body>
@@ -42,6 +44,7 @@
                 <li class="nav-item"><a class="nav-link" id="nav-citas" data-target="citas"><i class="fi fi-ss-calendar"></i> Agenda</a></li>
                 <li class="nav-item"><a class="nav-link" data-target="menus"><i class="fi fi-ss-calculator"></i> SMAE</a></li>
                 <li class="nav-item"><a class="nav-link" data-target="dieta-rapida"><i class="fi fi-ss-magic-wand"></i> Dieta Rápida</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="calculos-rapidos"><i class="fi fi-ss-bolt"></i> Cálculos Rápidos</a></li>
                 <hr class="border-secondary">
                 <li class="nav-item"><a class="nav-link" data-target="mis-alimentos" title="Da de alta productos comerciales"><i class="fi fi-ss-apple-whole"></i> Mis Alimentos</a></li>
                 <li class="nav-item"><a class="nav-link" data-target="mis-recetas" title="Crea tus propias preparaciones"><i class="fi fi-ss-pan-frying"></i> Mis Recetas</a></li>
@@ -49,8 +52,10 @@
             </ul>
         </div>
 
+        <!-- Contenido Principal -->
         <div class="col-md-10 p-4">
             
+            <!-- Dashboard -->
             <div id="dashboard" class="section-view active">
                 <h2 class="mb-4">Resumen Clínico</h2>
                 <div class="card p-3 mb-3 bg-white shadow-sm" style="border-left: 4px solid #1abc9c; width: 300px;">
@@ -59,6 +64,7 @@
                 </div>
             </div>
 
+            <!-- Pacientes -->
             <div id="pacientes" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Expedientes Clínicos</h2>
@@ -76,6 +82,7 @@
                 </div>
             </div>
 
+            <!-- Agenda -->
             <div id="citas" class="section-view">
                 <div class="d-flex justify-content-between mb-3">
                     <h2>Agenda de Consultas</h2>
@@ -86,6 +93,7 @@
                 <div id="calendar" class="shadow-sm border-0"></div>
             </div>
 
+            <!-- SMAE -->
             <div id="menus" class="section-view">
                 <h2>Cálculo Dietosintético (SMAE)</h2>
                 <div class="row mt-4">
@@ -132,6 +140,7 @@
                 </div>
             </div>
 
+            <!-- Dieta Rápida -->
             <div id="dieta-rapida" class="section-view">
                 <h2>Generador de Dieta Rápida (7 Días)</h2>
                 <div class="card shadow-sm border-0 p-4 mt-3">
@@ -154,6 +163,81 @@
                 </div>
             </div>
 
+            <!-- Cálculos Rápidos (NUEVA SECCIÓN REA CTI VA) -->
+            <div id="calculos-rapidos" class="section-view">
+                <h2>Cálculos Rápidos & Persistencia</h2>
+                <div class="row mt-3">
+                    <div class="col-md-5">
+                        <div class="card shadow-sm border-0 p-3 mb-3">
+                            <h5 class="text-primary border-bottom pb-2">1. Antropometría</h5>
+                            <div class="mb-2">
+                                <label class="small">Paciente (Auto-completar)</label>
+                                <select id="cr-paciente" class="form-select form-select-sm"></select>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6"><label class="small">Peso (kg)</label><input type="number" id="cr-peso" class="form-control form-control-sm cr-reactive" step="0.1" value="70"></div>
+                                <div class="col-6"><label class="small">Talla (cm)</label><input type="number" id="cr-talla" class="form-control form-control-sm cr-reactive" step="0.1" value="170"></div>
+                                <div class="col-6"><label class="small">Edad</label><input type="number" id="cr-edad" class="form-control form-control-sm cr-reactive" value="30"></div>
+                                <div class="col-6"><label class="small">Sexo</label><select id="cr-sexo" class="form-select form-select-sm cr-reactive"><option value="M">Masc</option><option value="F">Fem</option></select></div>
+                                <div class="col-12">
+                                    <label class="small">Actividad Física (Factor)</label>
+                                    <select id="cr-af" class="form-select form-select-sm cr-reactive">
+                                        <option value="1.2">Sedentario (1.2)</option>
+                                        <option value="1.375">Ligero (1.375)</option>
+                                        <option value="1.55">Moderado (1.55)</option>
+                                        <option value="1.725">Activo (1.725)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-0 p-3 mb-3">
+                            <h5 class="text-primary border-bottom pb-2">2. Distribución de Macronutrientes</h5>
+                            <div class="mb-2">
+                                <label class="small w-100">Carbohidratos: <span id="lbl-ch" class="range-slider-val">50</span>%</label>
+                                <input type="range" id="cr-ch" class="form-range cr-reactive" min="0" max="100" value="50">
+                            </div>
+                            <div class="mb-2">
+                                <label class="small w-100">Proteínas: <span id="lbl-pt" class="range-slider-val">20</span>%</label>
+                                <input type="range" id="cr-pt" class="form-range cr-reactive" min="0" max="100" value="20">
+                            </div>
+                            <div class="mb-2">
+                                <label class="small w-100">Lípidos: <span id="lbl-lp" class="range-slider-val">30</span>%</label>
+                                <input type="range" id="cr-lp" class="form-range cr-reactive" min="0" max="100" value="30" disabled>
+                                <small class="text-muted" style="font-size: 0.7rem;">Autocalculado para sumar 100%</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <div class="card shadow-sm border-0 p-3 mb-3 bg-light">
+                            <h5 class="text-primary border-bottom pb-2">3. Resultados en Tiempo Real</h5>
+                            <div class="row text-center mb-3">
+                                <div class="col-4"><h6>IMC</h6><h4 id="cr-res-imc" class="text-dark">0.0</h4></div>
+                                <div class="col-4"><h6>GEB</h6><h4 id="cr-res-geb" class="text-dark">0</h4></div>
+                                <div class="col-4 border-start border-primary"><h6>GET (Meta)</h6><h4 id="cr-res-get" class="text-success">0</h4></div>
+                            </div>
+                            <table class="table table-sm text-center">
+                                <thead><tr><th>Macro</th><th>%</th><th>Kcal</th><th>Gramos (g)</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CH</td><td id="tbl-pct-ch">50%</td><td id="tbl-kcal-ch">0</td><td id="tbl-g-ch" class="fw-bold">0</td></tr>
+                                    <tr><td>PROT</td><td id="tbl-pct-pt">20%</td><td id="tbl-kcal-pt">0</td><td id="tbl-g-pt" class="fw-bold">0</td></tr>
+                                    <tr><td>LIP</td><td id="tbl-pct-lp">30%</td><td id="tbl-kcal-lp">0</td><td id="tbl-g-lp" class="fw-bold">0</td></tr>
+                                </tbody>
+                            </table>
+                            <button class="btn btn-outline-primary btn-sm w-100 mt-2" id="btn-generar-cuadro"><i class="fi fi-ss-magic-wand"></i> Generar Cuadro de Equivalentes</button>
+                        </div>
+
+                        <div class="card shadow-sm border-0 p-3 d-none" id="card-cuadro-generado">
+                            <h5 class="text-primary border-bottom pb-2">4. Propuesta SMAE (Estado Local)</h5>
+                            <ul id="lista-cuadro-gen" class="list-group list-group-flush small mb-3"></ul>
+                            <button class="btn btn-success w-100" id="btn-guardar-expediente-rapido"><i class="fi fi-ss-disk"></i> Guardar en Expediente (Firestore)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mis Alimentos -->
             <div id="mis-alimentos" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Mis Alimentos Propios</h2>
@@ -169,6 +253,7 @@
                 </div>
             </div>
 
+            <!-- Mis Recetas -->
             <div id="mis-recetas" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Mis Recetas</h2>
@@ -177,6 +262,7 @@
                 <div class="row" id="grid-mis-recetas"></div>
             </div>
 
+            <!-- Mis Dietas -->
             <div id="mis-dietas" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Catálogo de Dietas</h2>
@@ -194,6 +280,18 @@
 
         </div>
     </div>
+</div>
+
+<!-- ================= TOAST NOTIFICATIONS ================= -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 2000;">
+  <div id="actionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-success text-white">
+      <i class="fi fi-ss-check-circle me-2"></i>
+      <strong class="me-auto">NutriFit</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body" id="toast-msg">Acción realizada con éxito.</div>
+  </div>
 </div>
 
 <!-- ================= MODALES ================= -->
@@ -273,7 +371,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="modal-footer bg-light mt-3 border-top pt-3">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <button type="submit" id="btn-guardar-paciente" class="btn btn-primary" style="background-color: #1abc9c; border:none;">Guardar Expediente</button>
@@ -308,8 +405,15 @@
 
   const getNumVal = (id) => parseFloat(document.getElementById(id).value) || 0;
   const getStrVal = (id) => document.getElementById(id).value || "";
+  
+  // Utilidad de Toast
+  const showToast = (msg) => {
+      document.getElementById('toast-msg').innerText = msg;
+      const t = new bootstrap.Toast(document.getElementById('actionToast'));
+      t.show();
+  };
 
-  // Navegación SPA Corregida: Solo seleccionamos los enlaces de la barra lateral para evitar conflictos con los tabs de Bootstrap
+  // Navegación SPA Corregida (Sidebar isolation)
   document.querySelectorAll('.sidebar .nav-link').forEach(link => {
       link.addEventListener('click', (e) => {
           e.preventDefault();
@@ -324,7 +428,121 @@
   // Base SMAE
   const dbSMAE = { verduras: { kcal: 25, prot: 2, lip: 0, hc: 4 }, frutas: { kcal: 60, prot: 0, lip: 0, hc: 15 }, cerSinGrasa: { kcal: 70, prot: 2, lip: 0, hc: 15 }, cerConGrasa: { kcal: 115, prot: 2, lip: 5, hc: 15 }, leguminosas: { kcal: 120, prot: 8, lip: 1, hc: 20 }, aoaMuyBajo: { kcal: 40, prot: 7, lip: 1, hc: 0 }, aoaBajo: { kcal: 55, prot: 7, lip: 3, hc: 0 }, aoaMod: { kcal: 75, prot: 7, lip: 5, hc: 0 }, aoaAlto: { kcal: 100, prot: 7, lip: 8, hc: 0 }, lecDes: { kcal: 95, prot: 9, lip: 2, hc: 12 }, lecSemi: { kcal: 110, prot: 9, lip: 4, hc: 12 }, lecEnt: { kcal: 150, prot: 9, lip: 8, hc: 12 }, lecAzu: { kcal: 200, prot: 8, lip: 5, hc: 30 }, aceSinProt: { kcal: 45, prot: 0, lip: 5, hc: 0 }, aceConProt: { kcal: 70, prot: 3, lip: 5, hc: 3 }, azuSinGrasa: { kcal: 40, prot: 0, lip: 0, hc: 10 }, azuConGrasa: { kcal: 85, prot: 0, lip: 5, hc: 10 }, alcohol: { kcal: 140, prot: 0, lip: 0, hc: 20 }};
   
-  let dietTotals = { kcal: 0, prot: 0, lip: 0, hc: 0 };
+  // ====== NUEVA SECCIÓN: CÁLCULOS RÁPIDOS REACTIVOS ====== //
+  let estadoEquivalentes = null; // Estado Local
+
+  const calcRapido = () => {
+      const p = getNumVal('cr-peso'), t = getNumVal('cr-talla'), e = getNumVal('cr-edad'), af = getNumVal('cr-af');
+      const sx = getStrVal('cr-sexo');
+      let pCh = getNumVal('cr-ch'), pPt = getNumVal('cr-pt');
+      
+      // Auto balancear Lipidos a 100%
+      let pLp = 100 - pCh - pPt;
+      if(pLp < 0) { pLp = 0; }
+      document.getElementById('cr-lp').value = pLp;
+      
+      document.getElementById('lbl-ch').innerText = pCh;
+      document.getElementById('lbl-pt').innerText = pPt;
+      document.getElementById('lbl-lp').innerText = pLp;
+
+      if(p && t) {
+          const imc = p / Math.pow(t/100, 2);
+          document.getElementById('cr-res-imc').innerText = imc.toFixed(1);
+          
+          const geb = sx === 'M' ? 66.5+(13.75*p)+(5.003*t)-(6.75*e) : 655.1+(9.563*p)+(1.85*t)-(4.676*e);
+          const get = geb * af;
+          document.getElementById('cr-res-geb').innerText = Math.round(geb);
+          document.getElementById('cr-res-get').innerText = Math.round(get);
+
+          // Gramos
+          const kCh = get * (pCh/100), kPt = get * (pPt/100), kLp = get * (pLp/100);
+          document.getElementById('tbl-pct-ch').innerText = pCh + '%';
+          document.getElementById('tbl-pct-pt').innerText = pPt + '%';
+          document.getElementById('tbl-pct-lp').innerText = pLp + '%';
+          
+          document.getElementById('tbl-kcal-ch').innerText = Math.round(kCh);
+          document.getElementById('tbl-kcal-pt').innerText = Math.round(kPt);
+          document.getElementById('tbl-kcal-lp').innerText = Math.round(kLp);
+
+          document.getElementById('tbl-g-ch').innerText = Math.round(kCh / 4);
+          document.getElementById('tbl-g-pt').innerText = Math.round(kPt / 4);
+          document.getElementById('tbl-g-lp').innerText = Math.round(kLp / 9);
+      }
+  };
+
+  document.querySelectorAll('.cr-reactive').forEach(el => el.addEventListener('input', calcRapido));
+  
+  // Cargar datos del paciente en CR
+  document.getElementById('cr-paciente').addEventListener('change', async (e) => {
+      const id = e.target.value;
+      if(id) {
+          const docSnap = await getDoc(doc(db, "pacientes", id));
+          if(docSnap.exists()){
+              const d = docSnap.data();
+              if(d.antropometria?.peso) document.getElementById('cr-peso').value = d.antropometria.peso;
+              if(d.antropometria?.talla) document.getElementById('cr-talla').value = d.antropometria.talla;
+              if(d.personales?.edad) document.getElementById('cr-edad').value = d.personales.edad;
+              if(d.personales?.sexo) document.getElementById('cr-sexo').value = d.personales.sexo;
+              calcRapido();
+          }
+      }
+  });
+
+  document.getElementById('btn-generar-cuadro').addEventListener('click', () => {
+      const ptG = parseFloat(document.getElementById('tbl-g-pt').innerText) || 0;
+      const chG = parseFloat(document.getElementById('tbl-g-ch').innerText) || 0;
+      const lpG = parseFloat(document.getElementById('tbl-g-lp').innerText) || 0;
+      const kcalT = parseFloat(document.getElementById('cr-res-get').innerText) || 0;
+
+      if(kcalT === 0) return alert("Faltan datos de antropometría.");
+
+      // Algoritmo de aproximación básica SMAE
+      estadoEquivalentes = {
+          verduras: 3, frutas: 3, lecDes: 1, 
+          cerSinGrasa: Math.max(0, Math.round((chG - (3*4) - (3*15) - 12) / 15)),
+          aoaBajo: Math.max(0, Math.round((ptG - (3*2) - (0*0) - 9 - (((chG - 69)/15)*2)) / 7)),
+          aceSinProt: Math.max(0, Math.round((lpG - 2 - (((ptG - 15 - (((chG - 69)/15)*2))/7)*3)) / 5))
+      };
+
+      let uiList = `
+        <li class="list-group-item d-flex justify-content-between align-items-center">Verduras <span class="badge bg-primary rounded-pill">${estadoEquivalentes.verduras}</span></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">Frutas <span class="badge bg-primary rounded-pill">${estadoEquivalentes.frutas}</span></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">Cereales s/Grasa <span class="badge bg-primary rounded-pill">${estadoEquivalentes.cerSinGrasa}</span></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">AOA Bajo Aporte <span class="badge bg-primary rounded-pill">${estadoEquivalentes.aoaBajo}</span></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">Leche Descremada <span class="badge bg-primary rounded-pill">${estadoEquivalentes.lecDes}</span></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">Aceites s/Proteína <span class="badge bg-primary rounded-pill">${estadoEquivalentes.aceSinProt}</span></li>
+      `;
+      document.getElementById('lista-cuadro-gen').innerHTML = uiList;
+      document.getElementById('card-cuadro-generado').classList.remove('d-none');
+  });
+
+  // Guardar Estado Local Atómicamente en Firestore
+  document.getElementById('btn-guardar-expediente-rapido').addEventListener('click', async () => {
+      const pId = document.getElementById('cr-paciente').value;
+      if(!pId) return alert("Selecciona un paciente en el Paso 1.");
+      if(!estadoEquivalentes) return alert("Genera el cuadro de equivalentes primero.");
+      
+      const payload = {
+          calculosRapidos: {
+              antropometria_momento: { peso: getNumVal('cr-peso'), talla: getNumVal('cr-talla') },
+              dieta: {
+                  get: getNumVal('cr-res-get'),
+                  pctMacros: { ch: getNumVal('cr-ch'), pt: getNumVal('cr-pt'), lp: getNumVal('cr-lp') },
+                  equivalentesGenerados: estadoEquivalentes
+              },
+              actualizado: serverTimestamp()
+          }
+      };
+
+      try {
+          await setDoc(doc(db, "pacientes", pId), payload, { merge: true });
+          showToast("Cálculos guardados atómicamente en el expediente NoSQL del paciente.");
+      } catch(e) { alert("Error al guardar: " + e.message); }
+  });
+
+  // ====== FIN CÁLCULOS RÁPIDOS ====== //
+
+  let dietTotalsSmae = { kcal: 0, prot: 0, lip: 0, hc: 0 };
   document.querySelectorAll('.smae-input').forEach(input => {
       input.addEventListener('input', () => {
           let tKcal = 0, tProt = 0, tLip = 0, tHc = 0;
@@ -332,7 +550,7 @@
               const r = parseFloat(inp.value) || 0; const g = inp.getAttribute('data-grupo');
               if(dbSMAE[g]) { tKcal += r*dbSMAE[g].kcal; tProt += r*dbSMAE[g].prot; tLip += r*dbSMAE[g].lip; tHc += r*dbSMAE[g].hc; }
           });
-          dietTotals = { kcal: tKcal, prot: tProt, lip: tLip, hc: tHc };
+          dietTotalsSmae = { kcal: tKcal, prot: tProt, lip: tLip, hc: tHc };
           document.getElementById('tot-kcal').innerText = tKcal.toFixed(1); document.getElementById('tot-prot').innerText = tProt.toFixed(1);
           document.getElementById('tot-lip').innerText = tLip.toFixed(1); document.getElementById('tot-hc').innerText = tHc.toFixed(1);
       });
@@ -343,12 +561,12 @@
       if(!pid) return alert("Selecciona un paciente.");
       try {
           const rac = {}; document.querySelectorAll('.smae-input').forEach(i => rac[i.getAttribute('data-grupo')] = parseFloat(i.value)||0);
-          await addDoc(collection(db, "menus"), { pacienteId: pid, raciones: rac, totales: dietTotals, fecha: serverTimestamp() });
-          alert("Distribución guardada.");
+          await addDoc(collection(db, "menus"), { pacienteId: pid, raciones: rac, totales: dietTotalsSmae, fecha: serverTimestamp() });
+          showToast("Distribución SMAE guardada correctamente.");
       } catch(e) { alert("Error al guardar."); }
   });
 
-  // Antropometría Palafox
+  // Antropometría Modal
   document.getElementById('btn-calcular-antropo').addEventListener('click', () => {
       const peso = getNumVal('m-peso'), talla = getNumVal('m-talla'), edad = getNumVal('p-edad'), sexo = getStrVal('p-sexo');
       const b = getNumVal('pl-bicipital'), t = getNumVal('pl-tricipital'), s = getNumVal('pl-subescapular'), i = getNumVal('pl-suprailiaco');
@@ -360,7 +578,6 @@
       document.getElementById('resultados-clinicos').classList.remove('d-none');
   });
 
-  // Pacientes: Reset de formulario al abrir
   document.getElementById('btn-nuevo-paciente').addEventListener('click', () => {
       document.getElementById('form-paciente').reset();
       document.getElementById('p-id').value = "";
@@ -368,7 +585,7 @@
       document.getElementById('modalPacienteLabel').innerHTML = '<i class="fi fi-ss-user-add"></i> Nuevo Expediente Clínico';
   });
 
-  // Pacientes Guardar
+  // Pacientes CRUD
   document.getElementById('form-paciente').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('btn-guardar-paciente');
@@ -394,28 +611,29 @@
           }
           document.getElementById('form-paciente').reset();
           bootstrap.Modal.getInstance(document.getElementById('modalPaciente')).hide();
+          showToast("Expediente clínico guardado correctamente.");
       } catch(err) { console.error(err); alert(`Error: ${err.message}`); } 
       finally { btn.disabled = false; btn.innerHTML = 'Guardar Expediente'; }
   });
 
-  // Pacientes Cargar y Eventos Editar/Eliminar
   onSnapshot(collection(db, "pacientes"), (snap) => {
       const tb = document.getElementById('tabla-pacientes');
       document.getElementById('total-pacientes').innerText = snap.size;
       tb.innerHTML = ""; document.getElementById('c-paciente').innerHTML = ""; document.getElementById('smae-paciente').innerHTML = "<option value=''>Seleccione...</option>";
+      document.getElementById('cr-paciente').innerHTML = "<option value=''>Seleccione paciente...</option>";
       
       snap.forEach((docSnap) => {
           const p = docSnap.data().personales || {};
           tb.innerHTML += `<tr><td>${p.nombre||''}</td><td>${p.email||docSnap.id}</td><td>${p.telefono||''}</td><td>${p.ocupacion||''}</td>
           <td><button class='btn btn-sm btn-info btn-edit text-white' data-id='${docSnap.id}'><i class='fi fi-ss-pencil'></i></button> <button class='btn btn-sm btn-danger btn-del' data-id='${docSnap.id}'><i class='fi fi-ss-trash'></i></button></td></tr>`;
           const opt = `<option value="${docSnap.id}">${p.nombre||docSnap.id}</option>`;
-          document.getElementById('c-paciente').innerHTML += opt; document.getElementById('smae-paciente').innerHTML += opt;
+          document.getElementById('c-paciente').innerHTML += opt; document.getElementById('smae-paciente').innerHTML += opt; document.getElementById('cr-paciente').innerHTML += opt;
       });
   });
 
   document.getElementById('tabla-pacientes').addEventListener('click', async (e) => {
       const btnDel = e.target.closest('.btn-del'), btnEdit = e.target.closest('.btn-edit');
-      if(btnDel && confirm("¿Eliminar paciente permanentemente?")) { await deleteDoc(doc(db, "pacientes", btnDel.getAttribute('data-id'))); }
+      if(btnDel && confirm("¿Eliminar paciente permanentemente?")) { await deleteDoc(doc(db, "pacientes", btnDel.getAttribute('data-id'))); showToast("Paciente eliminado.");}
       if(btnEdit) {
           const id = btnEdit.getAttribute('data-id');
           const docSnap = await getDoc(doc(db, "pacientes", id));
@@ -459,11 +677,11 @@
       }
   });
 
-  // Catálogos: Alimentos, Recetas, Dietas
+  // Catálogos
   document.getElementById('form-alimento').addEventListener('submit', async (e) => {
       e.preventDefault();
       await addDoc(collection(db, "mis_alimentos"), { nombre: getStrVal('a-nombre'), porcion: getStrVal('a-porcion'), kcal: getNumVal('a-kcal'), prot: getNumVal('a-prot'), lip: getNumVal('a-lip'), hc: getNumVal('a-hc') });
-      document.getElementById('form-alimento').reset(); bootstrap.Modal.getInstance(document.getElementById('modalAlimento')).hide();
+      document.getElementById('form-alimento').reset(); bootstrap.Modal.getInstance(document.getElementById('modalAlimento')).hide(); showToast("Alimento guardado.");
   });
   onSnapshot(collection(db, "mis_alimentos"), (snap) => {
       const tb = document.getElementById('tabla-mis-alimentos'); tb.innerHTML = "";
@@ -473,7 +691,7 @@
   document.getElementById('form-receta').addEventListener('submit', async (e) => {
       e.preventDefault();
       await addDoc(collection(db, "mis_recetas"), { nombre: getStrVal('re-nombre'), ingredientes: getStrVal('re-ingredientes'), prep: getStrVal('re-preparacion'), porciones: getNumVal('re-porciones') });
-      document.getElementById('form-receta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalReceta')).hide();
+      document.getElementById('form-receta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalReceta')).hide(); showToast("Receta guardada.");
   });
   onSnapshot(collection(db, "mis_recetas"), (snap) => {
       const grid = document.getElementById('grid-mis-recetas'); grid.innerHTML = "";
@@ -483,7 +701,7 @@
   document.getElementById('form-dieta').addEventListener('submit', async (e) => {
       e.preventDefault();
       await addDoc(collection(db, "mis_dietas"), { nombre: getStrVal('d-nombre'), kcal: getNumVal('d-kcal'), tipo: getStrVal('d-tipo'), notas: getStrVal('d-notas') });
-      document.getElementById('form-dieta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalDieta')).hide();
+      document.getElementById('form-dieta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalDieta')).hide(); showToast("Plantilla guardada.");
   });
   onSnapshot(collection(db, "mis_dietas"), (snap) => {
       const tb = document.getElementById('tabla-mis-dietas'); tb.innerHTML = "";
@@ -503,7 +721,7 @@
   document.getElementById('form-cita').addEventListener('submit', async (e) => {
       e.preventDefault(); const pSel = document.getElementById('c-paciente');
       await addDoc(collection(db, "citas"), { pacienteId: pSel.value, title: `Consulta: ${pSel.options[pSel.selectedIndex].text}`, start: document.getElementById('c-fecha').value, meetLink: document.getElementById('c-link').value });
-      document.getElementById('form-cita').reset(); bootstrap.Modal.getInstance(document.getElementById('modalCita')).hide();
+      document.getElementById('form-cita').reset(); bootstrap.Modal.getInstance(document.getElementById('modalCita')).hide(); showToast("Cita agendada.");
   });
   onSnapshot(collection(db, "citas"), (snap) => {
       const evs = []; snap.forEach(doc => { const d = doc.data(); evs.push({ id: doc.id, title: d.title, start: d.start, extendedProps: { meetLink: d.meetLink } }); });
