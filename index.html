@@ -286,37 +286,45 @@
                                 <div class="col-6 d-flex flex-column gap-2">
                                     <div class="form-check">
                                         <input class="form-check-input chk-patologia" type="checkbox" value="Diabetes">
-                                        <label class="form-check-label small">Diabetes Mellitus</label>
+                                        <label class="form-check-label small">Diabetes Mellitus <span class="text-muted">(E11)</span></label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input chk-patologia" type="checkbox" value="Hipertensión">
-                                        <label class="form-check-label small">Hipertensión Arterial</label>
+                                        <label class="form-check-label small">Hipertensión Arterial <span class="text-muted">(I10)</span></label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input chk-patologia" type="checkbox" value="Dislipidemia">
-                                        <label class="form-check-label small">Dislipidemia</label>
+                                        <label class="form-check-label small">Dislipidemia <span class="text-muted">(E78.5)</span></label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input chk-patologia" type="checkbox" value="Síndrome Metabólico">
-                                        <label class="form-check-label small">Síndrome Metabólico</label>
+                                        <label class="form-check-label small">Síndrome Metabólico <span class="text-muted">(E88.9)</span></label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Obesidad">
+                                        <label class="form-check-label small">Obesidad <span class="text-muted">(E66.9)</span></label>
                                     </div>
                                 </div>
                                 <div class="col-6 d-flex flex-column gap-2">
                                     <div class="form-check">
                                         <input class="form-check-input chk-patologia" type="checkbox" value="Intestino Irritable (SII)">
-                                        <label class="form-check-label small">Intestino Irritable (SII)</label>
+                                        <label class="form-check-label small">Intestino Irritable (SII) <span class="text-muted">(K58)</span></label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input chk-patologia" type="checkbox" value="Reflujo (ERGE)">
-                                        <label class="form-check-label small">Reflujo (ERGE)</label>
+                                        <label class="form-check-label small">Reflujo (ERGE) <span class="text-muted">(K21)</span></label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input chk-patologia" type="checkbox" value="Enfermedad Celiaca">
-                                        <label class="form-check-label small">Enfermedad Celiaca</label>
+                                        <label class="form-check-label small">Enfermedad Celiaca <span class="text-muted">(K90.0)</span></label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input chk-patologia" type="checkbox" value="Enfermedad Renal (ERC)">
-                                        <label class="form-check-label small">Enf. Renal Crónica (ERC)</label>
+                                        <label class="form-check-label small">Enf. Renal Crónica (ERC) <span class="text-muted">(N18)</span></label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Desnutrición">
+                                        <label class="form-check-label small">Desnutrición <span class="text-muted">(E43-E44)</span></label>
                                     </div>
                                 </div>
                             </div>
@@ -358,6 +366,14 @@
                                 <div class="col-6"><label class="small">Talla (cm)</label><input type="number" id="cr-talla" class="form-control form-control-sm cr-reactive" step="0.1" value="170"></div>
                                 <div class="col-6"><label class="small">Edad</label><input type="number" id="cr-edad" class="form-control form-control-sm cr-reactive" value="30"></div>
                                 <div class="col-6"><label class="small">Sexo</label><select id="cr-sexo" class="form-select form-select-sm cr-reactive"><option value="M">Masc</option><option value="F">Fem</option></select></div>
+                                <div class="col-6"><label class="small">Cintura (cm)</label><input type="number" id="cr-cintura" class="form-control form-control-sm cr-reactive" step="0.1" placeholder="Opcional"></div>
+                                <div class="col-6">
+                                    <label class="small">Fórmula de gasto energético</label>
+                                    <select id="cr-formula" class="form-select form-select-sm cr-reactive">
+                                        <option value="mifflin">Mifflin-St Jeor (adultos)</option>
+                                        <option value="harris">Harris-Benedict revisada</option>
+                                    </select>
+                                </div>
                                 <div class="col-12">
                                     <label class="small">Actividad Física (Factor)</label>
                                     <select id="cr-af" class="form-select form-select-sm cr-reactive">
@@ -367,6 +383,22 @@
                                         <option value="1.725">Activo (1.725)</option>
                                     </select>
                                 </div>
+                                <div class="col-12">
+                                    <label class="small">Estado fisiológico</label>
+                                    <select id="cr-fisiologico" class="form-select form-select-sm cr-reactive">
+                                        <option value="ninguno">Ninguno</option>
+                                        <option value="embarazo1">Embarazo — 1er trimestre</option>
+                                        <option value="embarazo2">Embarazo — 2do trimestre (+340 kcal)</option>
+                                        <option value="embarazo3">Embarazo — 3er trimestre (+452 kcal)</option>
+                                        <option value="lactancia1">Lactancia 0-6 meses (+330 kcal)</option>
+                                        <option value="lactancia2">Lactancia 7-12 meses (+400 kcal)</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 form-check mt-1">
+                                    <input class="form-check-input cr-reactive" type="checkbox" id="cr-usar-ajustado">
+                                    <label class="form-check-label small" for="cr-usar-ajustado">Usar Peso Ajustado en el cálculo (recomendado si IMC ≥ 30)</label>
+                                </div>
+                                <div class="col-12 small text-muted" id="cr-nota-pediatrica"></div>
                             </div>
                         </div>
 
@@ -395,6 +427,11 @@
                                 <div class="col-4"><h6>GEB</h6><h4 id="cr-res-geb" class="text-dark">0</h4></div>
                                 <div class="col-4 border-start border-primary"><h6>GET (Meta)</h6><h4 id="cr-res-get" class="text-success">0</h4></div>
                             </div>
+                            <div class="row text-center mb-3 g-2">
+                                <div class="col-md-4"><span class="badge w-100 py-2" id="cr-badge-imc">Clasificación IMC</span></div>
+                                <div class="col-md-4"><span class="badge w-100 py-2" id="cr-badge-cintura">Riesgo por cintura</span></div>
+                                <div class="col-md-4"><span class="badge bg-secondary w-100 py-2" id="cr-badge-peso">Peso ideal: — kg</span></div>
+                            </div>
                             <table class="table table-sm text-center">
                                 <thead><tr><th>Macro</th><th>%</th><th>Kcal</th><th>Gramos (g)</th></tr></thead>
                                 <tbody>
@@ -404,6 +441,7 @@
                                 </tbody>
                             </table>
                             <button class="btn btn-outline-primary btn-sm w-100 mt-2" id="btn-generar-cuadro"><i class="fi fi-ss-magic-wand"></i> Generar Cuadro de Equivalentes</button>
+                            <button class="btn btn-outline-dark btn-sm w-100 mt-2" id="btn-usar-get-plan"><i class="fi fi-ss-arrow-right"></i> Usar este GET en Plan Nutrimental</button>
                         </div>
 
                         <div class="card shadow-sm border-0 p-3 d-none" id="card-cuadro-generado">
@@ -635,7 +673,9 @@
                     <p class="small mb-1"><strong>Motivo:</strong> <span id="det-motivo"></span></p>
                     <hr>
                     <p class="small mb-0 text-danger fw-bold"><i class="fi fi-ss-ban"></i> Alergias:</p>
-                    <p class="small mb-0" id="det-alergias"></p>
+                    <p class="small mb-2" id="det-alergias"></p>
+                    <p class="small mb-1 fw-bold"><i class="fi fi-ss-diagnoses"></i> Diagnóstico(s) CIE-10:</p>
+                    <div id="det-diagnosticos" class="d-flex flex-wrap gap-1"></div>
                 </div>
             </div>
             
@@ -754,6 +794,23 @@
                         <div class="col-md-6"><label>APP (Patológicos Personales)</label><textarea id="hc-app" class="form-control" rows="2"></textarea></div>
                         <div class="col-md-6"><label>Medicamentos Actuales</label><input type="text" id="hc-medicamentos" class="form-control"></div>
                         <div class="col-md-6"><label class="text-danger fw-bold">Alergias / Intolerancias</label><input type="text" id="hc-alergias" class="form-control" placeholder="Ej. Lácteos, nueces, camarón..."></div>
+                    </div>
+                    <h6 class="form-section-title mt-3">Diagnóstico(s) Nutricios <small class="text-muted">(codificación CIE-10 / OMS)</small></h6>
+                    <div class="row g-2 mb-2" id="cie10-checklist">
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="E66.9|Obesidad" id="cie-obesidad"><label class="form-check-label small" for="cie-obesidad">Obesidad (E66.9)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="E11|Diabetes Mellitus tipo 2" id="cie-dm2"><label class="form-check-label small" for="cie-dm2">DM tipo 2 (E11)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="E10|Diabetes Mellitus tipo 1" id="cie-dm1"><label class="form-check-label small" for="cie-dm1">DM tipo 1 (E10)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="O24|Diabetes gestacional" id="cie-dmg"><label class="form-check-label small" for="cie-dmg">Diabetes gestacional (O24)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="I10|Hipertensión esencial" id="cie-hta"><label class="form-check-label small" for="cie-hta">Hipertensión (I10)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="E78.5|Dislipidemia mixta" id="cie-dlp"><label class="form-check-label small" for="cie-dlp">Dislipidemia (E78.5)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="E44|Desnutrición proteico-calórica leve/moderada" id="cie-desn"><label class="form-check-label small" for="cie-desn">Desnutrición leve/mod (E44)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="E43|Desnutrición proteico-calórica grave" id="cie-desng"><label class="form-check-label small" for="cie-desng">Desnutrición grave (E43)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="N18|Enfermedad Renal Crónica" id="cie-erc"><label class="form-check-label small" for="cie-erc">Enf. Renal Crónica (N18)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="K90.0|Enfermedad Celiaca" id="cie-celiaca"><label class="form-check-label small" for="cie-celiaca">Enf. Celiaca (K90.0)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="K21|Reflujo gastroesofágico" id="cie-erge"><label class="form-check-label small" for="cie-erge">ERGE (K21)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="K58|Síndrome de Intestino Irritable" id="cie-sii"><label class="form-check-label small" for="cie-sii">SII (K58)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="E03.9|Hipotiroidismo" id="cie-hipo"><label class="form-check-label small" for="cie-hipo">Hipotiroidismo (E03.9)</label></div>
+                        <div class="col-md-4 form-check"><input class="form-check-input chk-cie10" type="checkbox" value="Z71.3|Consulta y vigilancia dietética" id="cie-consulta"><label class="form-check-label small" for="cie-consulta">Consulta dietética (Z71.3)</label></div>
                     </div>
                     <h6 class="form-section-title mt-3">Estilo de Vida</h6>
                     <div class="row g-3">
@@ -979,6 +1036,93 @@
   const dbSMAE = { verduras: { kcal: 25, prot: 2, lip: 0, hc: 4 }, frutas: { kcal: 60, prot: 0, lip: 0, hc: 15 }, cerSinGrasa: { kcal: 70, prot: 2, lip: 0, hc: 15 }, cerConGrasa: { kcal: 115, prot: 2, lip: 5, hc: 15 }, leguminosas: { kcal: 120, prot: 8, lip: 1, hc: 20 }, aoaMuyBajo: { kcal: 40, prot: 7, lip: 1, hc: 0 }, aoaBajo: { kcal: 55, prot: 7, lip: 3, hc: 0 }, aoaMod: { kcal: 75, prot: 7, lip: 5, hc: 0 }, aoaAlto: { kcal: 100, prot: 7, lip: 8, hc: 0 }, lecDes: { kcal: 95, prot: 9, lip: 2, hc: 12 }, lecSemi: { kcal: 110, prot: 9, lip: 4, hc: 12 }, lecEnt: { kcal: 150, prot: 9, lip: 8, hc: 12 }, lecAzu: { kcal: 200, prot: 8, lip: 5, hc: 30 }, aceSinProt: { kcal: 45, prot: 0, lip: 5, hc: 0 }, aceConProt: { kcal: 70, prot: 3, lip: 5, hc: 3 }, azuSinGrasa: { kcal: 40, prot: 0, lip: 0, hc: 10 }, azuConGrasa: { kcal: 85, prot: 0, lip: 5, hc: 10 }, alcohol: { kcal: 140, prot: 0, lip: 0, hc: 20 }};
 
   // Nombres legibles de cada grupo SMAE (se usan para renderizar listas dinámicas)
+  // ===================================================================================
+  // MOTOR CLÍNICO: fórmulas de gasto energético por tipo de paciente, clasificaciones
+  // OMS (IMC, cintura) y normativas mexicanas (NOM) para complementar el criterio del
+  // nutriólogo — ninguno de estos valores sustituye el juicio clínico profesional.
+  // ===================================================================================
+
+  // Mifflin-St Jeor (1990) — fórmula de referencia actual de la Academy of Nutrition
+  // and Dietetics para adultos, generalmente más precisa que Harris-Benedict.
+  const gebMifflin = (pesoKg, tallaCm, edadAnios, sexo) =>
+      sexo === 'M' ? (10 * pesoKg) + (6.25 * tallaCm) - (5 * edadAnios) + 5
+                   : (10 * pesoKg) + (6.25 * tallaCm) - (5 * edadAnios) - 161;
+
+  // Harris-Benedict revisada (Roza & Shizgal, 1984).
+  const gebHarrisBenedict = (pesoKg, tallaCm, edadAnios, sexo) =>
+      sexo === 'M' ? 66.5 + (13.75 * pesoKg) + (5.003 * tallaCm) - (6.75 * edadAnios)
+                   : 655.1 + (9.563 * pesoKg) + (1.85 * tallaCm) - (4.676 * edadAnios);
+
+  // Schofield (1985), OMS/FAO/UNU — ecuación pediátrica basada en peso, la que usan
+  // las guías de la OMS para menores de 18 años (más apropiada que Mifflin/H-B en niños).
+  const gebSchofieldPediatrico = (pesoKg, edadAnios, sexo) => {
+      if (sexo === 'M') {
+          if (edadAnios < 3) return (60.9 * pesoKg) - 54;
+          if (edadAnios < 10) return (22.7 * pesoKg) + 495;
+          return (17.5 * pesoKg) + 651; // 10-18 años
+      }
+      if (edadAnios < 3) return (61.0 * pesoKg) - 51;
+      if (edadAnios < 10) return (22.5 * pesoKg) + 499;
+      return (12.2 * pesoKg) + 746; // 10-18 años
+  };
+
+  // Adiciones energéticas por estado fisiológico (valores de referencia IOM/OMS-FAO-UNU;
+  // siempre deben individualizarse según ganancia de peso gestacional y evolución clínica).
+  const ADICION_KCAL_FISIOLOGICO = {
+      ninguno: 0, embarazo1: 0, embarazo2: 340, embarazo3: 452, lactancia1: 330, lactancia2: 400
+  };
+  const LABEL_FISIOLOGICO = {
+      ninguno: 'Ninguno', embarazo1: 'Embarazo - 1er trimestre', embarazo2: 'Embarazo - 2do trimestre',
+      embarazo3: 'Embarazo - 3er trimestre', lactancia1: 'Lactancia (0-6 meses)', lactancia2: 'Lactancia (7-12 meses)'
+  };
+
+  // Clasificación de IMC para adultos (OMS, aplicable como referencia general en México).
+  const clasificarIMC = (imc) => {
+      if (!imc) return { texto: '—', color: 'secondary' };
+      if (imc < 18.5) return { texto: 'Bajo peso', color: 'warning' };
+      if (imc < 25) return { texto: 'Normal', color: 'success' };
+      if (imc < 30) return { texto: 'Sobrepeso', color: 'warning' };
+      if (imc < 35) return { texto: 'Obesidad grado I', color: 'danger' };
+      if (imc < 40) return { texto: 'Obesidad grado II', color: 'danger' };
+      return { texto: 'Obesidad grado III (mórbida)', color: 'danger' };
+  };
+
+  // Riesgo cardiometabólico por circunferencia de cintura — puntos de corte IDF para
+  // población latinoamericana (los mismos que recomienda el Consenso Mexicano de Obesidad).
+  const clasificarCintura = (cm, sexo) => {
+      if (!cm) return { texto: '—', color: 'secondary' };
+      const limite = sexo === 'M' ? 90 : 80;
+      return cm >= limite
+          ? { texto: `Riesgo cardiometabólico aumentado (≥${limite} cm)`, color: 'danger' }
+          : { texto: `Sin riesgo por cintura (<${limite} cm)`, color: 'success' };
+  };
+
+  // Peso saludable de referencia (usando el punto medio del rango normal de IMC, 22) y
+  // Peso Ajustado para pacientes con obesidad — evita sobreestimar el gasto energético
+  // al usar el peso actual completo en fórmulas predictivas.
+  const pesoIdealReferencia = (tallaCm) => 22 * Math.pow(tallaCm / 100, 2);
+  const pesoAjustado = (pesoActualKg, pesoIdealKg) => pesoIdealKg + 0.25 * (pesoActualKg - pesoIdealKg);
+
+  // Guías clínicas de referencia (NOM mexicanas + OMS/ADA/AHA) por patología, mostradas
+  // al generar un Plan Nutrimental cuando se selecciona la casilla correspondiente.
+  const GUIA_CLINICA_NOM = {
+      'Diabetes': "<b>Diabetes (NOM-015-SSA2-2018):</b> meta de glucosa en ayuno 80-130 mg/dL y HbA1c individualizada (referencia <7% en la mayoría de adultos); distribuir carbohidratos de forma constante entre tiempos de comida, priorizar bajo índice glucémico y fibra soluble.",
+      'Hipertensión': "<b>Hipertensión (OMS / dieta DASH):</b> sodio <2 g/día (<5 g de sal), aumentar potasio (frutas/verduras) si la función renal lo permite, evitar embutidos y ultraprocesados.",
+      'Dislipidemia': "<b>Dislipidemia (NOM-037-SSA2-2012):</b> grasas saturadas <7% del VCT, colesterol <200 mg/día, aumentar fibra soluble y ácidos grasos omega-3; meta de LDL según riesgo cardiovascular individual.",
+      'Síndrome Metabólico': "<b>Síndrome Metabólico:</b> déficit calórico moderado (500-750 kcal/día) si hay exceso de peso, reducción de azúcares simples y grasas saturadas, actividad física regular.",
+      'Obesidad': "<b>Obesidad (NOM-008-SSA3-2017):</b> déficit de 500-1000 kcal/día para una pérdida de 0.5-1 kg/semana; considerar valoración para manejo bariátrico si IMC ≥40, o ≥35 con comorbilidades.",
+      'Desnutrición': "<b>Desnutrición energético-proteica:</b> incremento calórico-proteico gradual para evitar síndrome de realimentación; vigilancia de electrolitos (fósforo, potasio, magnesio) en las primeras 72 h si el riesgo es alto.",
+      'Enfermedad Renal (ERC)': "<b>Enfermedad Renal Crónica:</b> proteína 0.6-0.8 g/kg/día en etapas sin diálisis, hasta 1.2 g/kg/día en hemodiálisis; restricción individualizada de sodio, potasio y fósforo según etapa y laboratorios.",
+      'Intestino Irritable (SII)': "<b>SII:</b> valorar dieta baja en FODMAPs por fases (eliminación, reintroducción, personalización) guiada por un especialista.",
+      'Reflujo (ERGE)': "<b>ERGE:</b> reducir grasas totales, evitar comidas copiosas nocturnas, café, alcohol, picante y cítricos si son desencadenantes; fraccionar en más tomas de menor volumen.",
+      'Enfermedad Celiaca': "<b>Enfermedad Celiaca:</b> exclusión estricta y permanente de gluten (trigo, cebada, centeno); vigilar contaminación cruzada y déficits de hierro, calcio, folatos y vitamina D."
+  };
+  const CIE10_PATOLOGIA = {
+      'Diabetes': 'E11', 'Hipertensión': 'I10', 'Dislipidemia': 'E78.5', 'Síndrome Metabólico': 'E88.9',
+      'Obesidad': 'E66.9', 'Desnutrición': 'E44', 'Enfermedad Renal (ERC)': 'N18', 'Intestino Irritable (SII)': 'K58',
+      'Reflujo (ERGE)': 'K21', 'Enfermedad Celiaca': 'K90.0'
+  };
+
   const labelSMAE = { verduras:'Verduras', frutas:'Frutas', cerSinGrasa:'Cereal sin grasa', cerConGrasa:'Cereal con grasa', leguminosas:'Leguminosas', aoaMuyBajo:'AOA muy bajo en grasa', aoaBajo:'AOA bajo en grasa', aoaMod:'AOA moderado en grasa', aoaAlto:'AOA alto en grasa', lecDes:'Leche descremada', lecSemi:'Leche semidescremada', lecEnt:'Leche entera', lecAzu:'Leche con azúcar', aceSinProt:'Aceites sin proteína', aceConProt:'Aceites con proteína', azuSinGrasa:'Azúcares sin grasa', azuConGrasa:'Azúcares con grasa' };
 
   // ===================================================================================
@@ -1228,9 +1372,14 @@
       } catch(e) { alert("Error al guardar."); }
   });
 
-  // 3. Cálculos Rápidos Reactivos
+  // 3. Cálculos Rápidos Reactivos — motor clínico completo (fórmula según edad,
+  // estado fisiológico, peso ajustado en obesidad, clasificaciones OMS).
+  const setBadge = (id, texto, color) => { const el = document.getElementById(id); if (!el) return; el.className = `badge w-100 py-2 bg-${color}`; el.innerText = texto; };
+
   const calcRapido = () => {
       const p = getNumVal('cr-peso'), t = getNumVal('cr-talla'), e = getNumVal('cr-edad'), af = getNumVal('cr-af'), sx = getStrVal('cr-sexo');
+      const cintura = getNumVal('cr-cintura'), formula = getStrVal('cr-formula'), fisiologico = getStrVal('cr-fisiologico');
+      const usarAjustado = document.getElementById('cr-usar-ajustado').checked;
       let pCh = getNumVal('cr-ch'), pPt = getNumVal('cr-pt');
       let pLp = 100 - pCh - pPt; if(pLp < 0) pLp = 0;
       document.getElementById('cr-lp').value = pLp;
@@ -1238,8 +1387,48 @@
 
       if(p && t) {
           const imc = p / Math.pow(t/100, 2); document.getElementById('cr-res-imc').innerText = imc.toFixed(1);
-          const geb = sx === 'M' ? 66.5+(13.75*p)+(5.003*t)-(6.75*e) : 655.1+(9.563*p)+(1.85*t)-(4.676*e);
-          const get = geb * af;
+          const claseImc = clasificarIMC(imc); setBadge('cr-badge-imc', `IMC: ${claseImc.texto}`, claseImc.color);
+
+          const claseCintura = clasificarCintura(cintura, sx);
+          setBadge('cr-badge-cintura', cintura ? claseCintura.texto : 'Captura cintura para evaluar riesgo', cintura ? claseCintura.color : 'secondary');
+
+          const pIdeal = pesoIdealReferencia(t);
+          const pAjustado = pesoAjustado(p, pIdeal);
+          const notaPed = document.getElementById('cr-nota-pediatrica');
+          const chkAjustado = document.getElementById('cr-usar-ajustado');
+
+          let pesoParaFormula = p;
+          if (e < 18) {
+              // En menores de edad se usa Schofield (OMS/FAO/UNU), independiente de la
+              // fórmula seleccionada — Mifflin/Harris-Benedict están validadas solo en adultos.
+              chkAjustado.disabled = true; chkAjustado.checked = false;
+              notaPed.innerHTML = '<i class="fi fi-ss-info"></i> Paciente menor de 18 años: se aplica automáticamente la ecuación de Schofield (OMS/FAO/UNU) en vez de Mifflin/Harris-Benedict. Para seguimiento por percentiles usa el módulo "Pediátrico (OMS)".';
+              document.getElementById('cr-badge-peso').className = 'badge bg-secondary w-100 py-2';
+              document.getElementById('cr-badge-peso').innerText = 'Peso ideal no aplica en pediatría';
+
+              const geb = gebSchofieldPediatrico(p, e, sx);
+              const get = geb * af;
+              document.getElementById('cr-res-geb').innerText = Math.round(geb); document.getElementById('cr-res-get').innerText = Math.round(get);
+              const kCh = get * (pCh/100), kPt = get * (pPt/100), kLp = get * (pLp/100);
+              document.getElementById('tbl-pct-ch').innerText = pCh + '%'; document.getElementById('tbl-pct-pt').innerText = pPt + '%'; document.getElementById('tbl-pct-lp').innerText = pLp + '%';
+              document.getElementById('tbl-kcal-ch').innerText = Math.round(kCh); document.getElementById('tbl-kcal-pt').innerText = Math.round(kPt); document.getElementById('tbl-kcal-lp').innerText = Math.round(kLp);
+              document.getElementById('tbl-g-ch').innerText = Math.round(kCh / 4); document.getElementById('tbl-g-pt').innerText = Math.round(kPt / 4); document.getElementById('tbl-g-lp').innerText = Math.round(kLp / 9);
+              return;
+          }
+
+          chkAjustado.disabled = (imc < 30);
+          if (imc < 30 && usarAjustado) chkAjustado.checked = false;
+          notaPed.innerHTML = '';
+          document.getElementById('cr-badge-peso').className = 'badge bg-secondary w-100 py-2';
+          document.getElementById('cr-badge-peso').innerText = `Peso ideal ref.: ${pIdeal.toFixed(1)} kg${imc >= 30 ? ' · Ajustado: ' + pAjustado.toFixed(1) + ' kg' : ''}`;
+
+          if (imc >= 30 && usarAjustado) pesoParaFormula = pAjustado;
+
+          const geb = formula === 'harris'
+              ? gebHarrisBenedict(pesoParaFormula, t, e, sx)
+              : gebMifflin(pesoParaFormula, t, e, sx);
+          const adicionFisiologica = ADICION_KCAL_FISIOLOGICO[fisiologico] || 0;
+          const get = (geb * af) + adicionFisiologica;
           document.getElementById('cr-res-geb').innerText = Math.round(geb); document.getElementById('cr-res-get').innerText = Math.round(get);
 
           const kCh = get * (pCh/100), kPt = get * (pPt/100), kLp = get * (pLp/100);
@@ -1248,6 +1437,14 @@
           document.getElementById('tbl-g-ch').innerText = Math.round(kCh / 4); document.getElementById('tbl-g-pt').innerText = Math.round(kPt / 4); document.getElementById('tbl-g-lp').innerText = Math.round(kLp / 9);
       }
   };
+
+  document.getElementById('btn-usar-get-plan').addEventListener('click', () => {
+      const get = parseFloat(document.getElementById('cr-res-get').innerText) || 0;
+      if (!get) return alert('Primero completa peso y talla en el paso 1.');
+      document.getElementById('plan-kcal').value = Math.round(get);
+      gotoTarget('plan-nutrimental');
+      showToast('GET transferido a Plan Nutrimental.');
+  });
 
   document.querySelectorAll('.cr-reactive').forEach(el => el.addEventListener('input', calcRapido));
   
@@ -1347,6 +1544,9 @@
       document.getElementById('det-tel').innerText = d.personales?.telefono || '-';
       document.getElementById('det-motivo').innerText = d.personales?.motivo || '-';
       document.getElementById('det-alergias').innerText = d.historiaClinica?.alergias || 'Ninguna registrada';
+      document.getElementById('det-diagnosticos').innerHTML = (d.diagnosticosCIE10 && d.diagnosticosCIE10.length)
+          ? d.diagnosticosCIE10.map(dx => `<span class="badge bg-info-subtle text-dark border" title="${dx.nombre}">${dx.nombre} (${dx.codigo})</span>`).join('')
+          : '<span class="text-muted small">Sin diagnósticos registrados</span>';
       
       document.getElementById('ev-paciente-id').value = id;
       document.getElementById('ev-talla').value = d.antropometria?.talla || '';
@@ -1625,9 +1825,14 @@
           const docRef = doc(db, "pacientes", email);
           const docSnap = await getDoc(docRef);
           
+          const diagnosticosCIE10 = Array.from(document.querySelectorAll('.chk-cie10:checked')).map(chk => {
+              const [codigo, nombre] = chk.value.split('|'); return { codigo, nombre };
+          });
+
           const pData = {
               personales: { nombre: getStrVal('p-nombre'), fnac: getStrVal('p-fnac'), edad: getNumVal('p-edad'), sexo: getStrVal('p-sexo'), telefono: getStrVal('p-tel'), email: email, ocupacion: getStrVal('p-ocupacion'), motivo: getStrVal('p-motivo') },
               historiaClinica: { ahf: getStrVal('hc-ahf'), app: getStrVal('hc-app'), medicamentos: getStrVal('hc-medicamentos'), alergias: getStrVal('hc-alergias'), tabaco: getStrVal('fr-tabaco'), alcohol: getStrVal('fr-alcohol'), estres: getStrVal('fr-estres'), actividad: getStrVal('fr-actividad'), digestion: getStrVal('hc-digestion') },
+              diagnosticosCIE10,
               antropometria: antropoData,
               actualizado: serverTimestamp()
           };
@@ -1661,6 +1866,8 @@
               document.getElementById('p-id').value = id; document.getElementById('p-email').value = id; document.getElementById('p-email').readOnly = true;
               document.getElementById('p-nombre').value = d.personales?.nombre||""; document.getElementById('p-fnac').value = d.personales?.fnac||""; document.getElementById('p-edad').value = d.personales?.edad||""; document.getElementById('p-sexo').value = d.personales?.sexo||"M"; document.getElementById('p-tel').value = d.personales?.telefono||""; document.getElementById('p-ocupacion').value = d.personales?.ocupacion||""; document.getElementById('p-motivo').value = d.personales?.motivo||"";
               document.getElementById('hc-ahf').value = d.historiaClinica?.ahf||""; document.getElementById('hc-app').value = d.historiaClinica?.app||""; document.getElementById('hc-medicamentos').value = d.historiaClinica?.medicamentos||""; document.getElementById('hc-alergias').value = d.historiaClinica?.alergias||""; document.getElementById('fr-tabaco').value = d.historiaClinica?.tabaco||"No"; document.getElementById('fr-alcohol').value = d.historiaClinica?.alcohol||"No"; document.getElementById('fr-estres').value = d.historiaClinica?.estres||"Bajo"; document.getElementById('fr-actividad').value = d.historiaClinica?.actividad||""; document.getElementById('hc-digestion').value = d.historiaClinica?.digestion||"";
+              document.querySelectorAll('.chk-cie10').forEach(chk => chk.checked = false);
+              (d.diagnosticosCIE10 || []).forEach(dx => { const chk = document.querySelector(`.chk-cie10[value="${dx.codigo}|${dx.nombre}"]`); if (chk) chk.checked = true; });
               document.getElementById('m-peso').value = d.antropometria?.peso||""; document.getElementById('m-talla').value = d.antropometria?.talla||""; document.getElementById('c-cintura').value = d.antropometria?.cintura||""; document.getElementById('c-cadera').value = d.antropometria?.cadera||""; document.getElementById('c-brazo-rel').value = d.antropometria?.brazoRel||""; document.getElementById('c-pantorrilla-c').value = d.antropometria?.pantorrillaC||""; document.getElementById('pl-tricipital').value = d.antropometria?.tricipital||""; document.getElementById('pl-bicipital').value = d.antropometria?.bicipital||""; document.getElementById('pl-subescapular').value = d.antropometria?.subescapular||""; document.getElementById('pl-suprailiaco').value = d.antropometria?.suprailiaco||""; document.getElementById('pl-supraespinal').value = d.antropometria?.supraespinal||""; document.getElementById('pl-abdominal').value = d.antropometria?.abdominal||""; document.getElementById('pl-muslo').value = d.antropometria?.muslo||""; document.getElementById('pl-pantorrilla').value = d.antropometria?.pantorrilla||"";
               
               document.getElementById('res-imc').innerText = d.antropometria?.imc || "0.00";
@@ -1953,15 +2160,23 @@
       if(e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-tag').click(); }
   });
 
-  // Autocompletar Tags con las Alergias del Paciente
+  // Autocompletar Tags con las Alergias del Paciente, y precargar el Panel Clínico
+  // según los diagnósticos CIE-10 ya registrados en su expediente (evita que el
+  // nutriólogo tenga que volver a marcarlos manualmente en cada plan).
   document.getElementById('plan-paciente').addEventListener('change', (e) => {
       const id = e.target.value;
       window.planExcludedTags = [];
+      document.querySelectorAll('.chk-patologia').forEach(chk => chk.checked = false);
       if(id && pacientesMemory[id]) {
           const alergias = pacientesMemory[id].historiaClinica?.alergias || '';
           if(alergias && alergias.toLowerCase() !== 'ninguna' && alergias.toLowerCase() !== 'no') {
               window.planExcludedTags = alergias.split(',').map(s => s.trim()).filter(s => s);
           }
+          const dx = pacientesMemory[id].diagnosticosCIE10 || [];
+          dx.forEach(d => {
+              const patologiaMatch = Object.entries(CIE10_PATOLOGIA).find(([, cie]) => d.codigo === cie || d.codigo.startsWith(cie));
+              if (patologiaMatch) { const chk = document.querySelector(`.chk-patologia[value="${patologiaMatch[0]}"]`); if (chk) chk.checked = true; }
+          });
       }
       window.renderTags();
   });
@@ -1988,17 +2203,25 @@
       }
 
       if(selectedPatologias.length > 0) {
-          let pautas = [];
-          if(selectedPatologias.includes('Diabetes')) pautas.push("<b>Diabetes:</b> Restricción de azúcares simples, control de índice glicémico y harinas refinadas (Guías ADA/OMS).");
-          if(selectedPatologias.includes('Hipertensión')) pautas.push("<b>Hipertensión:</b> Dieta DASH/Hiposódica (<2g sodio/día), evitar ultraprocesados y embutidos (OMS).");
-          if(selectedPatologias.includes('Dislipidemia')) pautas.push("<b>Dislipidemia:</b> Restricción de grasas saturadas/trans, aumento de fibra soluble y Omega-3 (AHA/OMS).");
-          if(selectedPatologias.includes('Síndrome Metabólico')) pautas.push("<b>S. Metabólico:</b> Déficit calórico moderado, restricción de fructosa añadida y grasas saturadas.");
-          if(selectedPatologias.includes('Intestino Irritable (SII)')) pautas.push("<b>SII:</b> Protocolo bajo en FODMAPs (evitar lactosa, exceso de fructosa, polioles y leguminosas fermentables).");
-          if(selectedPatologias.includes('Reflujo (ERGE)')) pautas.push("<b>ERGE:</b> Evitar irritantes gástricos (picante, menta, cítricos en ayuno, chocolate, café) y comidas altas en grasa.");
-          if(selectedPatologias.includes('Enfermedad Celiaca')) pautas.push("<b>Enfermedad Celiaca:</b> Dieta 100% libre de gluten (cero trigo, centeno, cebada o avena con trazas).");
-          if(selectedPatologias.includes('Enfermedad Renal (ERC)')) pautas.push("<b>ERC:</b> Ajuste estricto de proteínas según TFG, control de fósforo, potasio y líquidos (Guías KDOQI/KDIGO).");
-          
-          advertenciasHtml += `<p class="mb-0 mt-2"><strong><i class="fi fi-ss-heart-crack"></i> Lineamientos Clínicos Integrados:</strong><br> - ${pautas.join('<br> - ')}</p>`;
+          // Se usa el mismo diccionario de guías NOM/OMS que respalda el panel de
+          // Configuración clínica, para no duplicar criterios en dos lugares distintos.
+          const pautas = selectedPatologias.map(p => GUIA_CLINICA_NOM[p]).filter(Boolean);
+          advertenciasHtml += `<p class="mb-0 mt-2"><strong><i class="fi fi-ss-heart-crack"></i> Lineamientos Clínicos Integrados (NOM/OMS):</strong><br> - ${pautas.join('<br> - ')}</p>`;
+      }
+
+      // Distribución de macronutrientes ajustada por patología dominante (referencia
+      // clínica general — el nutriólogo puede afinarla manualmente en Cálculos Rápidos).
+      // Prioridad cuando hay varias: ERC > Diabetes > Dislipidemia > Obesidad > estándar.
+      const AJUSTE_MACROS_PATOLOGIA = {
+          'Enfermedad Renal (ERC)': { ch: 55, pt: 12, lp: 33, nota: 'proteína reducida (0.6-0.8 g/kg/día orientativo, ajustar por TFG y modalidad dialítica)' },
+          'Diabetes': { ch: 45, pt: 20, lp: 35, nota: 'carbohidratos moderados y de bajo índice glicémico' },
+          'Dislipidemia': { ch: 50, pt: 25, lp: 25, nota: 'lípidos reducidos, priorizando insaturados' },
+          'Obesidad': { ch: 45, pt: 25, lp: 30, nota: 'mayor proporción de proteína para saciedad dentro de un déficit calórico' }
+      };
+      const patologiaDominante = ['Enfermedad Renal (ERC)', 'Diabetes', 'Dislipidemia', 'Obesidad'].find(p => selectedPatologias.includes(p));
+      const macrosAjuste = patologiaDominante ? AJUSTE_MACROS_PATOLOGIA[patologiaDominante] : { ch: 50, pt: 20, lp: 30, nota: 'distribución estándar' };
+      if (patologiaDominante) {
+          advertenciasHtml += `<p class="mb-0 mt-2 small"><i class="fi fi-ss-scale-balanced"></i> Distribución de macronutrientes ajustada por <b>${patologiaDominante}</b>: ${macrosAjuste.ch}% CH / ${macrosAjuste.pt}% PT / ${macrosAjuste.lp}% LP (${macrosAjuste.nota}).</p>`;
       }
 
       const alertaExclusion = (advertenciasHtml !== '') ? `
@@ -2008,7 +2231,7 @@
 
       // Raciones reales según kcal objetivo (antes esta tabla y el menú eran
       // completamente fijos y no reflejaban ni las kcal ni al paciente elegido).
-      const raciones = distribuirRaciones(kcalObj, 50, 20, 30, { verduras: 4, frutas: 3, leguminosas: 1, grupoLacteo: 'lecSemi', grupoAoa: 'aoaMod' });
+      const raciones = distribuirRaciones(kcalObj, macrosAjuste.ch, macrosAjuste.pt, macrosAjuste.lp, { verduras: 4, frutas: 3, leguminosas: 1, grupoLacteo: 'lecSemi', grupoAoa: 'aoaMod' });
 
       const generarSemana = () => generarMenuSMAEdias(raciones, dias, window.planExcludedTags, true);
 
