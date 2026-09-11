@@ -15,47 +15,72 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Parsers para IA (Markdown y LaTeX Matemático) -->
+    <!-- Parsers para IA -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-      window.MathJax = {
-        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
-        startup: { typeset: false } // Renderizado manual al recibir msj
-      };
+      window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }, startup: { typeset: false } };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .sidebar { min-height: 100vh; background-color: #2c3e50; color: white; padding-top: 20px; }
+        :root {
+            --brand-primary: #1abc9c;
+            --brand-primary-rgb: 26,188,156;
+            --brand-secondary: #2c3e50;
+            --brand-secondary-rgb: 44,62,80;
+            --brand-bg: #f4f7f6;
+        }
+        body { background-color: var(--brand-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { min-height: 100vh; background-color: var(--brand-secondary); color: white; padding-top: 20px; }
         .sidebar .nav-link { color: #aeb6bf; margin-bottom: 10px; border-radius: 5px; cursor: pointer; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #1abc9c; color: white; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: var(--brand-primary); color: white; }
         .nav-link i { margin-right: 10px; }
         .section-view { display: none; }
-        .section-view.active { display: block; }
-        .brand-logo { font-size: 1.5rem; font-weight: bold; color: #1abc9c; text-align: center; margin-bottom: 30px;}
-        .nav-tabs .nav-link { color: #2c3e50; font-weight: 500; }
-        .nav-tabs .nav-link.active { color: #1abc9c; border-bottom: 3px solid #1abc9c; font-weight: bold; }
-        .form-section-title { color: #1abc9c; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 15px; margin-bottom: 15px; font-size: 1.1rem;}
+        .section-view.active { display: block; animation: fadeInView .25s ease; }
+        @keyframes fadeInView { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .brand-logo { font-size: 1.5rem; font-weight: bold; color: var(--brand-primary); text-align: center; margin-bottom: 30px;}
+        .nav-tabs .nav-link { color: var(--brand-secondary); font-weight: 500; }
+        .nav-tabs .nav-link.active { color: var(--brand-primary); border-bottom: 3px solid var(--brand-primary); font-weight: bold; }
+        .form-section-title { color: var(--brand-primary); border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 15px; margin-bottom: 15px; font-size: 1.1rem;}
         #calendar { background: white; padding: 15px; border-radius: 8px; min-height: 600px; }
         .smae-input { max-width: 80px; text-align: center; }
-        .menu-table th { background-color: #2c3e50; color: white; }
-        .range-slider-val { display: inline-block; width: 40px; text-align: center; font-weight: bold; color: #1abc9c; }
+        .menu-table th { background-color: var(--brand-secondary); color: white; }
+        .range-slider-val { display: inline-block; width: 40px; text-align: center; font-weight: bold; color: var(--brand-primary); }
         .chart-container { position: relative; height: 300px; width: 100%; margin-bottom: 2rem;}
+        .btn-brand { background-color: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+        .btn-brand:hover { background-color: var(--brand-primary); filter: brightness(0.92); color: #fff; }
+        .btn-brand-dark { background-color: var(--brand-secondary); border-color: var(--brand-secondary); color: #fff; }
+        .btn-brand-dark:hover { background-color: var(--brand-secondary); filter: brightness(1.15); color: #fff; }
+        .text-brand { color: var(--brand-primary) !important; }
+        .swatch { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.1); display: inline-block; vertical-align: middle; }
+        .config-preview-card { border-radius: 10px; overflow: hidden; }
+        .receta-slot-badge { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .03em; }
+
+        /* Dashboard Gallery */
+        .patient-card { transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border-left: 4px solid var(--brand-primary); }
+        .patient-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
         
         /* Chatbot UI */
-        #btn-toggle-chat { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; z-index: 1050; background-color: #1abc9c; border:none; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s;}
+        #btn-toggle-chat { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; z-index: 1050; background-color: var(--brand-primary); border:none; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s;}
         #btn-toggle-chat:hover { transform: scale(1.1); }
         #chat-window { position: fixed; bottom: 90px; right: 20px; width: 380px; z-index: 1050; border: none; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
         #chat-messages { height: 400px; overflow-y: auto; background-color: #f8f9fa; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .msg-ai { background-color: white; border: 1px solid #eee; border-radius: 10px 10px 10px 0; padding: 15px 15px 5px 15px; font-size: 0.85rem; color: #2c3e50; align-self: flex-start; max-width: 90%; }
-        .msg-user { background-color: #2c3e50; color: white; border-radius: 10px 10px 0 10px; padding: 10px; font-size: 0.85rem; align-self: flex-end; max-width: 85%; }
+        .msg-ai { background-color: white; border: 1px solid #eee; border-radius: 10px 10px 10px 0; padding: 15px 15px 5px 15px; font-size: 0.85rem; color: var(--brand-secondary); align-self: flex-start; max-width: 90%; }
+        .msg-user { background-color: var(--brand-secondary); color: white; border-radius: 10px 10px 0 10px; padding: 10px; font-size: 0.85rem; align-self: flex-end; max-width: 85%; }
         
         /* Formateo para IA Markdown */
-        .msg-ai h1, .msg-ai h2, .msg-ai h3 { font-size: 1rem; color: #1abc9c; margin-top: 10px; margin-bottom: 5px; font-weight: bold;}
+        .msg-ai h1, .msg-ai h2, .msg-ai h3 { font-size: 1rem; color: var(--brand-primary); margin-top: 10px; margin-bottom: 5px; font-weight: bold;}
         .msg-ai p { margin-bottom: 8px; }
         .msg-ai ul, .msg-ai ol { padding-left: 20px; margin-bottom: 8px; }
-        .msg-ai hr { margin: 10px 0; }
+        
+        /* Estilos específicos para PDF Plan Nutrimental */
+        .pdf-title { color: var(--brand-primary); font-weight: bold; }
+        .pdf-table th { background-color: rgba(var(--brand-primary-rgb), 0.1) !important; color: var(--brand-secondary); font-size: 0.8rem;}
+        .pdf-table td { font-size: 0.75rem; vertical-align: middle; }
+        .pdf-section-title { background-color: var(--brand-secondary); color: white; padding: 5px 10px; font-size: 0.9rem; margin-top: 15px; border-radius: 4px;}
+        .pdf-recipe-card { border: 1px solid #e0e0e0; border-radius: 5px; padding: 10px; height: 100%; }
+        .pdf-recipe-title { font-weight: bold; color: #2980b9; font-size: 0.8rem; margin-bottom: 5px;}
+        .pdf-ingredient { font-size: 0.75rem; margin-bottom: 2px; color: #444; }
     </style>
 </head>
 <body>
@@ -64,7 +89,8 @@
     <div class="row">
         <!-- Menú Lateral -->
         <div class="col-md-2 sidebar shadow-sm">
-            <div class="brand-logo"><i class="fi fi-ss-apple-whole"></i> NutriFit</div>
+            <div class="brand-logo"><i id="brand-icon" class="fi fi-ss-apple-whole"></i> <span id="brand-nombre">NutriFit</span></div>
+            <div class="text-center small text-white-50 mb-3 mt-n4" id="brand-slogan" style="font-size:0.7rem;"></div>
             <ul class="nav flex-column px-2">
                 <li class="nav-item"><a class="nav-link active" data-target="dashboard"><i class="fi fi-ss-apps"></i> Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" data-target="pacientes"><i class="fi fi-ss-users"></i> Pacientes</a></li>
@@ -73,10 +99,13 @@
                 <li class="nav-item"><a class="nav-link" data-target="dieta-rapida"><i class="fi fi-ss-magic-wand"></i> Dieta Rápida</a></li>
                 <li class="nav-item"><a class="nav-link" data-target="calculos-rapidos"><i class="fi fi-ss-bolt"></i> Cálculos Rápidos</a></li>
                 <li class="nav-item"><a class="nav-link" data-target="curvas-pediatricas"><i class="fi fi-ss-chart-line-up"></i> Pediátrico (OMS)</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="plan-nutrimental"><i class="fi fi-ss-book-alt"></i> Plan Nutrimental SMAE</a></li>
                 <hr class="border-secondary">
-                <li class="nav-item"><a class="nav-link" data-target="mis-alimentos" title="Da de alta productos comerciales"><i class="fi fi-ss-apple-whole"></i> Mis Alimentos</a></li>
-                <li class="nav-item"><a class="nav-link" data-target="mis-recetas" title="Crea tus propias preparaciones"><i class="fi fi-ss-pan-frying"></i> Mis Recetas</a></li>
-                <li class="nav-item"><a class="nav-link" data-target="mis-dietas" title="Catálogo de plantillas"><i class="fi fi-ss-clipboard-list"></i> Mis Dietas</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="mis-alimentos"><i class="fi fi-ss-apple-whole"></i> Mis Alimentos</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="mis-recetas"><i class="fi fi-ss-pan-frying"></i> Mis Recetas</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="mis-dietas"><i class="fi fi-ss-clipboard-list"></i> Mis Dietas</a></li>
+                <hr class="border-secondary">
+                <li class="nav-item"><a class="nav-link" data-target="configuracion"><i class="fi fi-ss-settings"></i> Configuración</a></li>
             </ul>
         </div>
 
@@ -84,17 +113,28 @@
         <div class="col-md-10 p-4">
             
             <div id="dashboard" class="section-view active">
-                <h2 class="mb-4">Resumen Clínico</h2>
-                <div class="card p-3 mb-3 bg-white shadow-sm" style="border-left: 4px solid #1abc9c; width: 300px;">
-                    <h5><i class="fi fi-ss-users text-success"></i> Pacientes Activos</h5>
-                    <h2 id="total-pacientes">0</h2>
+                <h2 class="mb-4">Dashboard Principal</h2>
+                <div class="d-flex flex-wrap gap-3 mb-4">
+                    <div class="card p-3 bg-white shadow-sm" style="border-left: 4px solid #1abc9c; width: 300px;">
+                        <h5><i class="fi fi-ss-users text-success"></i> Pacientes Activos</h5>
+                        <h2 id="total-pacientes">0</h2>
+                    </div>
+                    <div class="card p-3 bg-white shadow-sm" style="border-left: 4px solid #2c3e50; width: 300px;">
+                        <h5><i class="fi fi-ss-calendar-check text-primary"></i> Citas Próximos 7 Días</h5>
+                        <h2 id="total-citas-semana">0</h2>
+                    </div>
+                </div>
+                
+                <h4 class="mb-3 text-primary border-bottom pb-2"><i class="fi fi-ss-portrait"></i> Galería de Pacientes</h4>
+                <div class="row g-3" id="dashboard-patients-grid">
+                    <!-- Tarjetas inyectadas vía JS -->
                 </div>
             </div>
 
             <div id="pacientes" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2>Expedientes Clínicos</h2>
-                    <button class="btn btn-primary" id="btn-nuevo-paciente" data-bs-toggle="modal" data-bs-target="#modalPaciente" style="background-color: #1abc9c; border:none;">
+                    <h2>Expedientes Clínicos (Lista)</h2>
+                    <button class="btn btn-primary" id="btn-nuevo-paciente" data-bs-toggle="modal" data-bs-target="#modalPaciente" style="background-color: var(--brand-primary); border:none;">
                         <i class="fi fi-ss-user-add"></i> Nuevo Paciente
                     </button>
                 </div>
@@ -111,11 +151,11 @@
             <div id="citas" class="section-view">
                 <div class="d-flex justify-content-between mb-3">
                     <h2>Agenda de Consultas</h2>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCita" style="background-color: #1abc9c; border:none;">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCita" style="background-color: var(--brand-primary); border:none;">
                         <i class="fi fi-ss-calendar-plus"></i> Nueva Cita
                     </button>
                 </div>
-                <div id="calendar" class="shadow-sm border-0"></div>
+                <div id="calendar" class="shadow-sm border-0 bg-white"></div>
             </div>
 
             <div id="menus" class="section-view">
@@ -128,7 +168,7 @@
                         <div class="col-md-2"><label class="small">% CH</label><input type="number" id="auto-ch" class="form-control form-control-sm auto-pct" value="50"></div>
                         <div class="col-md-2"><label class="small">% PROT</label><input type="number" id="auto-pt" class="form-control form-control-sm auto-pct" value="20"></div>
                         <div class="col-md-2"><label class="small">% LIP</label><input type="number" id="auto-lp" class="form-control form-control-sm" value="30" readonly></div>
-                        <div class="col-md-4"><button class="btn btn-primary w-100 btn-sm" id="btn-auto-smae" style="background-color: #2c3e50; border:none;"><i class="fi fi-ss-gears"></i> Calcular Opciones</button></div>
+                        <div class="col-md-4"><button class="btn btn-primary w-100 btn-sm" id="btn-auto-smae" style="background-color: var(--brand-secondary); border:none;"><i class="fi fi-ss-gears"></i> Calcular Opciones</button></div>
                     </div>
                     <div class="row mt-3 d-none" id="auto-options-container"></div>
                 </div>
@@ -171,16 +211,22 @@
                             <p><strong>Proteína:</strong> <span id="tot-prot" class="fw-bold">0</span> g</p>
                             <p><strong>Lípidos:</strong> <span id="tot-lip" class="fw-bold">0</span> g</p>
                             <p><strong>H. Carbono:</strong> <span id="tot-hc" class="fw-bold">0</span> g</p>
-                            <button class="btn btn-primary w-100 mt-3" id="btn-guardar-dist" style="background-color: #1abc9c; border:none;"><i class="fi fi-ss-disk"></i> Guardar Distribución</button>
+                            <button class="btn btn-primary w-100 mt-3" id="btn-guardar-dist" style="background-color: var(--brand-primary); border:none;"><i class="fi fi-ss-disk"></i> Guardar Distribución</button>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Dieta Rápida -->
             <div id="dieta-rapida" class="section-view">
                 <h2>Generador de Dieta Rápida (7 Días)</h2>
                 <div class="card shadow-sm border-0 p-4 mt-3">
-                    <div class="row mb-4">
+                    <div class="row mb-4 align-items-end">
+                        <div class="col-md-12 mb-3">
+                            <label class="small fw-bold text-primary">Paciente a Asignar (Opcional)</label>
+                            <select id="dr-paciente" class="form-select"></select>
+                            <div id="dr-alergias-info" class="small text-danger mt-1"></div>
+                        </div>
                         <div class="col-md-4">
                             <label>Calorías Mínimas (kcal)</label>
                             <input type="number" id="dr-kcal-min" class="form-control" placeholder="Ej. 1500" value="1500" step="50">
@@ -189,13 +235,111 @@
                             <label>Calorías Máximas (kcal)</label>
                             <input type="number" id="dr-kcal-max" class="form-control" placeholder="Ej. 1800" value="1800" step="50">
                         </div>
-                        <div class="col-md-4 d-flex align-items-end">
-                            <button class="btn btn-primary w-100" id="btn-generar-dieta" style="background-color: #1abc9c; border:none;">
+                        <div class="col-md-4">
+                            <button class="btn btn-primary w-100" id="btn-generar-dieta" style="background-color: var(--brand-primary); border:none;">
                                 <i class="fi fi-ss-magic-wand"></i> Generar Menú Rápido
                             </button>
                         </div>
                     </div>
                     <div id="dr-resultado" class="table-responsive"></div>
+                </div>
+            </div>
+
+            <!-- Plan Nutrimental Dinámico (Con Patologías Clínicas) -->
+            <div id="plan-nutrimental" class="section-view">
+                <h2>Generador de Plan Nutrimental SMAE (Exportable PDF)</h2>
+                <div class="card shadow-sm border-0 p-4 mt-3">
+                    
+                    <div class="row mb-4 align-items-end">
+                        <div class="col-md-4 mb-3">
+                            <label class="small fw-bold text-primary">Paciente</label>
+                            <select id="plan-paciente" class="form-select"></select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="small">Kcal Objetivo</label>
+                            <input type="number" id="plan-kcal" class="form-control" placeholder="Ej. 1800" value="1800" step="50">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="small">Duración</label>
+                            <select id="plan-duracion" class="form-select">
+                                <option value="1">Por Día (1 Día)</option>
+                                <option value="7" selected>Por Semana (7 Días)</option>
+                                <option value="30">Por Mes (4 Semanas)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 p-3 bg-light rounded border">
+                        <div class="col-md-6 mb-3 mb-md-0 border-end">
+                            <label class="small fw-bold text-danger"><i class="fi fi-ss-ban"></i> Alimentos a Excluir (Tags)</label>
+                            <div class="input-group input-group-sm mb-2 mt-1">
+                                <input type="text" id="plan-tag-input" class="form-control" placeholder="Ej. Cebolla, Lácteos, Nuez...">
+                                <button class="btn btn-outline-danger" id="btn-add-tag" type="button">Agregar</button>
+                            </div>
+                            <div id="plan-tags-container" class="d-flex flex-wrap gap-1 mt-2">
+                                <!-- Tags renderizados aquí -->
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small fw-bold text-warning"><i class="fi fi-ss-heart-crack"></i> Panel Clínico (Guías Nacionales/OMS)</label>
+                            <div class="mt-2 row">
+                                <div class="col-6 d-flex flex-column gap-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Diabetes">
+                                        <label class="form-check-label small">Diabetes Mellitus</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Hipertensión">
+                                        <label class="form-check-label small">Hipertensión Arterial</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Dislipidemia">
+                                        <label class="form-check-label small">Dislipidemia</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Síndrome Metabólico">
+                                        <label class="form-check-label small">Síndrome Metabólico</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 d-flex flex-column gap-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Intestino Irritable (SII)">
+                                        <label class="form-check-label small">Intestino Irritable (SII)</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Reflujo (ERGE)">
+                                        <label class="form-check-label small">Reflujo (ERGE)</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Enfermedad Celiaca">
+                                        <label class="form-check-label small">Enfermedad Celiaca</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input chk-patologia" type="checkbox" value="Enfermedad Renal (ERC)">
+                                        <label class="form-check-label small">Enf. Renal Crónica (ERC)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button class="btn btn-primary px-5" id="btn-generar-plan" style="background-color: var(--brand-primary); border:none;">
+                                <i class="fi fi-ss-book-alt"></i> Generar Plan Clínico
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-end mb-3 mt-4 d-none" id="export-actions">
+                        <button class="btn btn-outline-success" id="btn-guardar-plan"><i class="fi fi-ss-disk"></i> Guardar en Expediente</button>
+                        <button class="btn btn-outline-danger" id="btn-export-plan-pdf"><i class="fi fi-ss-document"></i> Descargar PDF</button>
+                        <button class="btn btn-outline-primary" id="btn-export-plan-png"><i class="fi fi-ss-picture"></i> Descargar PNG</button>
+                    </div>
+
+                    <div id="plan-resultado" class="table-responsive bg-light p-3 border rounded mt-3">
+                        <p class="text-muted text-center mt-3">Selecciona un paciente, define exclusiones clínicas y haz clic en "Generar Plan Clínico".</p>
+                    </div>
                 </div>
             </div>
 
@@ -294,7 +438,7 @@
                                     <label class="small">Estatura (cm)</label>
                                     <input type="number" id="ped-talla" step="0.1" class="form-control form-control-sm" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100 btn-sm" style="background-color: #1abc9c; border:none;">
+                                <button type="submit" class="btn btn-primary w-100 btn-sm" style="background-color: var(--brand-primary); border:none;">
                                     <i class="fi fi-ss-add"></i> Agregar Punto
                                 </button>
                             </form>
@@ -326,12 +470,12 @@
             <div id="mis-alimentos" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Mis Alimentos Propios</h2>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAlimento" style="background-color: #1abc9c; border:none;"><i class="fi fi-ss-add"></i> Agregar Alimento</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAlimento" style="background-color: var(--brand-primary); border:none;"><i class="fi fi-ss-add"></i> Agregar Alimento</button>
                 </div>
                 <div class="card shadow-sm border-0">
                     <div class="card-body table-responsive">
                         <table class="table table-hover align-middle">
-                            <thead class="table-light"><tr><th>Nombre / Marca</th><th>Porción</th><th>Kcal</th><th>Prot (g)</th><th>Lip (g)</th><th>HC (g)</th></tr></thead>
+                            <thead class="table-light"><tr><th>Nombre / Marca</th><th>Porción</th><th>Kcal</th><th>Prot (g)</th><th>Lip (g)</th><th>HC (g)</th><th>Grupo SMAE</th></tr></thead>
                             <tbody id="tabla-mis-alimentos"></tbody>
                         </table>
                     </div>
@@ -341,22 +485,118 @@
             <div id="mis-recetas" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Mis Recetas</h2>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalReceta" style="background-color: #1abc9c; border:none;"><i class="fi fi-ss-add"></i> Crear Receta</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalReceta" style="background-color: var(--brand-primary); border:none;"><i class="fi fi-ss-add"></i> Crear Receta</button>
                 </div>
-                <div class="row" id="grid-mis-recetas"></div>
+                <div class="card shadow-sm border-0">
+                    <div class="card-body table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light"><tr><th>Platillo</th><th>Porciones</th><th>Ingredientes</th><th>Tiempo sugerido</th></tr></thead>
+                            <tbody id="tabla-mis-recetas"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <div id="mis-dietas" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Catálogo de Dietas</h2>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDieta" style="background-color: #1abc9c; border:none;"><i class="fi fi-ss-add"></i> Nueva Plantilla</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDieta" style="background-color: var(--brand-primary); border:none;"><i class="fi fi-ss-add"></i> Nueva Plantilla</button>
                 </div>
+                <p class="text-muted small">Estas plantillas son atajos rápidos: al aplicarlas, se precargan sus kcal y tipo en los generadores de menú.</p>
                 <div class="card shadow-sm border-0">
                     <div class="card-body table-responsive">
                         <table class="table table-hover align-middle">
-                            <thead class="table-light"><tr><th>Nombre del Plan</th><th>Kcal Objetivo</th><th>Tipo de Dieta</th></tr></thead>
+                            <thead class="table-light"><tr><th>Nombre del Plan</th><th>Kcal Objetivo</th><th>Tipo de Dieta</th><th>Acciones</th></tr></thead>
                             <tbody id="tabla-mis-dietas"></tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= CONFIGURACIÓN (WHITELABEL) ================= -->
+            <div id="configuracion" class="section-view">
+                <h2 class="mb-1"><i class="fi fi-ss-settings"></i> Configuración de la Plataforma</h2>
+                <p class="text-muted mb-4">Personaliza el nombre, la identidad visual y los datos que aparecen en los documentos exportados. Los cambios se aplican de inmediato a toda la aplicación.</p>
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm border-0 p-4 mb-3">
+                            <h5 class="form-section-title mt-0"><i class="fi fi-ss-signature"></i> Marca</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="small fw-bold">Nombre de la aplicación</label>
+                                    <input type="text" id="cfg-nombre" class="form-control" placeholder="Ej. NutriFit">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small fw-bold">Ícono de marca</label>
+                                    <select id="cfg-icono" class="form-select">
+                                        <option value="fi-ss-apple-whole">🍎 Manzana</option>
+                                        <option value="fi-ss-leaf">🍃 Hoja</option>
+                                        <option value="fi-ss-carrot">🥕 Zanahoria</option>
+                                        <option value="fi-ss-bowl-food">🥣 Tazón</option>
+                                        <option value="fi-ss-heart-health">❤️ Corazón saludable</option>
+                                        <option value="fi-ss-dumbbell">🏋️ Mancuerna</option>
+                                        <option value="fi-ss-lemon">🍋 Cítrico</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="small fw-bold">Eslogan / Nombre de la clínica (aparece bajo el logo)</label>
+                                    <input type="text" id="cfg-slogan" class="form-control" placeholder="Ej. Consultorio de Nutrición Clínica">
+                                </div>
+                            </div>
+
+                            <h5 class="form-section-title"><i class="fi fi-ss-palette"></i> Colores</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="small fw-bold">Color primario (acentos, botones)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text p-1"><input type="color" id="cfg-primario" class="form-control form-control-color border-0" value="#1abc9c"></span>
+                                        <input type="text" id="cfg-primario-hex" class="form-control" value="#1abc9c">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small fw-bold">Color secundario (sidebar, encabezados)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text p-1"><input type="color" id="cfg-secundario" class="form-control form-control-color border-0" value="#2c3e50"></span>
+                                        <input type="text" id="cfg-secundario-hex" class="form-control" value="#2c3e50">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="form-section-title"><i class="fi fi-ss-document"></i> Documentos exportados (PDF / PNG)</h5>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="small fw-bold">Pie de página profesional</label>
+                                    <textarea id="cfg-pie" class="form-control" rows="2" placeholder="Ej. Lic. en Nutrición Ana Pérez — Cédula Profesional 1234567"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button class="btn btn-outline-secondary" id="btn-reset-config" type="button"><i class="fi fi-ss-refresh"></i> Restablecer valores predeterminados</button>
+                                <button class="btn btn-primary btn-brand" id="btn-guardar-config" type="button"><i class="fi fi-ss-disk"></i> Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="card shadow-sm border-0 config-preview-card sticky-top" style="top: 20px;">
+                            <div class="p-4 text-center text-white" id="cfg-preview-header" style="background-color: var(--brand-secondary);">
+                                <div style="font-size:2rem;"><i id="cfg-preview-icon" class="fi fi-ss-apple-whole"></i></div>
+                                <h4 class="mt-2 mb-0" id="cfg-preview-nombre">NutriFit</h4>
+                                <small class="text-white-50" id="cfg-preview-slogan">Plataforma de Nutrición Clínica</small>
+                            </div>
+                            <div class="p-3">
+                                <p class="small text-muted mb-2">Vista previa de botones y acentos:</p>
+                                <button class="btn w-100 mb-2" id="cfg-preview-btn-primary" style="background-color: var(--brand-primary); color:#fff; border:none;"><i class="fi fi-ss-check-circle"></i> Botón primario</button>
+                                <button class="btn w-100" id="cfg-preview-btn-secondary" style="background-color: var(--brand-secondary); color:#fff; border:none;"><i class="fi fi-ss-book-alt"></i> Botón secundario</button>
+                                <hr>
+                                <p class="small text-muted mb-1">Este nombre y colores se usarán en:</p>
+                                <ul class="small text-muted mb-0">
+                                    <li>Barra lateral y pestaña del navegador</li>
+                                    <li>Notificaciones (toasts) y copiloto IA</li>
+                                    <li>Encabezado de Planes Nutrimentales / Dietas Rápidas en PDF y PNG</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -365,45 +605,122 @@
     </div>
 </div>
 
-<!-- ================= WIDGET CHATBOT IA CON MATHJAX Y MARKDOWN ================= -->
-<button class="btn btn-primary rounded-circle shadow-lg" id="btn-toggle-chat" title="Asistente IA">
-    <i class="fi fi-ss-brain"></i>
-</button>
+<!-- ================= MODALES AUXILIARES ================= -->
 
-<div class="card shadow-lg d-none" id="chat-window">
-    <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #2c3e50;">
-        <h6 class="m-0"><i class="fi fi-ss-sparkles text-warning"></i> Copiloto NutriFit IA</h6>
-        <button type="button" class="btn-close btn-close-white btn-sm" id="btn-close-chat"></button>
-    </div>
-    <div class="card-body" id="chat-messages">
-        <div class="msg-ai">Hola, colega. Soy tu asistente clínico. Conozco a profundidad las tablas del SMAE y fórmulas antropométricas (Palafox, Harris-Benedict, etc.). ¿En qué te ayudo hoy?</div>
-    </div>
-    <div class="card-footer bg-white p-2">
-        <div class="input-group">
-            <input type="text" id="chat-input" class="form-control form-control-sm" placeholder="Consulta guías o SMAE...">
-            <button class="btn btn-primary btn-sm" id="btn-send-chat" style="background-color: #1abc9c; border:none;"><i class="fi fi-ss-paper-plane"></i></button>
+<div class="modal fade" id="modalDetallePaciente" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title"><i class="fi fi-ss-id-card"></i> Perfil del Paciente</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body bg-light">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-3 text-center mb-3">
+                    <div class="display-1 text-primary"><i class="fi fi-ss-user-circle"></i></div>
+                    <h4 id="det-nombre" class="mt-2">Cargando...</h4>
+                    <p class="text-muted mb-1" id="det-email"></p>
+                    <p class="badge bg-secondary" id="det-edad"></p>
+                    <div class="d-grid gap-2 mt-3">
+                        <button class="btn btn-outline-primary btn-sm" id="btn-agendar-desde-perfil"><i class="fi fi-ss-calendar"></i> Agendar Cita</button>
+                        <button class="btn btn-outline-success btn-sm" id="btn-dieta-desde-perfil"><i class="fi fi-ss-magic-wand"></i> Asignar Dieta Rápida</button>
+                        <button class="btn btn-outline-warning btn-sm" id="btn-plan-desde-perfil"><i class="fi fi-ss-book-alt"></i> Generar Plan Nutrimental</button>
+                    </div>
+                </div>
+                <div class="card shadow-sm border-0 p-3">
+                    <h6 class="text-primary border-bottom pb-2">Información Clínica</h6>
+                    <p class="small mb-1"><strong>Ocupación:</strong> <span id="det-ocupacion"></span></p>
+                    <p class="small mb-1"><strong>Teléfono:</strong> <span id="det-tel"></span></p>
+                    <p class="small mb-1"><strong>Motivo:</strong> <span id="det-motivo"></span></p>
+                    <hr>
+                    <p class="small mb-0 text-danger fw-bold"><i class="fi fi-ss-ban"></i> Alergias:</p>
+                    <p class="small mb-0" id="det-alergias"></p>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-perfil-avances" type="button">Evolución (Avances)</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-perfil-citas" type="button">Próximas Citas</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-perfil-smae" type="button">Distribuciones</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-perfil-dr" type="button">Dietas Rápidas</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-perfil-plan" type="button">Planes Nutrimentales</button></li>
+                </ul>
+                
+                <div class="tab-content">
+                    <div class="tab-pane fade show active bg-white p-3 border rounded" id="tab-perfil-avances">
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="m-0 text-primary">Historial de Consultas Antropométricas</h6>
+                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEvolucion">
+                                <i class="fi fi-ss-add"></i> Registrar Medición de Hoy
+                            </button>
+                        </div>
+                        
+                        <div class="collapse mb-3" id="collapseEvolucion">
+                            <div class="card card-body bg-light border-0 shadow-sm">
+                                <form id="form-evolucion">
+                                    <input type="hidden" id="ev-paciente-id">
+                                    <div class="row g-2">
+                                        <div class="col-md-3"><label class="small text-muted">Peso (kg)</label><input type="number" step="0.1" id="ev-peso" class="form-control form-control-sm" required></div>
+                                        <div class="col-md-3"><label class="small text-muted">Talla (cm)</label><input type="number" step="0.01" id="ev-talla" class="form-control form-control-sm" required></div>
+                                        <div class="col-md-3"><label class="small text-muted">Cintura (cm)</label><input type="number" step="0.1" id="ev-cintura" class="form-control form-control-sm"></div>
+                                        <div class="col-md-3"><label class="small text-muted">Cadera (cm)</label><input type="number" step="0.1" id="ev-cadera" class="form-control form-control-sm"></div>
+                                        
+                                        <div class="col-md-3"><label class="small text-muted">Pl. Tricipital (mm)</label><input type="number" step="0.1" id="ev-tri" class="form-control form-control-sm"></div>
+                                        <div class="col-md-3"><label class="small text-muted">Pl. Bicipital (mm)</label><input type="number" step="0.1" id="ev-bic" class="form-control form-control-sm"></div>
+                                        <div class="col-md-3"><label class="small text-muted">Pl. Subescapular</label><input type="number" step="0.1" id="ev-sub" class="form-control form-control-sm"></div>
+                                        <div class="col-md-3"><label class="small text-muted">Pl. Suprailiaco</label><input type="number" step="0.1" id="ev-sup" class="form-control form-control-sm"></div>
+                                    </div>
+                                    <div class="text-end mt-3">
+                                        <button type="submit" class="btn btn-success btn-sm" id="btn-guardar-evolucion"><i class="fi fi-ss-disk"></i> Guardar Avance</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover text-center align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Consulta</th>
+                                        <th>Fecha</th>
+                                        <th>Peso</th>
+                                        <th>IMC</th>
+                                        <th>Masa Grasa</th>
+                                        <th>Masa Magra</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista-det-avances"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade bg-white p-3 border rounded" id="tab-perfil-citas">
+                        <ul class="list-group list-group-flush" id="lista-det-citas"></ul>
+                    </div>
+                    <div class="tab-pane fade bg-white p-3 border rounded" id="tab-perfil-smae">
+                        <ul class="list-group list-group-flush" id="lista-det-smae"></ul>
+                    </div>
+                    <div class="tab-pane fade bg-white p-3 border rounded" id="tab-perfil-dr">
+                        <ul class="list-group list-group-flush" id="lista-det-dr"></ul>
+                    </div>
+                    <div class="tab-pane fade bg-white p-3 border rounded" id="tab-perfil-plan">
+                        <ul class="list-group list-group-flush" id="lista-det-planes"></ul>
+                    </div>
+                </div>
+            </div>
         </div>
+      </div>
     </div>
-</div>
-
-<!-- TOAST NOTIFICATIONS -->
-<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 2000;">
-  <div id="actionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header bg-success text-white">
-      <i class="fi fi-ss-check-circle me-2"></i>
-      <strong class="me-auto">NutriFit</strong>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-    </div>
-    <div class="toast-body" id="toast-msg">Acción realizada con éxito.</div>
   </div>
 </div>
-
-<!-- ================= MODALES ================= -->
 
 <div class="modal fade" id="modalPaciente" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <div class="modal-header text-white" style="background-color: #2c3e50;">
+      <div class="modal-header text-white" style="background-color: var(--brand-secondary);">
         <h5 class="modal-title" id="modalPacienteLabel"><i class="fi fi-ss-book-medical"></i> Nuevo Expediente Clínico</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
@@ -413,11 +730,12 @@
             <ul class="nav nav-tabs mb-3" role="tablist">
                 <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button">Datos Personales</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-clinica" type="button">Historia Clínica</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-antropo" type="button">Antropometría</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-antropo" type="button">Antropometría (Registra Avance)</button></li>
             </ul>
 
             <div class="tab-content">
                 <div class="tab-pane fade show active p-3 bg-white border rounded" id="tab-datos">
+                    <div class="alert alert-warning"><i class="fi fi-ss-info"></i> El <strong>Email</strong> es el identificador único del paciente en la base de datos.</div>
                     <div class="row g-3">
                         <div class="col-md-6"><label>Nombre Completo *</label><input type="text" id="p-nombre" class="form-control" required></div>
                         <div class="col-md-3"><label>Edad *</label><input type="number" id="p-edad" class="form-control" required></div>
@@ -435,7 +753,7 @@
                         <div class="col-md-6"><label>AHF (Heredofamiliares)</label><textarea id="hc-ahf" class="form-control" rows="2"></textarea></div>
                         <div class="col-md-6"><label>APP (Patológicos Personales)</label><textarea id="hc-app" class="form-control" rows="2"></textarea></div>
                         <div class="col-md-6"><label>Medicamentos Actuales</label><input type="text" id="hc-medicamentos" class="form-control"></div>
-                        <div class="col-md-6"><label>Alergias</label><input type="text" id="hc-alergias" class="form-control"></div>
+                        <div class="col-md-6"><label class="text-danger fw-bold">Alergias / Intolerancias</label><input type="text" id="hc-alergias" class="form-control" placeholder="Ej. Lácteos, nueces, camarón..."></div>
                     </div>
                     <h6 class="form-section-title mt-3">Estilo de Vida</h6>
                     <div class="row g-3">
@@ -468,15 +786,18 @@
                         <div class="col-md-3"><label>Muslo</label><input type="number" step="0.1" id="pl-muslo" class="form-control"></div>
                         <div class="col-md-3"><label>Pantorrilla</label><input type="number" step="0.1" id="pl-pantorrilla" class="form-control"></div>
                     </div>
-                    <button type="button" id="btn-calcular-antropo" class="btn btn-outline-success"><i class="fi fi-ss-calculator"></i> Ejecutar Fórmulas</button>
+                    <button type="button" id="btn-calcular-antropo" class="btn btn-outline-success"><i class="fi fi-ss-calculator"></i> Ejecutar Fórmulas ISAK</button>
                     <div class="alert alert-info d-none mt-3" id="resultados-clinicos">
-                        <strong>GEB:</strong> <span id="res-geb"></span> kcal | <strong>IMC:</strong> <span id="res-imc"></span> | <strong>Masa Grasa:</strong> <span id="res-grasa"></span> %
+                        <strong>GEB:</strong> <span id="res-geb"></span> kcal | 
+                        <strong>IMC:</strong> <span id="res-imc"></span> | 
+                        <strong>Masa Grasa:</strong> <span id="res-grasa"></span> % |
+                        <strong>Masa Magra:</strong> <span id="res-masa-magra"></span> kg
                     </div>
                 </div>
             </div>
             <div class="modal-footer bg-light mt-3 border-top pt-3">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" id="btn-guardar-paciente" class="btn btn-primary" style="background-color: #1abc9c; border:none;">Guardar Expediente</button>
+                <button type="submit" id="btn-guardar-paciente" class="btn btn-primary" style="background-color: var(--brand-primary); border:none;">Guardar Expediente</button>
             </div>
         </form>
       </div>
@@ -485,21 +806,58 @@
 </div>
 
 <div class="modal fade" id="modalCita" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title">Agendar Consulta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-cita"><div class="mb-3"><label>Paciente</label><select id="c-paciente" class="form-select" required></select></div><div class="mb-3"><label>Fecha y Hora</label><input type="datetime-local" id="c-fecha" class="form-control" required></div><div class="mb-3"><label>Enlace de Meet</label><input type="url" id="c-link" class="form-control"></div><div class="modal-footer pb-0 border-0"><button type="submit" class="btn btn-primary">Agendar</button></div></form></div></div></div></div>
-<div class="modal fade" id="modalAlimento" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header" style="background-color: #1abc9c; color: white;"><h5 class="modal-title">Nuevo Alimento</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-alimento"><div class="mb-2"><label>Nombre / Marca</label><input type="text" id="a-nombre" class="form-control" required></div><div class="mb-2"><label>Porción</label><input type="text" id="a-porcion" class="form-control" required></div><div class="row g-2 mb-2"><div class="col-6"><label>Kcal</label><input type="number" id="a-kcal" class="form-control" required></div><div class="col-6"><label>Prot (g)</label><input type="number" step="0.1" id="a-prot" class="form-control" required></div><div class="col-6"><label>Lip (g)</label><input type="number" step="0.1" id="a-lip" class="form-control" required></div><div class="col-6"><label>HC (g)</label><input type="number" step="0.1" id="a-hc" class="form-control" required></div></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-success w-100">Guardar</button></div></form></div></div></div></div>
-<div class="modal fade" id="modalReceta" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header" style="background-color: #2c3e50; color: white;"><h5 class="modal-title">Nueva Receta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-receta"><div class="mb-3"><label>Platillo</label><input type="text" id="re-nombre" class="form-control" required></div><div class="mb-3"><label>Ingredientes</label><textarea id="re-ingredientes" class="form-control" rows="3" required></textarea></div><div class="mb-3"><label>Preparación</label><textarea id="re-preparacion" class="form-control" rows="3"></textarea></div><div class="row g-2 mb-3"><div class="col-md-3"><label>Porciones</label><input type="number" id="re-porciones" class="form-control" value="1"></div></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-dark w-100">Guardar</button></div></form></div></div></div></div>
+<div class="modal fade" id="modalAlimento" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header" style="background-color: var(--brand-primary); color: white;"><h5 class="modal-title">Nuevo Alimento</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-alimento"><div class="mb-2"><label>Nombre / Marca</label><input type="text" id="a-nombre" class="form-control" required></div><div class="mb-2"><label>Porción</label><input type="text" id="a-porcion" class="form-control" required></div><div class="row g-2 mb-2"><div class="col-6"><label>Kcal</label><input type="number" id="a-kcal" class="form-control" required></div><div class="col-6"><label>Prot (g)</label><input type="number" step="0.1" id="a-prot" class="form-control" required></div><div class="col-6"><label>Lip (g)</label><input type="number" step="0.1" id="a-lip" class="form-control" required></div><div class="col-6"><label>HC (g)</label><input type="number" step="0.1" id="a-hc" class="form-control" required></div></div><div class="mb-2"><label>Grupo SMAE equivalente <small class="text-muted">(para incluirlo en los menús generados)</small></label><select id="a-grupo" class="form-select"><option value="">— Sin grupo (solo catálogo) —</option></select></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-success w-100">Guardar</button></div></form></div></div></div></div>
+<div class="modal fade" id="modalReceta" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header" style="background-color: var(--brand-secondary); color: white;"><h5 class="modal-title">Nueva Receta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-receta"><div class="mb-3"><label>Platillo</label><input type="text" id="re-nombre" class="form-control" required></div><div class="mb-3"><label>Ingredientes</label><textarea id="re-ingredientes" class="form-control" rows="3" required></textarea></div><div class="mb-3"><label>Preparación</label><textarea id="re-preparacion" class="form-control" rows="3"></textarea></div><div class="row g-2 mb-3"><div class="col-md-4"><label>Porciones</label><input type="number" id="re-porciones" class="form-control" value="1"></div><div class="col-md-8"><label>Tiempo de comida sugerido <small class="text-muted">(para usarla en los menús generados)</small></label><select id="re-tiempo" class="form-select"><option value="">— Cualquiera —</option><option value="desayuno">Desayuno</option><option value="colacion">Colación</option><option value="comida">Comida</option><option value="cena">Cena</option></select></div></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-dark w-100">Guardar</button></div></form></div></div></div></div>
 <div class="modal fade" id="modalDieta" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Nueva Plantilla</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-dieta"><div class="mb-2"><label>Nombre del Plan</label><input type="text" id="d-nombre" class="form-control" required></div><div class="mb-2"><label>Kcal Objetivo</label><input type="number" id="d-kcal" class="form-control" required></div><div class="mb-2"><label>Tipo</label><input type="text" id="d-tipo" class="form-control"></div><div class="mb-2"><label>Notas</label><textarea id="d-notas" class="form-control" rows="3"></textarea></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-secondary w-100">Guardar</button></div></form></div></div></div></div>
+
+<!-- WIDGET CHATBOT IA -->
+<button class="btn btn-primary rounded-circle shadow-lg" id="btn-toggle-chat" title="Asistente IA"><i class="fi fi-ss-brain"></i></button>
+<div class="card shadow-lg d-none" id="chat-window">
+    <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: var(--brand-secondary);">
+        <h6 class="m-0"><i class="fi fi-ss-sparkles text-warning"></i> Copiloto <span id="brand-nombre-chat">NutriFit</span> IA</h6>
+        <button type="button" class="btn-close btn-close-white btn-sm" id="btn-close-chat"></button>
+    </div>
+    <div class="card-body" id="chat-messages">
+        <div class="msg-ai">Hola, colega. Soy tu asistente clínico. Conozco a profundidad las tablas del SMAE y fórmulas antropométricas. ¿En qué te ayudo hoy?</div>
+    </div>
+    <div class="card-footer bg-white p-2">
+        <div class="input-group">
+            <input type="text" id="chat-input" class="form-control form-control-sm" placeholder="Consulta guías o SMAE...">
+            <button class="btn btn-primary btn-sm" id="btn-send-chat" style="background-color: var(--brand-primary); border:none;"><i class="fi fi-ss-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST NOTIFICATIONS -->
+<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 2000;">
+  <div id="actionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header bg-success text-white"><i class="fi fi-ss-check-circle me-2"></i><strong class="me-auto" id="brand-nombre-toast">NutriFit</strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toast-msg">Acción realizada.</div></div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   // Variables Globales
   let calendar;
   let chartPeso, chartTalla, chartImc;
   let unsubPediatrico = null;
   let estadoEquivalentes = null;
+  let lastGeneratedMenu = [];
+  
+  // Memoria global 
+  let pacientesMemory = {};
+  let citasMemory = [];
+  let menusMemory = [];
+  let dietasRapidasMemory = [];
+  let planesMemory = [];
+  let misAlimentosMemory = [];
+  let misRecetasMemory = [];
+  let misDietasMemory = [];
+  
+  // ID del Perfil Abierto Actualmente
+  let currentProfileId = null;
 
   const firebaseConfig = {
     apiKey: "AIzaSyDOG2Xf3OSBKiD5YUHuka2j112g5GmS4gw",
@@ -521,23 +879,300 @@
       new bootstrap.Toast(document.getElementById('actionToast')).show();
   };
 
+  // 0. CONFIGURACIÓN DE MARCA (WHITELABEL)
+  const APP_CONFIG_DEFAULT = { nombre: 'NutriFit', slogan: 'Plataforma de Nutrición Clínica', icono: 'fi-ss-apple-whole', primario: '#1abc9c', secundario: '#2c3e50', piePdf: '' };
+  window.APP_CONFIG = { ...APP_CONFIG_DEFAULT };
+
+  const aplicarConfig = (cfg) => {
+      window.APP_CONFIG = { ...APP_CONFIG_DEFAULT, ...cfg };
+      const c = window.APP_CONFIG;
+      document.documentElement.style.setProperty('--brand-primary', c.primario);
+      document.documentElement.style.setProperty('--brand-secondary', c.secundario);
+      const hexToRgb = (hex) => { const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || ''); return m ? `${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)}` : '26,188,156'; };
+      document.documentElement.style.setProperty('--brand-primary-rgb', hexToRgb(c.primario));
+      document.documentElement.style.setProperty('--brand-secondary-rgb', hexToRgb(c.secundario));
+
+      document.title = `${c.nombre} - Clinical Dashboard`;
+      const iconEl = document.getElementById('brand-icon'); if (iconEl) iconEl.className = `fi ${c.icono}`;
+      const nombreEl = document.getElementById('brand-nombre'); if (nombreEl) nombreEl.innerText = c.nombre;
+      const sloganEl = document.getElementById('brand-slogan'); if (sloganEl) sloganEl.innerText = c.slogan || '';
+      const chatNombreEl = document.getElementById('brand-nombre-chat'); if (chatNombreEl) chatNombreEl.innerText = c.nombre;
+      const toastNombreEl = document.getElementById('brand-nombre-toast'); if (toastNombreEl) toastNombreEl.innerText = c.nombre;
+
+      // Formulario de configuración (si está visible/renderizado)
+      const setIf = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+      setIf('cfg-nombre', c.nombre); setIf('cfg-slogan', c.slogan); setIf('cfg-icono', c.icono);
+      setIf('cfg-primario', c.primario); setIf('cfg-primario-hex', c.primario);
+      setIf('cfg-secundario', c.secundario); setIf('cfg-secundario-hex', c.secundario);
+      setIf('cfg-pie', c.piePdf);
+
+      // Vista previa en vivo
+      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+      setTxt('cfg-preview-nombre', c.nombre); setTxt('cfg-preview-slogan', c.slogan || '');
+      const prevIcon = document.getElementById('cfg-preview-icon'); if (prevIcon) prevIcon.className = `fi ${c.icono}`;
+      const prevHeader = document.getElementById('cfg-preview-header'); if (prevHeader) prevHeader.style.backgroundColor = c.secundario;
+      const prevBtnP = document.getElementById('cfg-preview-btn-primary'); if (prevBtnP) prevBtnP.style.backgroundColor = c.primario;
+      const prevBtnS = document.getElementById('cfg-preview-btn-secondary'); if (prevBtnS) prevBtnS.style.backgroundColor = c.secundario;
+
+      localStorage.setItem('app_config', JSON.stringify(c));
+  };
+
+  // Carga inicial: primero localStorage (instantáneo, sin parpadeo), luego se sincroniza con Firestore si existe
+  try { const local = JSON.parse(localStorage.getItem('app_config') || 'null'); if (local) aplicarConfig(local); else aplicarConfig(APP_CONFIG_DEFAULT); } catch(e) { aplicarConfig(APP_CONFIG_DEFAULT); }
+
+  onSnapshot(doc(db, 'config', 'app'), (snap) => { if (snap.exists()) aplicarConfig(snap.data()); });
+
+  // Sincronizar selector de color <-> input de texto hex
+  const syncColorPair = (colorId, hexId) => {
+      const colorEl = document.getElementById(colorId), hexEl = document.getElementById(hexId);
+      if (!colorEl || !hexEl) return;
+      colorEl.addEventListener('input', () => { hexEl.value = colorEl.value; });
+      hexEl.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(hexEl.value)) colorEl.value = hexEl.value; });
+  };
+  syncColorPair('cfg-primario', 'cfg-primario-hex');
+  syncColorPair('cfg-secundario', 'cfg-secundario-hex');
+
+  document.getElementById('btn-guardar-config').addEventListener('click', async () => {
+      const nuevaCfg = {
+          nombre: getStrVal('cfg-nombre') || APP_CONFIG_DEFAULT.nombre,
+          slogan: getStrVal('cfg-slogan'),
+          icono: getStrVal('cfg-icono') || APP_CONFIG_DEFAULT.icono,
+          primario: getStrVal('cfg-primario-hex') || APP_CONFIG_DEFAULT.primario,
+          secundario: getStrVal('cfg-secundario-hex') || APP_CONFIG_DEFAULT.secundario,
+          piePdf: getStrVal('cfg-pie')
+      };
+      aplicarConfig(nuevaCfg);
+      try { await setDoc(doc(db, 'config', 'app'), nuevaCfg, { merge: true }); } catch(e) { /* sigue funcionando solo con localStorage */ }
+      showToast('Configuración de marca guardada.');
+  });
+
+  document.getElementById('btn-reset-config').addEventListener('click', async () => {
+      aplicarConfig(APP_CONFIG_DEFAULT);
+      try { await setDoc(doc(db, 'config', 'app'), APP_CONFIG_DEFAULT, { merge: true }); } catch(e) {}
+      showToast('Se restablecieron los valores predeterminados.');
+  });
+
   // 1. Navegación SPA
+  const gotoTarget = (targetId) => {
+      document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+      const trigger = document.querySelector(`.sidebar .nav-link[data-target="${targetId}"]`);
+      if(trigger) trigger.classList.add('active');
+      document.querySelectorAll('.section-view').forEach(sec => sec.classList.remove('active'));
+      const target = document.getElementById(targetId);
+      if(target) target.classList.add('active');
+      
+      if (targetId === 'citas' && calendar) {
+          setTimeout(() => { 
+              calendar.render(); 
+              calendar.updateSize(); 
+          }, 150);
+      }
+  };
+
   document.querySelectorAll('.sidebar .nav-link').forEach(link => {
       link.addEventListener('click', (e) => {
-          e.preventDefault();
-          document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
-          link.classList.add('active');
-          document.querySelectorAll('.section-view').forEach(sec => sec.classList.remove('active'));
-          const target = document.getElementById(link.getAttribute('data-target'));
-          if(target) target.classList.add('active');
+          e.preventDefault(); gotoTarget(link.getAttribute('data-target'));
       });
   });
 
-  // 2. Base SMAE y Generador Automático
+  // 2. Base SMAE
   const dbSMAE = { verduras: { kcal: 25, prot: 2, lip: 0, hc: 4 }, frutas: { kcal: 60, prot: 0, lip: 0, hc: 15 }, cerSinGrasa: { kcal: 70, prot: 2, lip: 0, hc: 15 }, cerConGrasa: { kcal: 115, prot: 2, lip: 5, hc: 15 }, leguminosas: { kcal: 120, prot: 8, lip: 1, hc: 20 }, aoaMuyBajo: { kcal: 40, prot: 7, lip: 1, hc: 0 }, aoaBajo: { kcal: 55, prot: 7, lip: 3, hc: 0 }, aoaMod: { kcal: 75, prot: 7, lip: 5, hc: 0 }, aoaAlto: { kcal: 100, prot: 7, lip: 8, hc: 0 }, lecDes: { kcal: 95, prot: 9, lip: 2, hc: 12 }, lecSemi: { kcal: 110, prot: 9, lip: 4, hc: 12 }, lecEnt: { kcal: 150, prot: 9, lip: 8, hc: 12 }, lecAzu: { kcal: 200, prot: 8, lip: 5, hc: 30 }, aceSinProt: { kcal: 45, prot: 0, lip: 5, hc: 0 }, aceConProt: { kcal: 70, prot: 3, lip: 5, hc: 3 }, azuSinGrasa: { kcal: 40, prot: 0, lip: 0, hc: 10 }, azuConGrasa: { kcal: 85, prot: 0, lip: 5, hc: 10 }, alcohol: { kcal: 140, prot: 0, lip: 0, hc: 20 }};
-  
+
+  // Nombres legibles de cada grupo SMAE (se usan para renderizar listas dinámicas)
+  const labelSMAE = { verduras:'Verduras', frutas:'Frutas', cerSinGrasa:'Cereal sin grasa', cerConGrasa:'Cereal con grasa', leguminosas:'Leguminosas', aoaMuyBajo:'AOA muy bajo en grasa', aoaBajo:'AOA bajo en grasa', aoaMod:'AOA moderado en grasa', aoaAlto:'AOA alto en grasa', lecDes:'Leche descremada', lecSemi:'Leche semidescremada', lecEnt:'Leche entera', lecAzu:'Leche con azúcar', aceSinProt:'Aceites sin proteína', aceConProt:'Aceites con proteína', azuSinGrasa:'Azúcares sin grasa', azuConGrasa:'Azúcares con grasa' };
+
+  // ===================================================================================
+  // MOTOR DE ALIMENTOS SMAE + CATÁLOGOS PROPIOS (conecta "Mis Alimentos"/"Mis Recetas"
+  // con los generadores de menú, que antes usaban texto fijo desconectado de los datos
+  // reales del usuario y de las raciones calculadas).
+  // ===================================================================================
+
+  // Banco de alimentos representativos por grupo del Sistema Mexicano de Alimentos
+  // Equivalentes (SMAE). Cada texto representa UNA ración/equivalente del grupo.
+  const bancoAlimentosSMAE = {
+      verduras: ["taza de espinaca cruda", "½ taza de brócoli cocido", "taza de lechuga con jitomate", "½ taza de calabacita cocida", "taza de nopales asados", "½ taza de zanahoria cocida", "taza de champiñones salteados", "½ taza de chayote cocido"],
+      frutas: ["manzana chica", "taza de papaya picada", "½ plátano", "taza de fresas", "naranja", "taza de melón picado", "2 kiwis", "taza de piña picada"],
+      cerSinGrasa: ["tortilla de maíz", "½ bolillo sin migajón", "3 cdas de avena cruda", "½ taza de arroz cocido", "½ taza de pasta cocida", "2 galletas María", "rebanada de pan integral"],
+      cerConGrasa: ["pieza de pan dulce chico", "3 galletas saladas con mantequilla", "½ taza de granola", "waffle chico", "6 totopos horneados"],
+      leguminosas: ["½ taza de frijoles cocidos", "½ taza de lentejas cocidas", "½ taza de habas cocidas", "½ taza de garbanzo cocido"],
+      aoaMuyBajo: ["3 claras de huevo", "30g de pechuga de pollo sin piel", "30g de atún en agua", "30g de pescado blanco a la plancha"],
+      aoaBajo: ["1 huevo entero", "30g de queso panela", "30g de jamón de pavo", "30g de queso fresco"],
+      aoaMod: ["30g de carne molida de res", "30g de chuleta de cerdo", "1 huevo estrellado con poco aceite", "30g de queso oaxaca"],
+      aoaAlto: ["30g de chorizo", "30g de salchicha", "30g de tocino", "1 huevo frito con aceite abundante"],
+      lecDes: ["taza de leche descremada", "taza de yogurt natural descremado"],
+      lecSemi: ["taza de leche semidescremada", "¾ taza de yogurt natural semidescremado"],
+      lecEnt: ["taza de leche entera", "taza de yogurt natural entero"],
+      lecAzu: ["taza de yogurt bebible con azúcar", "taza de leche con chocolate"],
+      aceSinProt: ["cdita de aceite de oliva", "cdita de mantequilla", "2 cditas de crema", "⅛ de aguacate"],
+      aceConProt: ["8 almendras", "5 mitades de nuez", "8 cacahuates", "⅓ de aguacate"],
+      azuSinGrasa: ["cda de azúcar", "cda de mermelada", "cda de miel"],
+      azuConGrasa: ["cdita de cajeta con nuez", "cda de crema de avellana y chocolate"]
+  };
+
+  // Distribución típica (proporción del total de raciones de cada grupo) entre los
+  // 5 tiempos de comida — generaliza la tabla que antes era 100% estática.
+  const patronDistribucionSMAE = {
+      verduras: { comida: 0.65, cena: 0.35 },
+      frutas: { colAM: 0.4, colPM: 0.6 },
+      cerSinGrasa: { desayuno: 0.5, colAM: 0.5 },
+      cerConGrasa: { desayuno: 0.5, cena: 0.5 },
+      leguminosas: { comida: 0.7, colAM: 0.3 },
+      aoaMuyBajo: { comida: 0.6, colAM: 0.4 },
+      aoaBajo: { colAM: 0.4, comida: 0.6 },
+      aoaMod: { comida: 1 },
+      aoaAlto: { comida: 1 },
+      lecDes: { desayuno: 0.6, cena: 0.4 },
+      lecSemi: { desayuno: 0.6, cena: 0.4 },
+      lecEnt: { desayuno: 0.6, cena: 0.4 },
+      lecAzu: { desayuno: 0.5, cena: 0.5 },
+      aceSinProt: { comida: 0.5, colAM: 0.5 },
+      aceConProt: { colAM: 0.5, comida: 0.5 },
+      azuSinGrasa: { desayuno: 0.5, cena: 0.5 },
+      azuConGrasa: { desayuno: 0.5, cena: 0.5 }
+  };
+  const SLOTS_5 = ['desayuno', 'colAM', 'comida', 'colPM', 'cena'];
+  const SLOT_LABEL = { desayuno: 'Desayuno', colAM: 'Colación mañana', comida: 'Comida', colPM: 'Colación tarde', cena: 'Cena' };
+
+  // Reparte las raciones (num, puede ser decimal) de UN grupo entre los tiempos de
+  // comida según su patrón, redondeando a 0.5 y garantizando que la suma no exceda el total.
+  const repartirGrupoEnSlots = (grupo, raciones) => {
+      const patron = patronDistribucionSMAE[grupo]; const out = {};
+      if (!patron || !raciones) return out;
+      let restante = raciones;
+      const entradas = Object.entries(patron);
+      entradas.forEach(([slot, peso], idx) => {
+          let cant = (idx === entradas.length - 1) ? restante : Math.round(raciones * peso * 2) / 2;
+          cant = Math.min(cant, restante); cant = Math.max(0, cant);
+          if (cant > 0) out[slot] = cant;
+          restante = Math.max(0, restante - cant);
+      });
+      return out;
+  };
+
+  // Selecciona un alimento real para un grupo SMAE: prioriza alimentos propios del
+  // nutriólogo (Mis Alimentos) cuando existen para ese grupo, evita repetir el mismo
+  // texto dentro de un mismo día y marca visualmente si coincide con una exclusión/alergia.
+  const elegirAlimentoDeGrupo = (grupo, excludedTags, usadosEnDia) => {
+      const propios = (misAlimentosMemory || []).filter(a => a.grupo === grupo).map(a => `${a.nombre} (${a.porcion})`);
+      const genericos = bancoAlimentosSMAE[grupo] || [];
+      const pool = propios.length > 0 && Math.random() < 0.5 ? propios : (genericos.length ? genericos : propios);
+      const disponibles = pool.filter(x => !usadosEnDia.has(x));
+      const elegido = (disponibles.length ? disponibles : pool)[Math.floor(Math.random() * (disponibles.length ? disponibles.length : pool.length))] || labelSMAE[grupo];
+      usadosEnDia.add(elegido);
+      const excluido = contieneExclusion(elegido, excludedTags);
+      return { texto: elegido, excluido };
+  };
+
+  // Construye el HTML tipo "tarjeta de receta" para un tiempo de comida a partir de
+  // las raciones por grupo que le tocaron, o usa una receta propia si el usuario tiene
+  // una marcada para ese tiempo y no contiene alérgenos.
+  const construirTarjetaTiempo = (gruposConRaciones, excludedTags, usadosEnDia, tiempoKey, permitirRecetaPropia) => {
+      if (permitirRecetaPropia) {
+          const candidatas = (misRecetasMemory || []).filter(r => r.tiempo === tiempoKey || !r.tiempo);
+          if (candidatas.length && Math.random() < 0.35) {
+              const r = candidatas[Math.floor(Math.random() * candidatas.length)];
+              const excluidaReceta = contieneExclusion(r.nombre + ' ' + r.ingredientes, excludedTags);
+              return `<div class="pdf-recipe-card ${excluidaReceta ? 'border border-danger border-2' : ''}"><div class="pdf-recipe-title">${r.nombre} <span class="badge bg-info-subtle text-dark receta-slot-badge">receta propia</span></div><div class="pdf-ingredient">${(r.ingredientes || '').replace(/\n/g, '<br>')}</div>${excluidaReceta ? '<div class="text-danger small fw-bold mt-1"><i class="fi fi-ss-triangle-warning"></i> Revisar posible alérgeno</div>' : ''}</div>`;
+          }
+      }
+      const items = [];
+      let hayExcluido = false;
+      Object.entries(gruposConRaciones).forEach(([grupo, cant]) => {
+          if (!cant || cant <= 0) return;
+          const { texto, excluido } = elegirAlimentoDeGrupo(grupo, excludedTags, usadosEnDia);
+          if (excluido) hayExcluido = true;
+          items.push(`<div class="pdf-ingredient">• ${cant} ${cant === 1 ? 'ración' : 'raciones'} de ${texto}</div>`);
+      });
+      if (items.length === 0) return `<div class="pdf-recipe-card"><div class="pdf-recipe-title">Libre</div><div class="pdf-ingredient text-muted">Sin equivalentes asignados</div></div>`;
+      return `<div class="pdf-recipe-card ${hayExcluido ? 'border border-danger border-2' : ''}">${items.join('')}${hayExcluido ? '<div class="text-danger small fw-bold mt-1"><i class="fi fi-ss-triangle-warning"></i> Posible alimento excluido: sustituir</div>' : ''}</div>`;
+  };
+
+  // Genera el menú de N días (5 tiempos por día) a partir de las raciones totales por
+  // grupo (objeto tipo el que devuelve distribuirRaciones), respetando exclusiones y
+  // mezclando recetas propias cuando aplica.
+  const generarMenuSMAEdias = (raciones, nombresDias, excludedTags = [], usarRecetasPropias = true) => {
+      const porSlot = {}; SLOTS_5.forEach(s => porSlot[s] = {});
+      Object.entries(raciones).forEach(([grupo, cant]) => {
+          const reparto = repartirGrupoEnSlots(grupo, cant);
+          Object.entries(reparto).forEach(([slot, val]) => { porSlot[slot][grupo] = val; });
+      });
+      const slotToTiempo = { desayuno: 'desayuno', colAM: 'colacion', comida: 'comida', colPM: 'colacion', cena: 'cena' };
+      return nombresDias.map(dia => {
+          const usadosEnDia = new Set();
+          const fila = { dia };
+          fila.des = construirTarjetaTiempo(porSlot.desayuno, excludedTags, usadosEnDia, slotToTiempo.desayuno, usarRecetasPropias);
+          fila.cm = construirTarjetaTiempo(porSlot.colAM, excludedTags, usadosEnDia, slotToTiempo.colAM, usarRecetasPropias);
+          fila.com = construirTarjetaTiempo(porSlot.comida, excludedTags, usadosEnDia, slotToTiempo.comida, usarRecetasPropias);
+          fila.ct = construirTarjetaTiempo(porSlot.colPM, excludedTags, usadosEnDia, slotToTiempo.colPM, usarRecetasPropias);
+          fila.cen = construirTarjetaTiempo(porSlot.cena, excludedTags, usadosEnDia, slotToTiempo.cena, usarRecetasPropias);
+          return fila;
+      });
+  };
+
+  // Versión simplificada a 3 tiempos (Desayuno/Comida/Cena) en texto plano, usada por
+  // el Generador de Dieta Rápida.
+  const generarMenuSMAEsimple = (raciones, nombresDias, excludedTags = []) => {
+      const porSlot = { desayuno: {}, comida: {}, cena: {} };
+      const mapa3 = { desayuno: 'desayuno', colAM: 'desayuno', comida: 'comida', colPM: 'comida', cena: 'cena' };
+      Object.entries(raciones).forEach(([grupo, cant]) => {
+          const reparto = repartirGrupoEnSlots(grupo, cant);
+          Object.entries(reparto).forEach(([slot5, val]) => { const slot3 = mapa3[slot5]; porSlot[slot3][grupo] = (porSlot[slot3][grupo] || 0) + val; });
+      });
+      const textoTiempo = (gruposConRaciones, tiempoKey, usadosEnDia) => {
+          const recetas = (misRecetasMemory || []).filter(r => r.tiempo === tiempoKey);
+          if (recetas.length && Math.random() < 0.3) {
+              const r = recetas[Math.floor(Math.random() * recetas.length)];
+              const marcado = contieneExclusion(r.nombre + ' ' + r.ingredientes, excludedTags);
+              return `${r.nombre} — ${r.ingredientes}` + (marcado ? ' <span class="badge bg-danger"><i class="fi fi-ss-triangle-warning"></i> Revisar alergia</span>' : '');
+          }
+          const partes = [];
+          let excluido = false;
+          Object.entries(gruposConRaciones).forEach(([grupo, cant]) => {
+              if (!cant || cant <= 0) return;
+              const { texto, excluido: exc } = elegirAlimentoDeGrupo(grupo, excludedTags, usadosEnDia);
+              if (exc) excluido = true;
+              partes.push(`${cant} ${texto}`);
+          });
+          const base = partes.length ? partes.join(', ') : 'Menú libre';
+          return base + (excluido ? ' <span class="badge bg-danger"><i class="fi fi-ss-triangle-warning"></i> Revisar alergia</span>' : '');
+      };
+      return nombresDias.map(dia => {
+          const usadosEnDia = new Set();
+          return {
+              dia,
+              desayuno: textoTiempo(porSlot.desayuno, 'desayuno', usadosEnDia),
+              comida: textoTiempo(porSlot.comida, 'comida', usadosEnDia),
+              cena: textoTiempo(porSlot.cena, 'cena', usadosEnDia)
+          };
+      });
+  };
+
+  // Motor único de distribución de raciones SMAE a partir de una meta de kcal y % de macros.
+  // Se usa tanto en "SMAE & Generador" (Motor Automatizado) como en "Cálculos Rápidos"
+  // (Generar Cuadro de Equivalentes), que antes tenían dos lógicas distintas e inconsistentes
+  // (la segunda usaba constantes arbitrarias que no correspondían a los macros calculados).
+  const distribuirRaciones = (kcalObjetivo, pctCh, pctPt, pctLp, perfil = {}) => {
+      const { verduras = 3, frutas = 3, leguminosas = 1, grupoLacteo = 'lecDes', grupoAoa = 'aoaBajo' } = perfil;
+      const targetC = (kcalObjetivo * (pctCh / 100)) / 4;
+      const targetP = (kcalObjetivo * (pctPt / 100)) / 4;
+      const targetL = (kcalObjetivo * (pctLp / 100)) / 9;
+
+      let p = verduras * 2 + leguminosas * 8 + dbSMAE[grupoLacteo].prot;
+      let c = verduras * 4 + frutas * 15 + leguminosas * 20 + dbSMAE[grupoLacteo].hc;
+      let l = leguminosas * 1 + dbSMAE[grupoLacteo].lip;
+
+      let cer = Math.max(0, Math.round(((targetC - c) / 15) * 2) / 2); p += cer * 2;
+      let aoa = Math.max(0, Math.round(((targetP - p) / 7) * 2) / 2); l += aoa * dbSMAE[grupoAoa].lip;
+      let ace = Math.max(0, Math.round(((targetL - l) / 5) * 2) / 2);
+
+      return { verduras, frutas, cerSinGrasa: cer, leguminosas, [grupoAoa]: aoa, [grupoLacteo]: 1, aceSinProt: ace };
+  };
+
+  // Normaliza texto (minúsculas y sin acentos) para comparar contra alimentos/tags excluidos
+  const normalizarTexto = (str) => (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const contieneExclusion = (texto, tags) => (tags || []).some(tag => tag && normalizarTexto(texto).includes(normalizarTexto(tag)));
+
   let dietTotalsSmae = { kcal: 0, prot: 0, lip: 0, hc: 0 };
-  
   const actualizarTotalesSMAE = () => {
       let tKcal = 0, tProt = 0, tLip = 0, tHc = 0;
       document.querySelectorAll('.smae-input').forEach(inp => {
@@ -548,7 +1183,6 @@
       document.getElementById('tot-kcal').innerText = tKcal.toFixed(1); document.getElementById('tot-prot').innerText = tProt.toFixed(1);
       document.getElementById('tot-lip').innerText = tLip.toFixed(1); document.getElementById('tot-hc').innerText = tHc.toFixed(1);
   };
-
   document.querySelectorAll('.smae-input').forEach(input => input.addEventListener('input', actualizarTotalesSMAE));
 
   document.querySelectorAll('.auto-pct').forEach(inp => {
@@ -561,37 +1195,18 @@
   document.getElementById('btn-auto-smae').addEventListener('click', () => {
       const kcal = getNumVal('auto-kcal'), pctC = getNumVal('auto-ch'), pctP = getNumVal('auto-pt'), pctL = getNumVal('auto-lp');
       if(kcal === 0) return alert("Ingresa las Kcal meta.");
-
-      const targetC = (kcal * (pctC / 100)) / 4;
-      const targetP = (kcal * (pctP / 100)) / 4;
-      const targetL = (kcal * (pctL / 100)) / 9;
-
-      const calcOpt = (v, f, leg, lecheG, aoaG) => {
-          let p = v*2 + leg*8 + dbSMAE[lecheG].prot;
-          let c = v*4 + f*15 + leg*20 + dbSMAE[lecheG].hc;
-          let l = leg*1 + dbSMAE[lecheG].lip;
-          let cer = Math.max(0, Math.round(((targetC - c) / 15) * 2) / 2);
-          p += cer * 2;
-          let aoa = Math.max(0, Math.round(((targetP - p) / 7) * 2) / 2);
-          l += aoa * dbSMAE[aoaG].lip;
-          let ace = Math.max(0, Math.round(((targetL - l) / 5) * 2) / 2);
-          return { verduras: v, frutas: f, cerSinGrasa: cer, leguminosas: leg, [aoaG]: aoa, [lecheG]: 1, aceSinProt: ace };
-      };
-
       const opts = [
-          { t: "Equilibrada (Lácteo Semi, AOA Mod)", d: calcOpt(3, 3, 1, 'lecSemi', 'aoaMod') },
-          { t: "Baja en Grasa (Lácteo Desc, AOA Muy Bajo)", d: calcOpt(4, 2, 1, 'lecDes', 'aoaMuyBajo') },
-          { t: "Alta en Fibra (AOA Bajo)", d: calcOpt(5, 2, 2, 'lecDes', 'aoaBajo') }
+          { t: "Equilibrada (Lácteo Semi, AOA Mod)", d: distribuirRaciones(kcal, pctC, pctP, pctL, { verduras: 3, frutas: 3, leguminosas: 1, grupoLacteo: 'lecSemi', grupoAoa: 'aoaMod' }) },
+          { t: "Baja en Grasa (Lácteo Desc, AOA Muy Bajo)", d: distribuirRaciones(kcal, pctC, pctP, pctL, { verduras: 4, frutas: 2, leguminosas: 1, grupoLacteo: 'lecDes', grupoAoa: 'aoaMuyBajo' }) },
+          { t: "Alta en Fibra (AOA Bajo)", d: distribuirRaciones(kcal, pctC, pctP, pctL, { verduras: 5, frutas: 2, leguminosas: 2, grupoLacteo: 'lecDes', grupoAoa: 'aoaBajo' }) }
       ];
-
       let html = '';
       opts.forEach(o => {
           html += `<div class="col-md-4"><div class="card p-2 border-primary shadow-sm mb-2"><h6 class="text-center text-primary mb-1">${o.t}</h6><ul class="list-unstyled small mb-2">`;
           for(let key in o.d) { if(o.d[key] > 0) html += `<li>${key}: <b>${o.d[key]}</b></li>`; }
           html += `</ul><button class="btn btn-sm btn-success w-100 btn-apply-smae" data-json='${JSON.stringify(o.d)}'>Aplicar en Tabla</button></div></div>`;
       });
-      const container = document.getElementById('auto-options-container');
-      container.innerHTML = html; container.classList.remove('d-none');
+      const container = document.getElementById('auto-options-container'); container.innerHTML = html; container.classList.remove('d-none');
   });
 
   document.getElementById('auto-options-container').addEventListener('click', (e) => {
@@ -652,10 +1267,14 @@
   });
 
   document.getElementById('btn-generar-cuadro').addEventListener('click', () => {
-      const ptG = parseFloat(document.getElementById('tbl-g-pt').innerText) || 0, chG = parseFloat(document.getElementById('tbl-g-ch').innerText) || 0, lpG = parseFloat(document.getElementById('tbl-g-lp').innerText) || 0;
-      if((parseFloat(document.getElementById('cr-res-get').innerText) || 0) === 0) return alert("Faltan datos.");
-      estadoEquivalentes = { verduras: 3, frutas: 3, lecDes: 1, cerSinGrasa: Math.max(0, Math.round((chG - 12 - 45)/15)), aoaBajo: Math.max(0, Math.round((ptG - 6 - 9 - (((chG-57)/15)*2))/7)), aceSinProt: Math.max(0, Math.round((lpG - 2 - (((ptG - 15 - (((chG-57)/15)*2))/7)*3))/5)) };
-      document.getElementById('lista-cuadro-gen').innerHTML = `<li class="list-group-item d-flex justify-content-between">Verduras <span class="badge bg-primary rounded-pill">${estadoEquivalentes.verduras}</span></li><li class="list-group-item d-flex justify-content-between">Frutas <span class="badge bg-primary rounded-pill">${estadoEquivalentes.frutas}</span></li><li class="list-group-item d-flex justify-content-between">Cereales s/Grasa <span class="badge bg-primary rounded-pill">${estadoEquivalentes.cerSinGrasa}</span></li><li class="list-group-item d-flex justify-content-between">AOA Bajo Aporte <span class="badge bg-primary rounded-pill">${estadoEquivalentes.aoaBajo}</span></li><li class="list-group-item d-flex justify-content-between">Leche Descremada <span class="badge bg-primary rounded-pill">${estadoEquivalentes.lecDes}</span></li><li class="list-group-item d-flex justify-content-between">Aceites s/Proteína <span class="badge bg-primary rounded-pill">${estadoEquivalentes.aceSinProt}</span></li>`;
+      const get = parseFloat(document.getElementById('cr-res-get').innerText) || 0;
+      if(get === 0) return alert("Faltan datos. Completa el paso 1 (Antropometría) primero.");
+      const pCh = getNumVal('cr-ch'), pPt = getNumVal('cr-pt'), pLp = 100 - pCh - pPt;
+      estadoEquivalentes = distribuirRaciones(get, pCh, pPt, pLp);
+      document.getElementById('lista-cuadro-gen').innerHTML = Object.entries(estadoEquivalentes)
+          .filter(([, cant]) => cant > 0)
+          .map(([grupo, cant]) => `<li class="list-group-item d-flex justify-content-between">${labelSMAE[grupo] || grupo} <span class="badge bg-primary rounded-pill">${cant}</span></li>`)
+          .join('');
       document.getElementById('card-cuadro-generado').classList.remove('d-none');
   });
 
@@ -670,11 +1289,18 @@
 
   // 4. Módulo Pediátrico (OMS/CDC)
   const initCharts = () => {
+      const ctxPeso = document.getElementById('chart-peso');
+      const ctxTalla = document.getElementById('chart-talla');
+      const ctxImc = document.getElementById('chart-imc');
+      
+      if (!ctxPeso || !ctxTalla || !ctxImc) return;
+
       const co = { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'linear', position: 'bottom', title: {display: true, text: 'Edad (Meses)'} } } };
       const mkCurve = (b, f) => Array.from({length: 61}, (_, i) => ({x: i, y: b + (i * f)}));
-      chartPeso = new Chart(document.getElementById('chart-peso').getContext('2d'), { type: 'line', data: { datasets: [ { label: 'P50 (OMS)', data: mkCurve(3.3, 0.25), borderColor: '#aeb6bf', borderDash: [5,5], pointRadius: 0 }, { label: 'Paciente', data: [], borderColor: '#1abc9c', backgroundColor: '#1abc9c', showLine: true } ] }, options: { ...co, scales: { ...co.scales, y: { title: {display: true, text: 'Peso (kg)'} } } } });
-      chartTalla = new Chart(document.getElementById('chart-talla').getContext('2d'), { type: 'line', data: { datasets: [ { label: 'P50 (OMS)', data: mkCurve(50, 1), borderColor: '#aeb6bf', borderDash: [5,5], pointRadius: 0 }, { label: 'Paciente', data: [], borderColor: '#f39c12', backgroundColor: '#f39c12', showLine: true } ] }, options: { ...co, scales: { ...co.scales, y: { title: {display: true, text: 'Estatura (cm)'} } } } });
-      chartImc = new Chart(document.getElementById('chart-imc').getContext('2d'), { type: 'line', data: { datasets: [ { label: 'P50 (OMS)', data: mkCurve(13, 0.05), borderColor: '#aeb6bf', borderDash: [5,5], pointRadius: 0 }, { label: 'Paciente', data: [], borderColor: '#e74c3c', backgroundColor: '#e74c3c', showLine: true } ] }, options: { ...co, scales: { ...co.scales, y: { title: {display: true, text: 'IMC'} } } } });
+      
+      chartPeso = new Chart(ctxPeso.getContext('2d'), { type: 'line', data: { datasets: [ { label: 'P50 (OMS)', data: mkCurve(3.3, 0.25), borderColor: '#aeb6bf', borderDash: [5,5], pointRadius: 0 }, { label: 'Paciente', data: [], borderColor: '#1abc9c', backgroundColor: '#1abc9c', showLine: true } ] }, options: { ...co, scales: { ...co.scales, y: { title: {display: true, text: 'Peso (kg)'} } } } });
+      chartTalla = new Chart(ctxTalla.getContext('2d'), { type: 'line', data: { datasets: [ { label: 'P50 (OMS)', data: mkCurve(50, 1), borderColor: '#aeb6bf', borderDash: [5,5], pointRadius: 0 }, { label: 'Paciente', data: [], borderColor: '#f39c12', backgroundColor: '#f39c12', showLine: true } ] }, options: { ...co, scales: { ...co.scales, y: { title: {display: true, text: 'Estatura (cm)'} } } } });
+      chartImc = new Chart(ctxImc.getContext('2d'), { type: 'line', data: { datasets: [ { label: 'P50 (OMS)', data: mkCurve(13, 0.05), borderColor: '#aeb6bf', borderDash: [5,5], pointRadius: 0 }, { label: 'Paciente', data: [], borderColor: '#e74c3c', backgroundColor: '#e74c3c', showLine: true } ] }, options: { ...co, scales: { ...co.scales, y: { title: {display: true, text: 'IMC'} } } } });
   };
   initCharts();
 
@@ -702,20 +1328,276 @@
       } catch(err) { alert("Error: " + err.message); }
   });
 
-  // 5. CRUD PACIENTES
+  // 5. CRUD PACIENTES & Galería
+  const getFechaTxt = (obj) => {
+      if (!obj || !obj.fecha) return 'Reciente';
+      if (obj.fecha.toDate) return obj.fecha.toDate().toLocaleDateString();
+      return new Date(obj.fecha).toLocaleDateString();
+  };
+
+  const renderPerfilPaciente = (id) => {
+      const d = pacientesMemory[id];
+      if(!d) return;
+      currentProfileId = id;
+
+      document.getElementById('det-nombre').innerText = d.personales?.nombre || 'Sin Nombre';
+      document.getElementById('det-email').innerText = d.personales?.email || id;
+      document.getElementById('det-edad').innerText = d.personales?.edad ? `${d.personales.edad} años - ${d.personales.sexo}` : '';
+      document.getElementById('det-ocupacion').innerText = d.personales?.ocupacion || '-';
+      document.getElementById('det-tel').innerText = d.personales?.telefono || '-';
+      document.getElementById('det-motivo').innerText = d.personales?.motivo || '-';
+      document.getElementById('det-alergias').innerText = d.historiaClinica?.alergias || 'Ninguna registrada';
+      
+      document.getElementById('ev-paciente-id').value = id;
+      document.getElementById('ev-talla').value = d.antropometria?.talla || '';
+
+      const listaAvances = document.getElementById('lista-det-avances');
+      listaAvances.innerHTML = '';
+      const pAvances = d.historial_antropometrico || [];
+      if(pAvances.length === 0) {
+          listaAvances.innerHTML = '<tr><td colspan="6" class="text-muted small py-3">No hay registros de avances para este paciente.</td></tr>';
+      } else {
+          pAvances.forEach((av, i) => {
+              listaAvances.innerHTML += `
+                  <tr>
+                      <td><span class="badge bg-primary">Cons. ${i + 1}</span></td>
+                      <td><small class="text-muted">${getFechaTxt(av)}</small></td>
+                      <td class="fw-bold">${av.peso ? av.peso : '-'}</td>
+                      <td>${av.imc ? av.imc : '-'}</td>
+                      <td>${av.grasa ? av.grasa : '-'}</td>
+                      <td class="text-success fw-bold">${av.masaMagra ? av.masaMagra : '-'}</td>
+                  </tr>`;
+          });
+      }
+
+      const listaCitas = document.getElementById('lista-det-citas'); listaCitas.innerHTML = '';
+      const pCitas = citasMemory.filter(c => c.pacienteId === id);
+      if(pCitas.length === 0) listaCitas.innerHTML = '<li class="list-group-item text-muted">No hay citas registradas.</li>';
+      else pCitas.forEach(c => listaCitas.innerHTML += `<li class="list-group-item"><i class="fi fi-ss-calendar-clock text-primary"></i> ${new Date(c.start).toLocaleString()}</li>`);
+
+      const listaSmae = document.getElementById('lista-det-smae'); listaSmae.innerHTML = '';
+      const pSmae = menusMemory.filter(m => m.pacienteId === id);
+      if(pSmae.length === 0) {
+          listaSmae.innerHTML = '<li class="list-group-item text-muted">No hay distribuciones guardadas.</li>';
+      } else {
+          pSmae.forEach((m, index) => {
+              let racionesHtml = '<div class="mt-2 small text-muted"><div class="row">';
+              for(let r in m.raciones) { if(m.raciones[r] > 0) racionesHtml += `<div class="col-4"><b>${r}:</b> ${m.raciones[r]}</div>`; }
+              racionesHtml += '</div></div>';
+              listaSmae.innerHTML += `<li class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                      <span><i class="fi fi-ss-restaurant text-success"></i> ${Math.round(m.totales.kcal)} kcal (${m.totales.prot.toFixed(0)}g P, ${m.totales.hc.toFixed(0)}g HC) - ${getFechaTxt(m)}</span>
+                      <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#smae-col-${index}">Ver Detalles</button>
+                  </div>
+                  <div class="collapse" id="smae-col-${index}">${racionesHtml}</div>
+              </li>`;
+          });
+      }
+
+      const listaDr = document.getElementById('lista-det-dr'); listaDr.innerHTML = '';
+      const pDr = dietasRapidasMemory.filter(m => m.pacienteId === id);
+      if(pDr.length === 0) {
+          listaDr.innerHTML = '<li class="list-group-item text-muted">No hay dietas rápidas asignadas.</li>';
+      } else {
+          pDr.forEach((m, index) => {
+              let menuHtml = '';
+              if(m.menu) {
+                  menuHtml = '<table class="table table-sm mt-2 font-monospace" style="font-size:0.8rem;"><tbody>';
+                  m.menu.forEach(d => { menuHtml += `<tr><td class="fw-bold text-primary">${d.dia}</td><td>${d.desayuno}</td><td>${d.comida}</td><td>${d.cena}</td></tr>`; });
+                  menuHtml += '</tbody></table>';
+              }
+              listaDr.innerHTML += `<li class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                      <span><i class="fi fi-ss-document text-info"></i> Dieta Rápida (${m.rangoKcal} kcal) - ${getFechaTxt(m)}</span>
+                      <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#dr-col-${index}">Ver Menú</button>
+                  </div>
+                  <div class="collapse mt-2" id="dr-col-${index}">${menuHtml}</div>
+              </li>`;
+          });
+      }
+
+      const listaPlanes = document.getElementById('lista-det-planes'); listaPlanes.innerHTML = '';
+      const pPlanes = planesMemory.filter(m => m.pacienteId === id);
+      if(pPlanes.length === 0) {
+          listaPlanes.innerHTML = '<li class="list-group-item text-muted">No hay planes nutrimentales guardados.</li>';
+      } else {
+          pPlanes.forEach((m, index) => {
+              listaPlanes.innerHTML += `<li class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                      <span><i class="fi fi-ss-book-alt text-warning"></i> Plan de ${m.kcalObjetivo} kcal (${m.duracion} día(s)) - ${getFechaTxt(m)}</span>
+                      <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#plan-col-${index}">Ver Plan</button>
+                  </div>
+                  <div class="collapse mt-2" id="plan-col-${index}" style="max-height:450px; overflow:auto;">${m.resumenHtml || ''}</div>
+              </li>`;
+          });
+      }
+
+      document.getElementById('btn-agendar-desde-perfil').setAttribute('data-id', id);
+      document.getElementById('btn-dieta-desde-perfil').setAttribute('data-id', id);
+      document.getElementById('btn-plan-desde-perfil').setAttribute('data-id', id);
+  };
+
+  document.getElementById('form-evolucion').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pId = document.getElementById('ev-paciente-id').value;
+      if(!pId) return;
+
+      const btn = document.getElementById('btn-guardar-evolucion');
+      btn.disabled = true; btn.innerHTML = 'Guardando...';
+
+      const d = pacientesMemory[pId];
+      const peso = getNumVal('ev-peso');
+      const talla = getNumVal('ev-talla');
+      const edad = parseInt(d.personales.edad) || 30;
+      const sexo = d.personales.sexo || 'M';
+
+      const b = getNumVal('ev-bic'), t = getNumVal('ev-tri'), s = getNumVal('ev-sub'), i = getNumVal('ev-sup');
+      
+      let imc = 0, grasa = 0, masaMagra = peso;
+      if(peso && talla) imc = peso / Math.pow(talla/100, 2);
+      
+      const suma = b + t + s + i;
+      if(suma > 0) {
+          const densidad = sexo === 'M' ? 1.1620-(0.0630*Math.log10(suma)) : 1.1549-(0.0678*Math.log10(suma));
+          grasa = ((4.95/densidad) - 4.5) * 100;
+          masaMagra = peso - (peso * (grasa/100));
+      }
+
+      const nuevoAvance = {
+          fecha: new Date().toISOString(),
+          peso, talla, cintura: getNumVal('ev-cintura'), cadera: getNumVal('ev-cadera'),
+          tricipital: t, bicipital: b, subescapular: s, suprailiaco: i,
+          imc: parseFloat(imc.toFixed(2)), grasa: parseFloat(grasa.toFixed(2)), masaMagra: parseFloat(masaMagra.toFixed(2))
+      };
+
+      let history = d.historial_antropometrico || [];
+      const todayStr = new Date().toLocaleDateString();
+      if (history.length > 0 && new Date(history[history.length-1].fecha).toLocaleDateString() === todayStr) {
+          history[history.length-1] = nuevoAvance;
+      } else {
+          history.push(nuevoAvance);
+      }
+
+      try {
+          await updateDoc(doc(db, "pacientes", pId), {
+              historial_antropometrico: history,
+              "antropometria.peso": peso, "antropometria.talla": talla,
+              "antropometria.imc": parseFloat(imc.toFixed(2)),
+              "antropometria.grasa": parseFloat(grasa.toFixed(2)),
+              "antropometria.masaMagra": parseFloat(masaMagra.toFixed(2)),
+              actualizado: serverTimestamp()
+          });
+          document.getElementById('form-evolucion').reset();
+          bootstrap.Collapse.getInstance(document.getElementById('collapseEvolucion')).hide();
+          showToast("Avance registrado correctamente.");
+      } catch(err) { alert("Error: " + err.message); }
+      finally { btn.disabled = false; btn.innerHTML = '<i class="fi fi-ss-disk"></i> Guardar Avance'; }
+  });
+
+  document.getElementById('dashboard-patients-grid').addEventListener('click', (e) => {
+      const card = e.target.closest('.patient-card');
+      if(card) {
+          const id = card.getAttribute('data-id');
+          renderPerfilPaciente(id);
+          bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDetallePaciente')).show();
+      }
+  });
+
+  document.getElementById('btn-agendar-desde-perfil').addEventListener('click', (e) => {
+      const pId = e.currentTarget.getAttribute('data-id');
+      bootstrap.Modal.getInstance(document.getElementById('modalDetallePaciente')).hide();
+      gotoTarget('citas');
+      setTimeout(() => { document.getElementById('c-paciente').value = pId; bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCita')).show(); }, 300);
+  });
+
+  document.getElementById('btn-dieta-desde-perfil').addEventListener('click', (e) => {
+      const pId = e.currentTarget.getAttribute('data-id');
+      bootstrap.Modal.getInstance(document.getElementById('modalDetallePaciente')).hide();
+      gotoTarget('dieta-rapida');
+      setTimeout(() => {
+          const sel = document.getElementById('dr-paciente');
+          sel.value = pId;
+          sel.dispatchEvent(new Event('change'));
+      }, 100);
+  });
+
+  document.getElementById('btn-plan-desde-perfil').addEventListener('click', (e) => {
+      const pId = e.currentTarget.getAttribute('data-id');
+      bootstrap.Modal.getInstance(document.getElementById('modalDetallePaciente')).hide();
+      gotoTarget('plan-nutrimental');
+      setTimeout(() => {
+          const sel = document.getElementById('plan-paciente');
+          sel.value = pId;
+          sel.dispatchEvent(new Event('change'));
+      }, 100);
+  });
+
+  // Listener Global BD Pacientes
+  onSnapshot(collection(db, "pacientes"), (snap) => {
+      const tb = document.getElementById('tabla-pacientes'); 
+      const grid = document.getElementById('dashboard-patients-grid');
+      document.getElementById('total-pacientes').innerText = snap.size; 
+      tb.innerHTML = ""; grid.innerHTML = "";
+      
+      const selects = ['c-paciente', 'smae-paciente', 'cr-paciente', 'ped-paciente', 'dr-paciente', 'plan-paciente'];
+      selects.forEach(s => document.getElementById(s).innerHTML = "<option value=''>Seleccione un paciente (opcional)...</option>");
+      
+      pacientesMemory = {}; 
+
+      snap.forEach((docSnap) => {
+          const d = docSnap.data();
+          const p = d.personales || {};
+          pacientesMemory[docSnap.id] = d;
+          
+          tb.innerHTML += `<tr><td>${p.nombre||''}</td><td>${p.email||docSnap.id}</td><td>${p.telefono||''}</td><td>${p.ocupacion||''}</td>
+          <td><button class='btn btn-sm btn-info btn-edit text-white' data-id='${docSnap.id}'><i class='fi fi-ss-pencil'></i></button> <button class='btn btn-sm btn-danger btn-del' data-id='${docSnap.id}'><i class='fi fi-ss-trash'></i></button></td></tr>`;
+          
+          grid.innerHTML += `
+            <div class="col-md-3">
+                <div class="card p-3 patient-card h-100" data-id="${docSnap.id}">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-primary" style="width:40px; height:40px;"><i class="fi fi-ss-user"></i></div>
+                        <div class="ms-3">
+                            <h6 class="mb-0 text-truncate" style="max-width: 150px;">${p.nombre || 'Sin Nombre'}</h6>
+                            <small class="text-muted">${p.edad ? p.edad + ' años' : ''}</small>
+                        </div>
+                    </div>
+                    <p class="small text-muted mb-0 text-truncate"><i class="fi fi-ss-envelope"></i> ${p.email || docSnap.id}</p>
+                </div>
+            </div>`;
+          
+          const opt = `<option value="${docSnap.id}">${p.nombre||docSnap.id}</option>`;
+          selects.forEach(s => document.getElementById(s).innerHTML += opt);
+      });
+
+      if(currentProfileId && pacientesMemory[currentProfileId]) {
+          renderPerfilPaciente(currentProfileId);
+      }
+  });
+
   document.getElementById('btn-calcular-antropo').addEventListener('click', () => {
       const peso = getNumVal('m-peso'), talla = getNumVal('m-talla'), edad = getNumVal('p-edad'), sexo = getStrVal('p-sexo');
       const b = getNumVal('pl-bicipital'), t = getNumVal('pl-tricipital'), s = getNumVal('pl-subescapular'), i = getNumVal('pl-suprailiaco');
-      if(!peso || !talla) return;
-      document.getElementById('res-imc').innerText = (peso / Math.pow(talla/100, 2)).toFixed(2);
+      if(!peso || !talla) return alert("Ingresa peso y talla.");
+      
+      const imc = peso / Math.pow(talla/100, 2);
+      document.getElementById('res-imc').innerText = imc.toFixed(2);
       document.getElementById('res-geb').innerText = (sexo === 'M' ? 66.5+(13.75*peso)+(5.003*talla)-(6.75*edad) : 655.1+(9.563*peso)+(1.85*talla)-(4.676*edad)).toFixed(2);
+      
       const suma = b+t+s+i;
-      document.getElementById('res-grasa').innerText = (suma > 0) ? (((4.95/(sexo === 'M' ? 1.1620-(0.0630*Math.log10(suma)) : 1.1549-(0.0678*Math.log10(suma)))) - 4.5) * 100).toFixed(2) : "N/A";
+      let grasa = 0;
+      if(suma > 0) {
+          const densidad = sexo === 'M' ? 1.1620-(0.0630*Math.log10(suma)) : 1.1549-(0.0678*Math.log10(suma));
+          grasa = ((4.95/densidad) - 4.5) * 100;
+      }
+      document.getElementById('res-grasa').innerText = grasa > 0 ? grasa.toFixed(2) : "0.00";
+      document.getElementById('res-masa-magra').innerText = grasa > 0 ? (peso - (peso * (grasa/100))).toFixed(2) : peso.toFixed(2);
       document.getElementById('resultados-clinicos').classList.remove('d-none');
   });
 
   document.getElementById('btn-nuevo-paciente').addEventListener('click', () => {
       document.getElementById('form-paciente').reset(); document.getElementById('p-id').value = ""; document.getElementById('p-email').readOnly = false;
+      document.getElementById('resultados-clinicos').classList.add('d-none');
       document.getElementById('modalPacienteLabel').innerHTML = '<i class="fi fi-ss-user-add"></i> Nuevo Expediente Clínico';
   });
 
@@ -724,38 +1606,49 @@
       const email = getStrVal('p-email').toLowerCase().trim(); const pId = document.getElementById('p-id').value;
       if(!email) return alert("El correo es obligatorio.");
       btn.disabled = true; btn.innerHTML = 'Procesando...';
+      
+      const imcVal = parseFloat(document.getElementById('res-imc').innerText) || 0;
+      const grasaVal = parseFloat(document.getElementById('res-grasa').innerText) || 0;
+      const mmVal = parseFloat(document.getElementById('res-masa-magra').innerText) || 0;
+      const pesoVal = getNumVal('m-peso');
+      
+      const antropoData = {
+          peso: pesoVal, talla: getNumVal('m-talla'), cintura: getNumVal('c-cintura'), cadera: getNumVal('c-cadera'),
+          brazoRel: getNumVal('c-brazo-rel'), pantorrillaC: getNumVal('c-pantorrilla-c'),
+          tricipital: getNumVal('pl-tricipital'), bicipital: getNumVal('pl-bicipital'), subescapular: getNumVal('pl-subescapular'),
+          suprailiaco: getNumVal('pl-suprailiaco'), supraespinal: getNumVal('pl-supraespinal'), abdominal: getNumVal('pl-abdominal'),
+          muslo: getNumVal('pl-muslo'), pantorrilla: getNumVal('pl-pantorrilla'),
+          imc: imcVal, grasa: grasaVal, masaMagra: mmVal, fecha: new Date().toISOString()
+      };
+
       try {
           const docRef = doc(db, "pacientes", email);
+          const docSnap = await getDoc(docRef);
+          
           const pData = {
               personales: { nombre: getStrVal('p-nombre'), fnac: getStrVal('p-fnac'), edad: getNumVal('p-edad'), sexo: getStrVal('p-sexo'), telefono: getStrVal('p-tel'), email: email, ocupacion: getStrVal('p-ocupacion'), motivo: getStrVal('p-motivo') },
               historiaClinica: { ahf: getStrVal('hc-ahf'), app: getStrVal('hc-app'), medicamentos: getStrVal('hc-medicamentos'), alergias: getStrVal('hc-alergias'), tabaco: getStrVal('fr-tabaco'), alcohol: getStrVal('fr-alcohol'), estres: getStrVal('fr-estres'), actividad: getStrVal('fr-actividad'), digestion: getStrVal('hc-digestion') },
-              antropometria: { peso: getNumVal('m-peso'), talla: getNumVal('m-talla'), cintura: getNumVal('c-cintura'), cadera: getNumVal('c-cadera'), brazoRel: getNumVal('c-brazo-rel'), pantorrillaC: getNumVal('c-pantorrilla-c'), tricipital: getNumVal('pl-tricipital'), bicipital: getNumVal('pl-bicipital'), subescapular: getNumVal('pl-subescapular'), suprailiaco: getNumVal('pl-suprailiaco'), supraespinal: getNumVal('pl-supraespinal'), abdominal: getNumVal('pl-abdominal'), muslo: getNumVal('pl-muslo'), pantorrilla: getNumVal('pl-pantorrilla') },
+              antropometria: antropoData,
               actualizado: serverTimestamp()
           };
 
-          if(pId) { await updateDoc(docRef, pData); } 
-          else {
-              const snap = await getDoc(docRef);
-              if(snap.exists()){ alert("El paciente ya existe."); btn.disabled = false; btn.innerHTML = 'Guardar Expediente'; return; }
+          if(pId || docSnap.exists()) { 
+              if(!pId && docSnap.exists()){ alert("El paciente ya existe en base de datos."); btn.disabled = false; btn.innerHTML = 'Guardar Expediente'; return; }
+              let history = docSnap.exists() && docSnap.data().historial_antropometrico ? docSnap.data().historial_antropometrico : [];
+              const todayStr = new Date().toLocaleDateString();
+              if (history.length > 0 && new Date(history[history.length-1].fecha).toLocaleDateString() === todayStr) {
+                  history[history.length-1] = antropoData; 
+              } else { history.push(antropoData); }
+              pData.historial_antropometrico = history;
+              await updateDoc(docRef, pData); 
+          } else {
+              pData.historial_antropometrico = [antropoData];
               pData.registro = serverTimestamp(); await setDoc(docRef, pData);
           }
-          document.getElementById('form-paciente').reset(); bootstrap.Modal.getInstance(document.getElementById('modalPaciente')).hide(); showToast("Expediente guardado.");
+          document.getElementById('form-paciente').reset(); document.getElementById('resultados-clinicos').classList.add('d-none');
+          bootstrap.Modal.getInstance(document.getElementById('modalPaciente')).hide(); showToast("Expediente guardado.");
       } catch(err) { console.error(err); alert(`Error: ${err.message}`); } 
       finally { btn.disabled = false; btn.innerHTML = 'Guardar Expediente'; }
-  });
-
-  onSnapshot(collection(db, "pacientes"), (snap) => {
-      const tb = document.getElementById('tabla-pacientes'); document.getElementById('total-pacientes').innerText = snap.size; tb.innerHTML = ""; 
-      const selects = ['c-paciente', 'smae-paciente', 'cr-paciente', 'ped-paciente'];
-      selects.forEach(s => document.getElementById(s).innerHTML = "<option value=''>Seleccione...</option>");
-      
-      snap.forEach((docSnap) => {
-          const p = docSnap.data().personales || {};
-          tb.innerHTML += `<tr><td>${p.nombre||''}</td><td>${p.email||docSnap.id}</td><td>${p.telefono||''}</td><td>${p.ocupacion||''}</td>
-          <td><button class='btn btn-sm btn-info btn-edit text-white' data-id='${docSnap.id}'><i class='fi fi-ss-pencil'></i></button> <button class='btn btn-sm btn-danger btn-del' data-id='${docSnap.id}'><i class='fi fi-ss-trash'></i></button></td></tr>`;
-          const opt = `<option value="${docSnap.id}">${p.nombre||docSnap.id}</option>`;
-          selects.forEach(s => document.getElementById(s).innerHTML += opt);
-      });
   });
 
   document.getElementById('tabla-pacientes').addEventListener('click', async (e) => {
@@ -763,37 +1656,54 @@
       if(btnDel && confirm("¿Eliminar paciente permanentemente?")) { await deleteDoc(doc(db, "pacientes", btnDel.getAttribute('data-id'))); showToast("Eliminado."); }
       if(btnEdit) {
           const id = btnEdit.getAttribute('data-id');
-          const docSnap = await getDoc(doc(db, "pacientes", id));
-          if(docSnap.exists()){
-              const d = docSnap.data();
-              document.getElementById('p-id').value = id;
-              document.getElementById('p-email').value = id; document.getElementById('p-email').readOnly = true;
+          const d = pacientesMemory[id];
+          if(d){
+              document.getElementById('p-id').value = id; document.getElementById('p-email').value = id; document.getElementById('p-email').readOnly = true;
               document.getElementById('p-nombre').value = d.personales?.nombre||""; document.getElementById('p-fnac').value = d.personales?.fnac||""; document.getElementById('p-edad').value = d.personales?.edad||""; document.getElementById('p-sexo').value = d.personales?.sexo||"M"; document.getElementById('p-tel').value = d.personales?.telefono||""; document.getElementById('p-ocupacion').value = d.personales?.ocupacion||""; document.getElementById('p-motivo').value = d.personales?.motivo||"";
               document.getElementById('hc-ahf').value = d.historiaClinica?.ahf||""; document.getElementById('hc-app').value = d.historiaClinica?.app||""; document.getElementById('hc-medicamentos').value = d.historiaClinica?.medicamentos||""; document.getElementById('hc-alergias').value = d.historiaClinica?.alergias||""; document.getElementById('fr-tabaco').value = d.historiaClinica?.tabaco||"No"; document.getElementById('fr-alcohol').value = d.historiaClinica?.alcohol||"No"; document.getElementById('fr-estres').value = d.historiaClinica?.estres||"Bajo"; document.getElementById('fr-actividad').value = d.historiaClinica?.actividad||""; document.getElementById('hc-digestion').value = d.historiaClinica?.digestion||"";
               document.getElementById('m-peso').value = d.antropometria?.peso||""; document.getElementById('m-talla').value = d.antropometria?.talla||""; document.getElementById('c-cintura').value = d.antropometria?.cintura||""; document.getElementById('c-cadera').value = d.antropometria?.cadera||""; document.getElementById('c-brazo-rel').value = d.antropometria?.brazoRel||""; document.getElementById('c-pantorrilla-c').value = d.antropometria?.pantorrillaC||""; document.getElementById('pl-tricipital').value = d.antropometria?.tricipital||""; document.getElementById('pl-bicipital').value = d.antropometria?.bicipital||""; document.getElementById('pl-subescapular').value = d.antropometria?.subescapular||""; document.getElementById('pl-suprailiaco').value = d.antropometria?.suprailiaco||""; document.getElementById('pl-supraespinal').value = d.antropometria?.supraespinal||""; document.getElementById('pl-abdominal').value = d.antropometria?.abdominal||""; document.getElementById('pl-muslo').value = d.antropometria?.muslo||""; document.getElementById('pl-pantorrilla').value = d.antropometria?.pantorrilla||"";
+              
+              document.getElementById('res-imc').innerText = d.antropometria?.imc || "0.00";
+              document.getElementById('res-grasa').innerText = d.antropometria?.grasa || "0.00";
+              document.getElementById('res-masa-magra').innerText = d.antropometria?.masaMagra || "0.00";
+              document.getElementById('resultados-clinicos').classList.remove('d-none');
+              
               document.getElementById('modalPacienteLabel').innerHTML = '<i class="fi fi-ss-pencil"></i> Modificar Expediente';
               bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPaciente')).show();
           }
       }
   });
 
-  // 6. Catálogos: Alimentos, Recetas, Dietas
+  // 6. Catálogos: Alimentos, Recetas, Dietas (conectados al motor de generación de menús)
+  document.getElementById('a-grupo').innerHTML += Object.entries(labelSMAE).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+
   document.getElementById('form-alimento').addEventListener('submit', async (e) => {
-      e.preventDefault(); await addDoc(collection(db, "mis_alimentos"), { nombre: getStrVal('a-nombre'), porcion: getStrVal('a-porcion'), kcal: getNumVal('a-kcal'), prot: getNumVal('a-prot'), lip: getNumVal('a-lip'), hc: getNumVal('a-hc') });
-      document.getElementById('form-alimento').reset(); bootstrap.Modal.getInstance(document.getElementById('modalAlimento')).hide(); showToast("Alimento guardado.");
+      e.preventDefault(); await addDoc(collection(db, "mis_alimentos"), { nombre: getStrVal('a-nombre'), porcion: getStrVal('a-porcion'), kcal: getNumVal('a-kcal'), prot: getNumVal('a-prot'), lip: getNumVal('a-lip'), hc: getNumVal('a-hc'), grupo: getStrVal('a-grupo') });
+      document.getElementById('form-alimento').reset(); bootstrap.Modal.getInstance(document.getElementById('modalAlimento')).hide(); showToast("Alimento guardado y disponible en los generadores de menú.");
   });
   onSnapshot(collection(db, "mis_alimentos"), (snap) => {
+      misAlimentosMemory = [];
       const tb = document.getElementById('tabla-mis-alimentos'); tb.innerHTML = "";
-      snap.forEach(doc => { const d = doc.data(); tb.innerHTML += `<tr><td>${d.nombre}</td><td>${d.porcion}</td><td>${d.kcal}</td><td>${d.prot}</td><td>${d.lip}</td><td>${d.hc}</td></tr>`; });
+      snap.forEach(doc => {
+          const d = { id: doc.id, ...doc.data() }; misAlimentosMemory.push(d);
+          const grupoTxt = d.grupo ? (labelSMAE[d.grupo] || d.grupo) : '<span class="text-muted">— sin grupo —</span>';
+          tb.innerHTML += `<tr><td>${d.nombre}</td><td>${d.porcion}</td><td>${d.kcal}</td><td>${d.prot}</td><td>${d.lip}</td><td>${d.hc}</td><td>${grupoTxt}</td></tr>`;
+      });
   });
 
   document.getElementById('form-receta').addEventListener('submit', async (e) => {
-      e.preventDefault(); await addDoc(collection(db, "mis_recetas"), { nombre: getStrVal('re-nombre'), ingredientes: getStrVal('re-ingredientes'), prep: getStrVal('re-preparacion'), porciones: getNumVal('re-porciones') });
-      document.getElementById('form-receta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalReceta')).hide(); showToast("Receta guardada.");
+      e.preventDefault(); await addDoc(collection(db, "mis_recetas"), { nombre: getStrVal('re-nombre'), ingredientes: getStrVal('re-ingredientes'), prep: getStrVal('re-preparacion'), porciones: getNumVal('re-porciones'), tiempo: getStrVal('re-tiempo') });
+      document.getElementById('form-receta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalReceta')).hide(); showToast("Receta guardada y disponible en los generadores de menú.");
   });
+  
+  const TIEMPO_LABEL = { desayuno: 'Desayuno', colacion: 'Colación', comida: 'Comida', cena: 'Cena' };
   onSnapshot(collection(db, "mis_recetas"), (snap) => {
-      const grid = document.getElementById('grid-mis-recetas'); grid.innerHTML = "";
-      snap.forEach(doc => { const d = doc.data(); grid.innerHTML += `<div class="col-md-4 mb-3"><div class="card p-3 shadow-sm border-0"><h5>${d.nombre}</h5><p class="text-muted small mb-1">Porciones: ${d.porciones}</p><p class="small text-truncate">${d.ingredientes}</p></div></div>`; });
+      misRecetasMemory = [];
+      const tb = document.getElementById('tabla-mis-recetas'); tb.innerHTML = "";
+      snap.forEach(doc => { 
+          const d = { id: doc.id, ...doc.data() }; misRecetasMemory.push(d);
+          tb.innerHTML += `<tr><td>${d.nombre}</td><td>${d.porciones}</td><td><span class="d-inline-block text-truncate" style="max-width: 300px;">${d.ingredientes}</span></td><td>${d.tiempo ? (TIEMPO_LABEL[d.tiempo] || d.tiempo) : '<span class="text-muted">cualquiera</span>'}</td></tr>`; 
+      });
   });
 
   document.getElementById('form-dieta').addEventListener('submit', async (e) => {
@@ -801,57 +1711,159 @@
       document.getElementById('form-dieta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalDieta')).hide(); showToast("Plantilla guardada.");
   });
   onSnapshot(collection(db, "mis_dietas"), (snap) => {
+      misDietasMemory = [];
       const tb = document.getElementById('tabla-mis-dietas'); tb.innerHTML = "";
-      snap.forEach(doc => { const d = doc.data(); tb.innerHTML += `<tr><td>${d.nombre}</td><td>${d.kcal}</td><td>${d.tipo}</td></tr>`; });
+      snap.forEach(doc => {
+          const d = { id: doc.id, ...doc.data() }; misDietasMemory.push(d);
+          tb.innerHTML += `<tr><td>${d.nombre}</td><td>${d.kcal}</td><td>${d.tipo || '-'}</td><td>
+              <button class="btn btn-sm btn-outline-primary btn-usar-dieta-rapida" data-id="${d.id}"><i class="fi fi-ss-magic-wand"></i> Usar en Dieta Rápida</button>
+              <button class="btn btn-sm btn-outline-dark btn-usar-plan" data-id="${d.id}"><i class="fi fi-ss-book-alt"></i> Usar en Plan</button>
+          </td></tr>`;
+      });
   });
 
-  // 7. Calendario (Ya declarado let calendar arriba)
-  document.addEventListener('DOMContentLoaded', () => {
-    calendar = new FullCalendar.Calendar(document.getElementById('calendar'), { initialView: 'timeGridWeek', locale: 'es', headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' }, eventClick: (info) => { if(info.event.extendedProps.meetLink) window.open(info.event.extendedProps.meetLink, '_blank'); } });
-    document.getElementById('nav-citas').addEventListener('click', () => setTimeout(() => calendar.render(), 100));
+  // Aplicar una plantilla del catálogo directamente a los generadores (antes las
+  // plantillas de "Mis Dietas" quedaban aisladas, sin ninguna acción real asociada).
+  document.getElementById('tabla-mis-dietas').addEventListener('click', (e) => {
+      const btnRapida = e.target.closest('.btn-usar-dieta-rapida');
+      const btnPlan = e.target.closest('.btn-usar-plan');
+      if (btnRapida) {
+          const d = misDietasMemory.find(x => x.id === btnRapida.getAttribute('data-id')); if (!d) return;
+          document.getElementById('dr-kcal-min').value = Math.max(1000, d.kcal - 150);
+          document.getElementById('dr-kcal-max').value = d.kcal + 150;
+          gotoTarget('dieta-rapida');
+          showToast(`Plantilla "${d.nombre}" cargada en Dieta Rápida.`);
+      }
+      if (btnPlan) {
+          const d = misDietasMemory.find(x => x.id === btnPlan.getAttribute('data-id')); if (!d) return;
+          document.getElementById('plan-kcal').value = d.kcal;
+          gotoTarget('plan-nutrimental');
+          showToast(`Plantilla "${d.nombre}" cargada en Plan Nutrimental. Selecciona paciente y genera.`);
+      }
   });
+
+  onSnapshot(collection(db, "menus"), (snap) => {
+      menusMemory = []; snap.forEach(doc => menusMemory.push(doc.data()));
+      if(currentProfileId) renderPerfilPaciente(currentProfileId);
+  });
+  
+  onSnapshot(collection(db, "dietas_pacientes"), (snap) => {
+      dietasRapidasMemory = []; snap.forEach(doc => dietasRapidasMemory.push(doc.data()));
+      if(currentProfileId) renderPerfilPaciente(currentProfileId);
+  });
+
+  onSnapshot(collection(db, "planes_nutrimentales"), (snap) => {
+      planesMemory = []; snap.forEach(doc => planesMemory.push(doc.data()));
+      if(currentProfileId) renderPerfilPaciente(currentProfileId);
+  });
+
+  // 7. Calendario Citas
+  // NOTA: los scripts type="module" se ejecutan siempre después de parsear el HTML
+  // (igual que "defer"), por lo que envolver esto en DOMContentLoaded provocaba que
+  // el listener se registrara DESPUÉS de que el evento ya se había disparado y el
+  // calendario jamás se inicializaba. Se ejecuta directamente.
+  const calEl = document.getElementById('calendar');
+  if (calEl) {
+      calendar = new FullCalendar.Calendar(calEl, { initialView: 'timeGridWeek', locale: 'es', headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' }, eventClick: (info) => { if(info.event.extendedProps.meetLink) window.open(info.event.extendedProps.meetLink, '_blank'); } });
+  }
+  
   document.getElementById('form-cita').addEventListener('submit', async (e) => {
       e.preventDefault(); const pSel = document.getElementById('c-paciente');
       await addDoc(collection(db, "citas"), { pacienteId: pSel.value, title: `Consulta: ${pSel.options[pSel.selectedIndex].text}`, start: document.getElementById('c-fecha').value, meetLink: document.getElementById('c-link').value });
       document.getElementById('form-cita').reset(); bootstrap.Modal.getInstance(document.getElementById('modalCita')).hide(); showToast("Cita agendada.");
   });
+  
   onSnapshot(collection(db, "citas"), (snap) => {
-      const evs = []; snap.forEach(doc => { const d = doc.data(); evs.push({ id: doc.id, title: d.title, start: d.start, extendedProps: { meetLink: d.meetLink } }); });
-      calendar.removeAllEvents(); calendar.addEventSource(evs);
+      const evs = []; citasMemory = [];
+      snap.forEach(doc => { 
+          const d = doc.data(); 
+          citasMemory.push(d);
+          evs.push({ id: doc.id, title: d.title, start: d.start, extendedProps: { meetLink: d.meetLink } }); 
+      });
+      if(calendar) { calendar.removeAllEvents(); calendar.addEventSource(evs); }
+      if(currentProfileId) renderPerfilPaciente(currentProfileId);
+
+      const ahora = new Date(); const en7dias = new Date(); en7dias.setDate(ahora.getDate() + 7);
+      const proximas = citasMemory.filter(c => { const f = new Date(c.start); return f >= ahora && f <= en7dias; }).length;
+      document.getElementById('total-citas-semana').innerText = proximas;
   });
 
-  // 8. Dieta Rápida (Generador + PDF/PNG Export)
-  const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
-  const bases = [
-      { des: "Chilaquiles verdes con pollo deshebrado y frijoles de la olla", com: "Bistec a la mexicana con arroz integral y tortillas", cen: "Quesadillas de champiñones con pico de gallo" },
-      { des: "Huevos revueltos con ejotes y tortilla de maíz", com: "Pechuga asada con ensalada de nopales y aguacate", cen: "Enfrijoladas espolvoreadas con queso panela" },
-      { des: "Avena cocida con manzana, canela y almendras", com: "Sopa de lentejas y pescado a la plancha con verduras al vapor", cen: "Sándwich de pavo con pan integral y vegetales" },
-      { des: "Huevos a la mexicana con frijoles refritos s/grasa", com: "Salpicón de res con tostadas horneadas y aguacate", cen: "Tacos de rajas con queso panela en tortilla de maíz" },
-      { des: "Yogurt natural con papaya picada y granola s/azúcar", com: "Albóndigas en caldillo de tomate con calabacitas y arroz", cen: "Ensalada de atún con verduras y galletas habaneras" },
-      { des: "Omelette de espinacas con pan tostado integral", com: "Tacos de pollo asado con guacamole y salsa", cen: "Tlacoyos de haba asados al comal con nopales" },
-      { des: "Licuado de plátano con nuez y sándwich de queso", com: "Mixiote de pollo con verduras y frijoles enteros", cen: "Sincronizada de jamón de pavo con ensalada verde" }
-  ];
+  // 8. Dieta Rápida Export (Corregido con delegación correcta)
+  let drExcludedTags = [];
 
+  // Autocompletar alergias del paciente, igual que en Plan Nutrimental (antes esta sección
+  // ignoraba por completo las alergias registradas del paciente seleccionado)
+  document.getElementById('dr-paciente').addEventListener('change', (e) => {
+      const id = e.target.value;
+      drExcludedTags = [];
+      const info = document.getElementById('dr-alergias-info');
+      if(id && pacientesMemory[id]) {
+          const alergias = pacientesMemory[id].historiaClinica?.alergias || '';
+          if(alergias && !['ninguna', 'no'].includes(alergias.toLowerCase())) {
+              drExcludedTags = alergias.split(',').map(s => s.trim()).filter(Boolean);
+              info.innerHTML = `<i class="fi fi-ss-ban"></i> Alergias registradas: ${drExcludedTags.join(', ')}. Se marcarán en el menú generado.`;
+          } else { info.innerHTML = ''; }
+      } else { info.innerHTML = ''; }
+  });
+
+  const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+
+  // Generador real: calcula raciones SMAE a partir del punto medio del rango de kcal
+  // y arma el menú con el motor de alimentos (banco genérico + Mis Alimentos + Mis
+  // Recetas), en vez del texto de 7 días fijo que había antes (idéntico sin importar
+  // las kcal o el paciente elegido).
   document.getElementById('btn-generar-dieta').addEventListener('click', () => {
       const minKcal = parseInt(document.getElementById('dr-kcal-min').value) || 1500;
       const maxKcal = parseInt(document.getElementById('dr-kcal-max').value) || 1800;
-      let html = `<div id="tabla-dieta-render" class="bg-white p-3"><h4 class="text-center mb-3">Menú Sugerido (${minKcal} - ${maxKcal} kcal)</h4><table class="table table-bordered menu-table text-center mt-3"><thead><tr><th>Día</th><th>Desayuno</th><th>Comida</th><th>Cena</th></tr></thead><tbody>`;
-      dias.forEach((dia, i) => { const extra = maxKcal >= 2000 ? " + 1 colación" : ""; html += `<tr><td class="fw-bold align-middle">${dia}</td><td>${bases[i].des}${extra}</td><td>${bases[i].com}</td><td>${bases[i].cen}</td></tr>`; });
-      html += `</tbody></table></div><div class="d-flex justify-content-end gap-2 mt-3"><button class="btn btn-outline-danger" id="btn-descargar-pdf">Guardar PDF</button><button class="btn btn-outline-primary" id="btn-descargar-png">Guardar PNG</button></div>`;
+      const kcalPromedio = (minKcal + maxKcal) / 2;
+
+      const raciones = distribuirRaciones(kcalPromedio, 50, 20, 30, { verduras: 4, frutas: 3, leguminosas: 1, grupoLacteo: 'lecSemi', grupoAoa: 'aoaMod' });
+      const filas = generarMenuSMAEsimple(raciones, dias, drExcludedTags);
+      lastGeneratedMenu = filas;
+
+      let html = `<div id="tabla-dieta-render" class="bg-white p-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="pdf-title mb-0"><i class="fi ${APP_CONFIG.icono}"></i> ${APP_CONFIG.nombre}</h5>
+              <small class="text-muted">${new Date().toLocaleDateString('es-MX')}</small>
+          </div>
+          <h4 class="text-center mb-3">Menú Sugerido (${minKcal} - ${maxKcal} kcal)</h4><table class="table table-bordered menu-table text-center mt-3"><thead><tr><th>Día</th><th>Desayuno</th><th>Comida</th><th>Cena</th></tr></thead><tbody>`;
+      lastGeneratedMenu.forEach(m => { html += `<tr><td class="fw-bold align-middle">${m.dia}</td><td>${m.desayuno}</td><td>${m.comida}</td><td>${m.cena}</td></tr>`; });
+      html += `</tbody></table>${APP_CONFIG.piePdf ? `<div class="text-center text-muted small mt-2 pt-2 border-top">${APP_CONFIG.piePdf}</div>` : ''}</div>
+      <div class="d-flex justify-content-end gap-2 mt-3">
+          <button class="btn btn-outline-success" id="btn-guardar-dr"><i class="fi fi-ss-disk"></i> Guardar a Paciente</button>
+          <button class="btn btn-outline-danger" id="btn-descargar-pdf-rapido">Descargar PDF</button>
+          <button class="btn btn-outline-primary" id="btn-descargar-png-rapido">Descargar PNG</button>
+      </div>`;
       document.getElementById('dr-resultado').innerHTML = html;
   });
 
-  document.getElementById('dr-resultado').addEventListener('click', (e) => {
-      if(e.target.closest('#btn-descargar-png')) { html2canvas(document.getElementById('tabla-dieta-render'), { scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = 'Menu.png'; link.href = canvas.toDataURL(); link.click(); }); }
-      if(e.target.closest('#btn-descargar-pdf')) { html2canvas(document.getElementById('tabla-dieta-render'), { scale: 2 }).then(canvas => {
+  document.getElementById('dr-resultado').addEventListener('click', async (e) => {
+      if(e.target.closest('#btn-descargar-png-rapido')) { html2canvas(document.getElementById('tabla-dieta-render'), { scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = 'Menu.png'; link.href = canvas.toDataURL(); link.click(); }); }
+      if(e.target.closest('#btn-descargar-pdf-rapido')) { 
+          const btn = e.target.closest('#btn-descargar-pdf-rapido');
+          btn.innerHTML = "Generando...";
+          html2canvas(document.getElementById('tabla-dieta-render'), { scale: 2 }).then(canvas => {
               const imgData = canvas.toDataURL('image/png'); const { jsPDF } = window.jspdf; const pdf = new jsPDF('l', 'mm', 'a4');
               pdf.addImage(imgData, 'PNG', 0, 10, pdf.internal.pageSize.getWidth(), (canvas.height * pdf.internal.pageSize.getWidth()) / canvas.width);
-              pdf.save('Menu.pdf');
+              pdf.save('Dieta_Rapida.pdf');
+              btn.innerHTML = "Descargar PDF";
           });
+      }
+      if(e.target.closest('#btn-guardar-dr')) {
+          const pId = document.getElementById('dr-paciente').value;
+          if(!pId) return alert("Selecciona un paciente en la lista superior.");
+          const btn = e.target.closest('#btn-guardar-dr'); btn.disabled = true; btn.innerHTML = "Guardando...";
+          try {
+              const minKcal = document.getElementById('dr-kcal-min').value;
+              const maxKcal = document.getElementById('dr-kcal-max').value;
+              await addDoc(collection(db, "dietas_pacientes"), { pacienteId: pId, rangoKcal: `${minKcal} - ${maxKcal}`, menu: lastGeneratedMenu, fecha: serverTimestamp() });
+              showToast("Dieta rápida asignada al expediente.");
+          } catch(err) { alert("Error al asignar: " + err.message); } 
+          finally { btn.disabled = false; btn.innerHTML = `<i class="fi fi-ss-disk"></i> Guardar a Paciente`; }
       }
   });
 
-  // 9. CHATBOT IA GEMINI (Renderizado de Markdown y Fórmulas Matemáticas)
+  // 9. CHATBOT IA GEMINI
   const btnToggleChat = document.getElementById('btn-toggle-chat');
   const chatWindow = document.getElementById('chat-window');
   const chatMessages = document.getElementById('chat-messages');
@@ -880,10 +1892,8 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       try {
-          const sysInstr = `Eres un asistente experto en nutrición clínica. Limítate a responder dudas sobre el Sistema Mexicano de Alimentos Equivalentes (SMAE), fórmulas antropométricas (ej. Palafox, Harris-Benedict, Mifflin) y guías clínicas. Responde de forma clara, concisa y técnica.`;
-          
-          // Usando Gemini 1.5 Flash bajo la v1beta
-          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
+          const sysInstr = `Eres un asistente experto en nutrición clínica. Limítate a responder dudas sobre el Sistema Mexicano de Alimentos Equivalentes (SMAE), fórmulas antropométricas y guías clínicas. Escribe fórmulas matemáticas usando el formato $ o $$ para que MathJax las renderice.`;
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -898,17 +1908,9 @@
                if(data.error.code === 400 || data.error.code === 403) localStorage.removeItem('gemini_api_key');
           } else {
               const resText = data.candidates[0].content.parts[0].text;
-              
-              // 1. Convertir el Markdown a HTML usando marked.js
               const htmlText = marked.parse(resText);
-              
-              // 2. Insertar el HTML formateado
               document.getElementById(loaderId).outerHTML = `<div class="msg-ai">${htmlText}</div>`;
-              
-              // 3. Ejecutar MathJax asíncronamente para formatear las fórmulas ($$...$$ y $...$)
-              if (window.MathJax) {
-                  MathJax.typesetPromise([chatMessages]).catch((err) => console.error("Error renderizando MathJax:", err));
-              }
+              if (window.MathJax) MathJax.typesetPromise([chatMessages]).catch((err) => console.error(err));
           }
       } catch (err) {
           document.getElementById(loaderId).outerHTML = `<div class="msg-ai text-danger">Error de conexión con Gemini API.</div>`;
@@ -918,6 +1920,248 @@
 
   document.getElementById('btn-send-chat').addEventListener('click', enviarMensajeIA);
   chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensajeIA(); });
+
+  // 10. GENERADOR DE PLAN NUTRIMENTAL
+  
+  // A. Lógica del Input de Tags para Alimentos Excluidos
+  window.planExcludedTags = [];
+
+  window.renderTags = () => {
+      const container = document.getElementById('plan-tags-container');
+      container.innerHTML = '';
+      window.planExcludedTags.forEach((tag, index) => {
+          container.innerHTML += `<span class="badge bg-danger d-flex align-items-center">${tag} <i class="fi fi-ss-cross-circle ms-2" style="cursor:pointer;" onclick="window.removeTag(${index})"></i></span>`;
+      });
+  };
+
+  window.removeTag = (index) => {
+      window.planExcludedTags.splice(index, 1);
+      window.renderTags();
+  };
+
+  document.getElementById('btn-add-tag').addEventListener('click', () => {
+      const input = document.getElementById('plan-tag-input');
+      const val = input.value.trim();
+      if(val && !window.planExcludedTags.includes(val)) {
+          window.planExcludedTags.push(val);
+          input.value = '';
+          window.renderTags();
+      }
+  });
+
+  document.getElementById('plan-tag-input').addEventListener('keypress', (e) => {
+      if(e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-tag').click(); }
+  });
+
+  // Autocompletar Tags con las Alergias del Paciente
+  document.getElementById('plan-paciente').addEventListener('change', (e) => {
+      const id = e.target.value;
+      window.planExcludedTags = [];
+      if(id && pacientesMemory[id]) {
+          const alergias = pacientesMemory[id].historiaClinica?.alergias || '';
+          if(alergias && alergias.toLowerCase() !== 'ninguna' && alergias.toLowerCase() !== 'no') {
+              window.planExcludedTags = alergias.split(',').map(s => s.trim()).filter(s => s);
+          }
+      }
+      window.renderTags();
+  });
+
+  // B. Generar Plan y PDF
+  document.getElementById('btn-generar-plan').addEventListener('click', async () => {
+      const pId = document.getElementById('plan-paciente').value;
+      const kcalObj = parseInt(document.getElementById('plan-kcal').value) || 1800;
+      const duracion = parseInt(document.getElementById('plan-duracion').value) || 7;
+      
+      if (!pId) return alert("Selecciona un paciente.");
+      const d = pacientesMemory[pId];
+      if (!d) return alert("Paciente no encontrado.");
+
+      const nombre = d.personales?.nombre || "Paciente";
+      const fecha = new Date().toLocaleDateString('es-MX');
+
+      // Procesar Patologías (Guías OMS) y Tags
+      const selectedPatologias = Array.from(document.querySelectorAll('.chk-patologia:checked')).map(cb => cb.value);
+      let advertenciasHtml = '';
+
+      if(window.planExcludedTags.length > 0) {
+          advertenciasHtml += `<p class="mb-1"><strong><i class="fi fi-ss-ban"></i> Alimentos a Evitar/Excluir:</strong> ${window.planExcludedTags.join(', ')}</p>`;
+      }
+
+      if(selectedPatologias.length > 0) {
+          let pautas = [];
+          if(selectedPatologias.includes('Diabetes')) pautas.push("<b>Diabetes:</b> Restricción de azúcares simples, control de índice glicémico y harinas refinadas (Guías ADA/OMS).");
+          if(selectedPatologias.includes('Hipertensión')) pautas.push("<b>Hipertensión:</b> Dieta DASH/Hiposódica (<2g sodio/día), evitar ultraprocesados y embutidos (OMS).");
+          if(selectedPatologias.includes('Dislipidemia')) pautas.push("<b>Dislipidemia:</b> Restricción de grasas saturadas/trans, aumento de fibra soluble y Omega-3 (AHA/OMS).");
+          if(selectedPatologias.includes('Síndrome Metabólico')) pautas.push("<b>S. Metabólico:</b> Déficit calórico moderado, restricción de fructosa añadida y grasas saturadas.");
+          if(selectedPatologias.includes('Intestino Irritable (SII)')) pautas.push("<b>SII:</b> Protocolo bajo en FODMAPs (evitar lactosa, exceso de fructosa, polioles y leguminosas fermentables).");
+          if(selectedPatologias.includes('Reflujo (ERGE)')) pautas.push("<b>ERGE:</b> Evitar irritantes gástricos (picante, menta, cítricos en ayuno, chocolate, café) y comidas altas en grasa.");
+          if(selectedPatologias.includes('Enfermedad Celiaca')) pautas.push("<b>Enfermedad Celiaca:</b> Dieta 100% libre de gluten (cero trigo, centeno, cebada o avena con trazas).");
+          if(selectedPatologias.includes('Enfermedad Renal (ERC)')) pautas.push("<b>ERC:</b> Ajuste estricto de proteínas según TFG, control de fósforo, potasio y líquidos (Guías KDOQI/KDIGO).");
+          
+          advertenciasHtml += `<p class="mb-0 mt-2"><strong><i class="fi fi-ss-heart-crack"></i> Lineamientos Clínicos Integrados:</strong><br> - ${pautas.join('<br> - ')}</p>`;
+      }
+
+      const alertaExclusion = (advertenciasHtml !== '') ? `
+      <div style="background-color: #f8d7da; color: #842029; padding: 12px; border-radius: 5px; font-size: 0.85rem; margin-top: 15px; margin-bottom: 15px; border: 1px solid #f5c2c7;">
+          ${advertenciasHtml}
+      </div>` : '';
+
+      // Raciones reales según kcal objetivo (antes esta tabla y el menú eran
+      // completamente fijos y no reflejaban ni las kcal ni al paciente elegido).
+      const raciones = distribuirRaciones(kcalObj, 50, 20, 30, { verduras: 4, frutas: 3, leguminosas: 1, grupoLacteo: 'lecSemi', grupoAoa: 'aoaMod' });
+
+      const generarSemana = () => generarMenuSMAEdias(raciones, dias, window.planExcludedTags, true);
+
+      let menuBase = generarSemana();
+
+      let menuHtml = '';
+      if (duracion === 1) {
+          menuHtml = generarTablaMenu(menuBase.slice(0, 1), "Menú del Día");
+      } else if (duracion === 7) {
+          menuHtml = generarTablaMenu(menuBase, "Menú Semanal (7 Días)");
+      } else if (duracion === 30) {
+          menuHtml = generarTablaMenu(generarSemana(), "Semana 1") + 
+                     generarTablaMenu(generarSemana(), "Semana 2") + 
+                     generarTablaMenu(generarSemana(), "Semana 3") + 
+                     generarTablaMenu(generarSemana(), "Semana 4");
+      }
+
+      function generarTablaMenu(dias, titulo) {
+          let tabla = `<div class="pdf-section-title mb-2">${titulo}</div>
+          <table class="table table-bordered pdf-table text-start w-100 mb-4" style="table-layout: fixed;">
+              <thead>
+                  <tr>
+                      <th style="width: 10%;">Tiempo</th>
+                      ${dias.map(d => `<th style="width: ${90/dias.length}%; text-align:center;">${d.dia}</th>`).join('')}
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td class="fw-bold bg-light text-center">Colación Mañana<br><small class="text-muted">12:00 pm</small></td>
+                      ${dias.map(d => `<td class="p-1">${d.cm}</td>`).join('')}
+                  </tr>
+                  <tr>
+                      <td class="fw-bold bg-light text-center">Desayuno<br><small class="text-muted">9:00 am</small></td>
+                      ${dias.map(d => `<td class="p-1">${d.des}</td>`).join('')}
+                  </tr>
+                  <tr>
+                      <td class="fw-bold bg-light text-center">Comida<br><small class="text-muted">3:00 pm</small></td>
+                      ${dias.map(d => `<td class="p-1">${d.com}</td>`).join('')}
+                  </tr>
+                  <tr>
+                      <td class="fw-bold bg-light text-center">Colación Tarde<br><small class="text-muted">5:00 pm</small></td>
+                      ${dias.map(d => `<td class="p-1">${d.ct}</td>`).join('')}
+                  </tr>
+                  <tr>
+                      <td class="fw-bold bg-light text-center">Cena<br><small class="text-muted">9:00 pm</small></td>
+                      ${dias.map(d => `<td class="p-1">${d.cen}</td>`).join('')}
+                  </tr>
+              </tbody>
+          </table>`;
+          return tabla;
+      }
+
+      let html = `
+      <div id="render-plan-pdf" class="bg-white p-4 m-auto" style="width: 1150px;">
+          <div class="d-flex justify-content-between align-items-end mb-3 border-bottom pb-2">
+              <div>
+                  <h3 class="pdf-title mb-0"><i class="fi ${APP_CONFIG.icono}"></i> ${APP_CONFIG.nombre}</h3>
+                  <p class="text-muted mb-0 small">Plan de Alimentación Personalizado Clínico</p>
+              </div>
+              <div class="text-end">
+                  <p class="mb-0 fw-bold">Paciente: <span class="fw-normal">${nombre}</span></p>
+                  <p class="mb-0 small text-muted">Plan asignado: ${fecha}</p>
+                  <p class="mb-0 small text-success fw-bold">Objetivo Energético: ${kcalObj} kcal</p>
+              </div>
+          </div>
+          
+          ${alertaExclusion}
+          
+          <div class="pdf-section-title mb-2">Equivalentes por Día</div>
+          <table class="table table-bordered pdf-table text-center align-middle mb-4">
+              <thead>
+                  <tr>
+                      <th class="text-start">GRUPO</th>
+                      <th>★ TOTAL</th>
+                      <th>Desayuno<br><small>9:00 am</small></th>
+                      <th>Colación mañana<br><small>12:00 pm</small></th>
+                      <th>Comida<br><small>3:00 pm</small></th>
+                      <th>Colación tarde<br><small>5:00 pm</small></th>
+                      <th>Cena<br><small>9:00 pm</small></th>
+                  </tr>
+              </thead>
+              <tbody>
+                  ${Object.entries(raciones).filter(([g, cant]) => cant > 0).map(([grupo, cant]) => {
+                      const reparto = repartirGrupoEnSlots(grupo, cant);
+                      return `<tr><td class="text-start fw-bold">${labelSMAE[grupo] || grupo}</td><td>${cant}</td><td>${reparto.desayuno || ''}</td><td>${reparto.colAM || ''}</td><td>${reparto.comida || ''}</td><td>${reparto.colPM || ''}</td><td>${reparto.cena || ''}</td></tr>`;
+                  }).join('')}
+              </tbody>
+          </table>
+
+          ${menuHtml}
+
+          ${APP_CONFIG.piePdf ? `<div class="text-center text-muted small mt-3 pt-2 border-top">${APP_CONFIG.piePdf}</div>` : ''}
+
+      </div>`;
+
+      document.getElementById('plan-resultado').innerHTML = html;
+      document.getElementById('export-actions').classList.remove('d-none');
+  });
+
+  // Delegación de eventos para exportar y guardar el Plan Nutrimental
+  document.getElementById('plan-resultado').parentElement.addEventListener('click', async (e) => {
+      if(e.target.closest('#btn-guardar-plan')) {
+          const btn = e.target.closest('#btn-guardar-plan');
+          const pId = document.getElementById('plan-paciente').value;
+          if(!pId) { alert("Selecciona un paciente antes de guardar."); return; }
+          btn.disabled = true; btn.innerHTML = "Guardando...";
+          try {
+              await addDoc(collection(db, "planes_nutrimentales"), {
+                  pacienteId: pId,
+                  kcalObjetivo: getNumVal('plan-kcal'),
+                  duracion: getNumVal('plan-duracion'),
+                  patologias: Array.from(document.querySelectorAll('.chk-patologia:checked')).map(cb => cb.value),
+                  exclusiones: window.planExcludedTags,
+                  resumenHtml: document.getElementById('plan-resultado').innerHTML,
+                  fecha: serverTimestamp()
+              });
+              showToast("Plan nutrimental guardado en el expediente del paciente.");
+          } catch(err) { alert("Error al guardar: " + err.message); }
+          finally { btn.disabled = false; btn.innerHTML = '<i class="fi fi-ss-disk"></i> Guardar en Expediente'; }
+      }
+      if(e.target.closest('#btn-export-plan-png')) { 
+          const btn = e.target.closest('#btn-export-plan-png');
+          btn.innerHTML = "Generando PNG...";
+          html2canvas(document.getElementById('render-plan-pdf'), { scale: 2 }).then(canvas => { 
+              const link = document.createElement('a'); 
+              link.download = 'Plan_Nutrimental_Clinico.png'; 
+              link.href = canvas.toDataURL(); 
+              link.click(); 
+              btn.innerHTML = `<i class="fi fi-ss-picture"></i> Descargar PNG`;
+          }); 
+      }
+      if(e.target.closest('#btn-export-plan-pdf')) {
+          const btn = e.target.closest('#btn-export-plan-pdf');
+          btn.disabled = true; 
+          btn.innerHTML = "Generando PDF...";
+          
+          const element = document.getElementById('render-plan-pdf');
+          html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+              const imgData = canvas.toDataURL('image/png');
+              const { jsPDF } = window.jspdf;
+              
+              const pdfWidth = 297; 
+              const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+              const pdf = new jsPDF('l', 'mm', [pdfWidth, pdfHeight]);
+              
+              pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+              pdf.save('Plan_Nutrimental_Clinico.pdf');
+              
+              btn.disabled = false; 
+              btn.innerHTML = `<i class="fi fi-ss-document"></i> Descargar PDF`;
+          });
+      }
+  });
 
 </script>
 </body>
