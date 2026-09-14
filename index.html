@@ -6,6 +6,9 @@
     <title>NutriFit - Clinical Dashboard</title>
     
     <!-- CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
     
@@ -24,63 +27,186 @@
     
     <style>
         :root {
-            --brand-primary: #1abc9c;
-            --brand-primary-rgb: 26,188,156;
+            --brand-primary: #00796b;
+            --brand-primary-rgb: 0,121,107;
             --brand-secondary: #2c3e50;
             --brand-secondary-rgb: 44,62,80;
             --brand-bg: #f4f7f6;
+            /* Color de texto/ícono sobre fondos de marca — se recalcula en JS (aplicarConfig)
+               cada vez que cambian los colores, para que un color de marca claro nunca
+               termine con texto blanco ilegible encima (y viceversa con uno oscuro). */
+            --on-primary: #ffffff;
+            --on-secondary: #ffffff;
+            /* Tokens neutros del sistema — independientes del color de marca configurable */
+            --ink: #212121;
+            --paper: #eef1f0;
+            --paper-raised: #ffffff;
+            --line: rgba(0,0,0,0.09);
+            --muted: #6c757d;
+            --color-success: #2f7d55;
+            --font: 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;
+            /* Sombras de "elevación" Material Design (dp1/dp2/dp4/dp8) */
+            --elev-1: 0 1px 2px rgba(0,0,0,.14), 0 1px 3px rgba(0,0,0,.12);
+            --elev-2: 0 2px 4px rgba(0,0,0,.12), 0 3px 6px rgba(0,0,0,.14);
+            --elev-4: 0 4px 8px rgba(0,0,0,.12), 0 6px 12px rgba(0,0,0,.14);
+            --elev-8: 0 8px 16px rgba(0,0,0,.14), 0 10px 24px rgba(0,0,0,.16);
         }
-        body { background-color: var(--brand-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .sidebar { min-height: 100vh; background-color: var(--brand-secondary); color: white; padding-top: 20px; }
-        .sidebar .nav-link { color: #aeb6bf; margin-bottom: 10px; border-radius: 5px; cursor: pointer; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: var(--brand-primary); color: white; }
-        .nav-link i { margin-right: 10px; }
+
+        * { -webkit-font-smoothing: antialiased; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--paper); font-family: var(--font); color: var(--ink); font-size: 0.94rem; }
+        :focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+
+        h1, h2, h3, h4, h5, h6 { font-family: var(--font); font-weight: 500; color: var(--ink); letter-spacing: 0; }
+        .section-view > h2, .section-view > div > h2 { font-size: 1.75rem; font-weight: 500; margin-bottom: 0.35rem; }
+        .section-view > p.text-muted:first-of-type, .section-view > .d-flex + p.text-muted { color: var(--muted) !important; margin-bottom: 1.5rem; }
+
+        /* ============================= SIDEBAR ============================= */
+        .sidebar {
+            min-height: 100vh; color: #dfe6e2; padding: 24px 14px;
+            background-color: var(--brand-secondary);
+            box-shadow: var(--elev-4);
+            position: relative; z-index: 5;
+        }
+        .sidebar .nav-link { color: #cfd8d5; margin-bottom: 3px; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.88rem; font-weight: 500; transition: background-color .15s ease, color .15s ease; }
+        .sidebar .nav-link:hover { background-color: rgba(255,255,255,0.08); color: #fff; }
+        .sidebar .nav-link.active { background-color: var(--brand-primary); color: var(--on-primary); box-shadow: var(--elev-1); }
+        .nav-link i { margin-right: 10px; width: 18px; text-align: center; }
+        .sidebar hr { border-color: rgba(255,255,255,0.12); margin: 14px 6px; }
+
         .section-view { display: none; }
-        .section-view.active { display: block; animation: fadeInView .25s ease; }
-        @keyframes fadeInView { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .brand-logo { font-size: 1.5rem; font-weight: bold; color: var(--brand-primary); text-align: center; margin-bottom: 30px;}
-        .nav-tabs .nav-link { color: var(--brand-secondary); font-weight: 500; }
-        .nav-tabs .nav-link.active { color: var(--brand-primary); border-bottom: 3px solid var(--brand-primary); font-weight: bold; }
-        .form-section-title { color: var(--brand-primary); border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 15px; margin-bottom: 15px; font-size: 1.1rem;}
-        #calendar { background: white; padding: 15px; border-radius: 8px; min-height: 600px; }
+        .section-view.active { display: block; animation: fadeInView .3s ease; }
+        @keyframes fadeInView { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+
+        .brand-logo { font-family: var(--font); font-size: 1.4rem; font-weight: 700; color: var(--on-secondary); text-align: center; margin-bottom: 2px; }
+        .brand-logo i { color: var(--brand-primary); }
+
+        .nav-tabs { border-bottom: 1px solid var(--line); }
+        .nav-tabs .nav-link { border: none; color: var(--muted); font-weight: 500; font-size: 0.88rem; padding: 0.6rem 1rem; border-radius: 4px 4px 0 0; }
+        .nav-tabs .nav-link.active { color: var(--brand-primary); background: rgba(var(--brand-primary-rgb), 0.06); border-bottom: 2px solid var(--brand-primary); font-weight: 700; }
+        .nav-pills .nav-link { color: var(--muted); font-weight: 500; font-size: 0.85rem; border-radius: 999px; }
+        .nav-pills .nav-link.active { background-color: var(--brand-primary); }
+
+        .form-section-title { color: var(--brand-primary); border-bottom: 1px solid var(--line); padding-bottom: 6px; margin-top: 18px; margin-bottom: 16px; font-size: 1rem; font-weight: 700; }
+        #calendar { background: var(--paper-raised); padding: 15px; border-radius: 4px; min-height: 600px; box-shadow: var(--elev-1); }
         .smae-input { max-width: 80px; text-align: center; }
-        .menu-table th { background-color: var(--brand-secondary); color: white; }
-        .range-slider-val { display: inline-block; width: 40px; text-align: center; font-weight: bold; color: var(--brand-primary); }
+        .menu-table th { background-color: var(--brand-secondary); color: var(--on-secondary); font-weight: 500; }
+        .range-slider-val { display: inline-block; width: 40px; text-align: center; font-weight: 700; color: var(--brand-primary); }
         .chart-container { position: relative; height: 300px; width: 100%; margin-bottom: 2rem;}
-        .btn-brand { background-color: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
-        .btn-brand:hover { background-color: var(--brand-primary); filter: brightness(0.92); color: #fff; }
-        .btn-brand-dark { background-color: var(--brand-secondary); border-color: var(--brand-secondary); color: #fff; }
-        .btn-brand-dark:hover { background-color: var(--brand-secondary); filter: brightness(1.15); color: #fff; }
+
+        /* ============================= COMPONENTES BASE (Material sobre Bootstrap 5) ============================= */
+        /* Tarjetas con "elevación" en vez de borde — el lenguaje visual de Material Design
+           usa sombra para indicar jerarquía de superficies, no líneas divisorias. */
+        .card { border-radius: 4px; border: none !important; box-shadow: var(--elev-1); transition: box-shadow .2s ease; }
+        .card.shadow-sm { box-shadow: var(--elev-1) !important; }
+
+        .btn { border-radius: 4px; font-weight: 500; letter-spacing: 0.01em; transition: box-shadow .15s ease, filter .15s ease, transform .1s ease; }
+        .btn:active { transform: scale(0.98); }
+        .btn-sm { font-size: 0.8rem; }
+        /* Botones "elevados" (rellenos) llevan sombra Material; los outline/text, no */
+        .btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-brand, .btn-brand-dark { box-shadow: var(--elev-1) !important; }
+        .btn-primary:hover, .btn-secondary:hover, .btn-success:hover, .btn-brand:hover, .btn-brand-dark:hover { box-shadow: var(--elev-2) !important; }
+        .btn-outline-primary, .btn-outline-secondary, .btn-outline-success, .btn-outline-danger { box-shadow: none !important; }
+        .btn-brand { background-color: var(--brand-primary); border-color: var(--brand-primary); color: var(--on-primary); }
+        .btn-brand:hover { background-color: var(--brand-primary); filter: brightness(0.92); color: var(--on-primary); }
+        .btn-brand-dark { background-color: var(--brand-secondary); border-color: var(--brand-secondary); color: var(--on-secondary); }
+        .btn-brand-dark:hover { background-color: var(--brand-secondary); filter: brightness(1.15); color: var(--on-secondary); }
         .text-brand { color: var(--brand-primary) !important; }
+
+        /* Reasigna los utilitarios semánticos de Bootstrap a los tokens de marca, para que
+           iconos/textos/botones "primary" en todo el tablero sigan el color de marca
+           configurable en vez del azul por defecto de Bootstrap; "success" usa un verde
+           hoja fijo e independiente de la marca, para que siga leyéndose como "correcto/OK"
+           incluso si el nutriólogo elige otro color de marca. */
+        .text-primary { color: var(--brand-primary) !important; }
+        .border-primary { border-color: var(--brand-primary) !important; }
+        .btn-outline-primary { color: var(--brand-primary); border-color: var(--brand-primary); }
+        .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary.active { background-color: var(--brand-primary); border-color: var(--brand-primary); color: var(--on-primary); }
+
+        .text-success { color: var(--color-success) !important; }
+        .border-success { border-color: var(--color-success) !important; }
+        .btn-success { background-color: var(--color-success); border-color: var(--color-success); }
+        .btn-success:hover { filter: brightness(0.92); }
+        .btn-outline-success { color: var(--color-success); border-color: var(--color-success); }
+        .btn-outline-success:hover, .btn-outline-success:focus { background-color: var(--color-success); border-color: var(--color-success); color: #fff; }
+
+        /* .btn-primary/.btn-secondary y sus fondos ya se usan en varios botones y modales
+           con estilo inline var(--brand-*); esta regla cubre los que no lo tienen (p.ej.
+           badges neutrales y modales que aún usaban el azul/gris por defecto de Bootstrap). */
+        .btn-primary, .bg-primary { background-color: var(--brand-primary) !important; border-color: var(--brand-primary) !important; }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active { filter: brightness(0.92); }
+        .btn-secondary, .bg-secondary { background-color: var(--brand-secondary) !important; border-color: var(--brand-secondary) !important; }
+        .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active { filter: brightness(1.15); }
+
+        .badge { border-radius: 999px; font-weight: 500; letter-spacing: 0.01em; padding: 0.42em 0.8em; }
+
+        .table { --bs-table-border-color: var(--line); font-size: 0.87rem; }
+        .table thead th { font-weight: 700; color: var(--muted); border-bottom-width: 1px; font-size: 0.78rem; }
+        .bg-light { background-color: var(--paper) !important; }
+        .modal-body.bg-light { background-color: var(--paper) !important; }
+        .border { border-color: var(--line) !important; }
+
         .swatch { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.1); display: inline-block; vertical-align: middle; }
-        .config-preview-card { border-radius: 10px; overflow: hidden; }
-        .receta-slot-badge { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .03em; }
+        .config-preview-card { border-radius: 4px; overflow: hidden; box-shadow: var(--elev-2); }
+        .receta-slot-badge { font-size: 0.65rem; letter-spacing: .03em; }
 
         /* Dashboard Gallery */
-        .patient-card { transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border-left: 4px solid var(--brand-primary); }
-        .patient-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
-        
-        /* Chatbot UI */
-        #btn-toggle-chat { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; z-index: 1050; background-color: var(--brand-primary); border:none; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s;}
-        #btn-toggle-chat:hover { transform: scale(1.1); }
-        #chat-window { position: fixed; bottom: 90px; right: 20px; width: 380px; z-index: 1050; border: none; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
-        #chat-messages { height: 400px; overflow-y: auto; background-color: #f8f9fa; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .msg-ai { background-color: white; border: 1px solid #eee; border-radius: 10px 10px 10px 0; padding: 15px 15px 5px 15px; font-size: 0.85rem; color: var(--brand-secondary); align-self: flex-start; max-width: 90%; }
-        .msg-user { background-color: var(--brand-secondary); color: white; border-radius: 10px 10px 0 10px; padding: 10px; font-size: 0.85rem; align-self: flex-end; max-width: 85%; }
-        
+        .patient-card { transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border-left: 3px solid var(--brand-primary); box-shadow: var(--elev-1); }
+        .patient-card:hover { transform: translateY(-3px); box-shadow: var(--elev-4) !important; }
+
+        /* Chatbot UI (Material FAB + sheet) */
+        #btn-toggle-chat { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; z-index: 1050; background-color: var(--brand-primary); border:none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; transition: box-shadow 0.2s, transform 0.2s; box-shadow: var(--elev-4) !important; }
+        #btn-toggle-chat:hover { box-shadow: var(--elev-8) !important; transform: scale(1.05); }
+        #chat-window { position: fixed; bottom: 90px; right: 20px; width: 380px; z-index: 1050; border: none; border-radius: 8px; overflow: hidden; box-shadow: var(--elev-8); display: flex; flex-direction: column; }
+        #chat-messages { height: 400px; overflow-y: auto; background-color: var(--paper); padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg-ai { background-color: var(--paper-raised); border: none; border-radius: 12px 12px 12px 2px; padding: 15px 15px 5px 15px; font-size: 0.85rem; color: var(--brand-secondary); align-self: flex-start; max-width: 90%; box-shadow: var(--elev-1); }
+        .msg-user { background-color: var(--brand-secondary); color: var(--on-secondary); border-radius: 12px 12px 2px 12px; padding: 10px 14px; font-size: 0.85rem; align-self: flex-end; max-width: 85%; }
+
         /* Formateo para IA Markdown */
-        .msg-ai h1, .msg-ai h2, .msg-ai h3 { font-size: 1rem; color: var(--brand-primary); margin-top: 10px; margin-bottom: 5px; font-weight: bold;}
+        .msg-ai h1, .msg-ai h2, .msg-ai h3 { font-size: 0.95rem; color: var(--brand-primary); margin-top: 10px; margin-bottom: 5px; font-weight: 700;}
         .msg-ai p { margin-bottom: 8px; }
         .msg-ai ul, .msg-ai ol { padding-left: 20px; margin-bottom: 8px; }
-        
+
         /* Estilos específicos para PDF Plan Nutrimental */
-        .pdf-title { color: var(--brand-primary); font-weight: bold; }
+        .pdf-title { color: var(--brand-primary); font-weight: 700; }
         .pdf-table th { background-color: rgba(var(--brand-primary-rgb), 0.1) !important; color: var(--brand-secondary); font-size: 0.8rem;}
         .pdf-table td { font-size: 0.75rem; vertical-align: middle; }
-        .pdf-section-title { background-color: var(--brand-secondary); color: white; padding: 5px 10px; font-size: 0.9rem; margin-top: 15px; border-radius: 4px;}
-        .pdf-recipe-card { border: 1px solid #e0e0e0; border-radius: 5px; padding: 10px; height: 100%; }
-        .pdf-recipe-title { font-weight: bold; color: #2980b9; font-size: 0.8rem; margin-bottom: 5px;}
+        .pdf-section-title { background-color: var(--brand-secondary); color: var(--on-secondary); padding: 5px 10px; font-size: 0.9rem; margin-top: 15px; border-radius: 4px; font-weight: 500;}
+        .pdf-recipe-card { border: none; box-shadow: var(--elev-1); border-radius: 4px; padding: 10px; height: 100%; }
+        .pdf-recipe-title { font-weight: 700; color: #2980b9; font-size: 0.8rem; margin-bottom: 5px;}
         .pdf-ingredient { font-size: 0.75rem; margin-bottom: 2px; color: #444; }
+
+        /* Encabezado de exportación (avatar + nombre + separadores verticales), inspirado
+           en formatos de reporte clínico habituales del sector. */
+        .pdf-header-avatar { width: 44px; height: 44px; border-radius: 50%; background-color: var(--brand-primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; overflow: hidden; }
+        .pdf-header-info { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .pdf-header-divider { width: 1px; height: 18px; background-color: var(--line); }
+        .pdf-count-pill { background-color: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+
+        /* Tabla de Equivalentes por Día: totales en píldora, puntito de color por grupo,
+           filas con tinte alterno suave — igual que un cuadro de raciones fácil de escanear. */
+        .pdf-total-pill { background-color: var(--brand-primary); color: var(--on-primary); border-radius: 999px; padding: 2px 12px; font-size: 0.78rem; font-weight: 700; display: inline-block; min-width: 28px; }
+        .pdf-group-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--brand-primary); margin-right: 8px; }
+        .pdf-table.pdf-equiv-table tbody tr:nth-child(even) { background-color: rgba(var(--brand-primary-rgb), 0.05); }
+        .pdf-table.pdf-equiv-table td, .pdf-table.pdf-equiv-table th { border-color: var(--line) !important; }
+        .pdf-time-pill { background-color: var(--paper); border-radius: 999px; padding: 3px 12px; font-size: 0.75rem; font-weight: 700; color: var(--brand-secondary); }
+        .pdf-subsection-title { background-color: rgba(var(--brand-primary-rgb), 0.12); color: var(--brand-secondary); padding: 6px 14px; border-radius: 4px; font-weight: 700; font-size: 0.82rem; margin-top: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .pdf-swap-item { font-size: 0.75rem; padding: 4px 2px; border-bottom: 1px dashed var(--line); display: flex; justify-content: space-between; gap: 8px; }
+        .pdf-swap-item span:last-child { font-weight: 700; color: var(--brand-secondary); white-space: nowrap; }
+
+        /* Métricas destacadas (GET/IMC/GEB/Dashboard) — el único lugar con números a gran escala */
+        #cr-res-imc, #cr-res-geb, #cr-res-get, #total-pacientes, #total-citas-semana { font-weight: 700; font-size: 2.1rem; }
+
+        /* Avisos clínicos (exclusiones, lineamientos NOM/OMS) dentro de los planes generados */
+        .clinical-alert { background-color: #fbeceb; color: #7a2e22; padding: 14px 16px; border-radius: 4px; font-size: 0.85rem; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid #c1443c; line-height: 1.5; }
+        .clinical-alert b { font-weight: 700; }
+
+        /* Checklist de diagnósticos CIE-10 */
+        #cie10-checklist { background: var(--paper); border-radius: 4px; padding: 12px 14px; box-shadow: var(--elev-1); }
+
+        /* La vista previa de marca en Configuración debe reflejar el mismo tratamiento del logo real */
+        #cfg-preview-nombre { font-weight: 700; }
     </style>
 </head>
 <body>
@@ -115,11 +241,11 @@
             <div id="dashboard" class="section-view active">
                 <h2 class="mb-4">Dashboard Principal</h2>
                 <div class="d-flex flex-wrap gap-3 mb-4">
-                    <div class="card p-3 bg-white shadow-sm" style="border-left: 4px solid #1abc9c; width: 300px;">
+                    <div class="card p-3 bg-white shadow-sm" style="border-left: 3px solid var(--brand-primary); width: 300px;">
                         <h5><i class="fi fi-ss-users text-success"></i> Pacientes Activos</h5>
                         <h2 id="total-pacientes">0</h2>
                     </div>
-                    <div class="card p-3 bg-white shadow-sm" style="border-left: 4px solid #2c3e50; width: 300px;">
+                    <div class="card p-3 bg-white shadow-sm" style="border-left: 3px solid var(--brand-secondary); width: 300px;">
                         <h5><i class="fi fi-ss-calendar-check text-primary"></i> Citas Próximos 7 Días</h5>
                         <h2 id="total-citas-semana">0</h2>
                     </div>
@@ -459,22 +585,22 @@
                     <div class="col-md-4">
                         <div class="card shadow-sm border-0 p-3 mb-3">
                             <h5 class="text-primary border-bottom pb-2">Registrar Medición</h5>
-                            <form id="form-pediatrico">
+                            <form id="form-pediatrico" novalidate>
                                 <div class="mb-3">
                                     <label class="small fw-bold">Paciente Pediátrico</label>
-                                    <select id="ped-paciente" class="form-select form-select-sm" required></select>
+                                    <select id="ped-paciente" class="form-select form-select-sm" required></select><div class="invalid-feedback">Selecciona un paciente.</div>
                                 </div>
                                 <div class="mb-2">
                                     <label class="small">Edad (Meses)</label>
-                                    <input type="number" id="ped-edad" class="form-control form-control-sm" required>
+                                    <input type="number" id="ped-edad" class="form-control form-control-sm" required><div class="invalid-feedback">Ingresa la edad en meses.</div>
                                 </div>
                                 <div class="mb-2">
                                     <label class="small">Peso (kg)</label>
-                                    <input type="number" id="ped-peso" step="0.1" class="form-control form-control-sm" required>
+                                    <input type="number" id="ped-peso" step="0.1" class="form-control form-control-sm" required><div class="invalid-feedback">Ingresa el peso en kg.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="small">Estatura (cm)</label>
-                                    <input type="number" id="ped-talla" step="0.1" class="form-control form-control-sm" required>
+                                    <input type="number" id="ped-talla" step="0.1" class="form-control form-control-sm" required><div class="invalid-feedback">Ingresa la estatura en cm.</div>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100 btn-sm" style="background-color: var(--brand-primary); border:none;">
                                     <i class="fi fi-ss-add"></i> Agregar Punto
@@ -580,6 +706,20 @@
                                     <label class="small fw-bold">Eslogan / Nombre de la clínica (aparece bajo el logo)</label>
                                     <input type="text" id="cfg-slogan" class="form-control" placeholder="Ej. Consultorio de Nutrición Clínica">
                                 </div>
+                                <div class="col-md-12">
+                                    <label class="small fw-bold">Logo del nutriólogo <small class="text-muted fw-normal">(opcional — si lo subes, reemplaza al ícono en la barra lateral y en los PDF/PNG exportados)</small></label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex align-items-center justify-content-center" style="width:56px; height:56px; border-radius:8px; background-color: var(--paper); overflow:hidden; flex-shrink:0;">
+                                            <img id="cfg-logo-preview" src="" class="d-none" style="width:100%; height:100%; object-fit:cover;">
+                                            <i id="cfg-logo-preview-vacio" class="fi fi-ss-image text-muted"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <input type="file" id="cfg-logo-input" class="form-control form-control-sm" accept="image/png,image/jpeg,image/webp">
+                                            <div class="form-text">PNG o JPG, se ajusta automáticamente a un ícono cuadrado.</div>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger btn-sm d-none" id="btn-quitar-logo"><i class="fi fi-ss-trash"></i> Quitar</button>
+                                    </div>
+                                </div>
                             </div>
 
                             <h5 class="form-section-title"><i class="fi fi-ss-palette"></i> Colores</h5>
@@ -617,7 +757,7 @@
 
                     <div class="col-lg-5">
                         <div class="card shadow-sm border-0 config-preview-card sticky-top" style="top: 20px;">
-                            <div class="p-4 text-center text-white" id="cfg-preview-header" style="background-color: var(--brand-secondary);">
+                            <div class="p-4 text-center" id="cfg-preview-header" style="background-color: var(--brand-secondary); color: var(--on-secondary);">
                                 <div style="font-size:2rem;"><i id="cfg-preview-icon" class="fi fi-ss-apple-whole"></i></div>
                                 <h4 class="mt-2 mb-0" id="cfg-preview-nombre">NutriFit</h4>
                                 <small class="text-white-50" id="cfg-preview-slogan">Plataforma de Nutrición Clínica</small>
@@ -648,7 +788,7 @@
 <div class="modal fade" id="modalDetallePaciente" tabindex="-1">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
+      <div class="modal-header" style="background-color: var(--brand-secondary); color: var(--on-secondary);">
         <h5 class="modal-title"><i class="fi fi-ss-id-card"></i> Perfil del Paciente</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
@@ -700,11 +840,11 @@
                         
                         <div class="collapse mb-3" id="collapseEvolucion">
                             <div class="card card-body bg-light border-0 shadow-sm">
-                                <form id="form-evolucion">
+                                <form id="form-evolucion" novalidate>
                                     <input type="hidden" id="ev-paciente-id">
                                     <div class="row g-2">
-                                        <div class="col-md-3"><label class="small text-muted">Peso (kg)</label><input type="number" step="0.1" id="ev-peso" class="form-control form-control-sm" required></div>
-                                        <div class="col-md-3"><label class="small text-muted">Talla (cm)</label><input type="number" step="0.01" id="ev-talla" class="form-control form-control-sm" required></div>
+                                        <div class="col-md-3"><label class="small text-muted">Peso (kg)</label><input type="number" step="0.1" id="ev-peso" class="form-control form-control-sm" required><div class="invalid-feedback">Ingresa el peso actual.</div></div>
+                                        <div class="col-md-3"><label class="small text-muted">Talla (cm)</label><input type="number" step="0.01" id="ev-talla" class="form-control form-control-sm" required><div class="invalid-feedback">Ingresa la talla actual.</div></div>
                                         <div class="col-md-3"><label class="small text-muted">Cintura (cm)</label><input type="number" step="0.1" id="ev-cintura" class="form-control form-control-sm"></div>
                                         <div class="col-md-3"><label class="small text-muted">Cadera (cm)</label><input type="number" step="0.1" id="ev-cadera" class="form-control form-control-sm"></div>
                                         
@@ -760,12 +900,12 @@
 <div class="modal fade" id="modalPaciente" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <div class="modal-header text-white" style="background-color: var(--brand-secondary);">
+      <div class="modal-header" style="background-color: var(--brand-secondary); color: var(--on-secondary);">
         <h5 class="modal-title" id="modalPacienteLabel"><i class="fi fi-ss-book-medical"></i> Nuevo Expediente Clínico</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body bg-light">
-        <form id="form-paciente">
+        <form id="form-paciente" novalidate>
             <input type="hidden" id="p-id" value="">
             <ul class="nav nav-tabs mb-3" role="tablist">
                 <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button">Datos Personales</button></li>
@@ -777,11 +917,11 @@
                 <div class="tab-pane fade show active p-3 bg-white border rounded" id="tab-datos">
                     <div class="alert alert-warning"><i class="fi fi-ss-info"></i> El <strong>Email</strong> es el identificador único del paciente en la base de datos.</div>
                     <div class="row g-3">
-                        <div class="col-md-6"><label>Nombre Completo *</label><input type="text" id="p-nombre" class="form-control" required></div>
-                        <div class="col-md-3"><label>Edad *</label><input type="number" id="p-edad" class="form-control" required></div>
+                        <div class="col-md-6"><label>Nombre Completo *</label><input type="text" id="p-nombre" class="form-control" required><div class="invalid-feedback">El nombre es obligatorio.</div></div>
+                        <div class="col-md-3"><label>Edad *</label><input type="number" id="p-edad" class="form-control" required><div class="invalid-feedback">Ingresa la edad.</div></div>
                         <div class="col-md-3"><label>Sexo</label><select id="p-sexo" class="form-select"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
-                        <div class="col-md-6"><label>Teléfono *</label><input type="tel" id="p-tel" class="form-control" required></div>
-                        <div class="col-md-6"><label>Email * (Único)</label><input type="email" id="p-email" class="form-control" required></div>
+                        <div class="col-md-6"><label>Teléfono *</label><input type="tel" id="p-tel" class="form-control" required><div class="invalid-feedback">Ingresa un teléfono de contacto.</div></div>
+                        <div class="col-md-6"><label>Email * (Único)</label><input type="email" id="p-email" class="form-control" required><div class="invalid-feedback">Ingresa un correo válido (es el identificador único).</div></div>
                         <div class="col-md-3"><label>Fecha Nacimiento</label><input type="date" id="p-fnac" class="form-control"></div>
                         <div class="col-md-4"><label>Ocupación</label><input type="text" id="p-ocupacion" class="form-control"></div>
                         <div class="col-md-5"><label>Motivo Consulta</label><input type="text" id="p-motivo" class="form-control"></div>
@@ -862,15 +1002,15 @@
   </div>
 </div>
 
-<div class="modal fade" id="modalCita" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title">Agendar Consulta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-cita"><div class="mb-3"><label>Paciente</label><select id="c-paciente" class="form-select" required></select></div><div class="mb-3"><label>Fecha y Hora</label><input type="datetime-local" id="c-fecha" class="form-control" required></div><div class="mb-3"><label>Enlace de Meet</label><input type="url" id="c-link" class="form-control"></div><div class="modal-footer pb-0 border-0"><button type="submit" class="btn btn-primary">Agendar</button></div></form></div></div></div></div>
-<div class="modal fade" id="modalAlimento" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header" style="background-color: var(--brand-primary); color: white;"><h5 class="modal-title">Nuevo Alimento</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-alimento"><div class="mb-2"><label>Nombre / Marca</label><input type="text" id="a-nombre" class="form-control" required></div><div class="mb-2"><label>Porción</label><input type="text" id="a-porcion" class="form-control" required></div><div class="row g-2 mb-2"><div class="col-6"><label>Kcal</label><input type="number" id="a-kcal" class="form-control" required></div><div class="col-6"><label>Prot (g)</label><input type="number" step="0.1" id="a-prot" class="form-control" required></div><div class="col-6"><label>Lip (g)</label><input type="number" step="0.1" id="a-lip" class="form-control" required></div><div class="col-6"><label>HC (g)</label><input type="number" step="0.1" id="a-hc" class="form-control" required></div></div><div class="mb-2"><label>Grupo SMAE equivalente <small class="text-muted">(para incluirlo en los menús generados)</small></label><select id="a-grupo" class="form-select"><option value="">— Sin grupo (solo catálogo) —</option></select></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-success w-100">Guardar</button></div></form></div></div></div></div>
-<div class="modal fade" id="modalReceta" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header" style="background-color: var(--brand-secondary); color: white;"><h5 class="modal-title">Nueva Receta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-receta"><div class="mb-3"><label>Platillo</label><input type="text" id="re-nombre" class="form-control" required></div><div class="mb-3"><label>Ingredientes</label><textarea id="re-ingredientes" class="form-control" rows="3" required></textarea></div><div class="mb-3"><label>Preparación</label><textarea id="re-preparacion" class="form-control" rows="3"></textarea></div><div class="row g-2 mb-3"><div class="col-md-4"><label>Porciones</label><input type="number" id="re-porciones" class="form-control" value="1"></div><div class="col-md-8"><label>Tiempo de comida sugerido <small class="text-muted">(para usarla en los menús generados)</small></label><select id="re-tiempo" class="form-select"><option value="">— Cualquiera —</option><option value="desayuno">Desayuno</option><option value="colacion">Colación</option><option value="comida">Comida</option><option value="cena">Cena</option></select></div></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-dark w-100">Guardar</button></div></form></div></div></div></div>
-<div class="modal fade" id="modalDieta" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Nueva Plantilla</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-dieta"><div class="mb-2"><label>Nombre del Plan</label><input type="text" id="d-nombre" class="form-control" required></div><div class="mb-2"><label>Kcal Objetivo</label><input type="number" id="d-kcal" class="form-control" required></div><div class="mb-2"><label>Tipo</label><input type="text" id="d-tipo" class="form-control"></div><div class="mb-2"><label>Notas</label><textarea id="d-notas" class="form-control" rows="3"></textarea></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-secondary w-100">Guardar</button></div></form></div></div></div></div>
+<div class="modal fade" id="modalCita" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title">Agendar Consulta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-cita" novalidate><div class="mb-3"><label>Paciente</label><select id="c-paciente" class="form-select" required></select><div class="invalid-feedback">Selecciona un paciente.</div></div><div class="mb-3"><label>Fecha y Hora</label><input type="datetime-local" id="c-fecha" class="form-control" required><div class="invalid-feedback">Selecciona fecha y hora.</div></div><div class="mb-3"><label>Enlace de Meet</label><input type="url" id="c-link" class="form-control"></div><div class="modal-footer pb-0 border-0"><button type="submit" class="btn btn-primary">Agendar</button></div></form></div></div></div></div>
+<div class="modal fade" id="modalAlimento" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header" style="background-color: var(--brand-primary); color: var(--on-primary);"><h5 class="modal-title">Nuevo Alimento</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-alimento" novalidate><div class="mb-2"><label>Nombre / Marca</label><input type="text" id="a-nombre" class="form-control" required><div class="invalid-feedback">El nombre del alimento es obligatorio.</div></div><div class="mb-2"><label>Porción</label><input type="text" id="a-porcion" class="form-control" required><div class="invalid-feedback">Indica la porción.</div></div><div class="row g-2 mb-2"><div class="col-6"><label>Kcal</label><input type="number" id="a-kcal" class="form-control" required><div class="invalid-feedback">Indica las kcal.</div></div><div class="col-6"><label>Prot (g)</label><input type="number" step="0.1" id="a-prot" class="form-control" required><div class="invalid-feedback">Indica los gramos de proteína.</div></div><div class="col-6"><label>Lip (g)</label><input type="number" step="0.1" id="a-lip" class="form-control" required><div class="invalid-feedback">Indica los gramos de lípidos.</div></div><div class="col-6"><label>HC (g)</label><input type="number" step="0.1" id="a-hc" class="form-control" required><div class="invalid-feedback">Indica los gramos de carbohidratos.</div></div></div><div class="mb-2"><label>Grupo SMAE equivalente <small class="text-muted">(para incluirlo en los menús generados)</small></label><select id="a-grupo" class="form-select"><option value="">— Sin grupo (solo catálogo) —</option></select></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-success w-100">Guardar</button></div></form></div></div></div></div>
+<div class="modal fade" id="modalReceta" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header" style="background-color: var(--brand-secondary); color: white;"><h5 class="modal-title">Nueva Receta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-receta" novalidate><div class="mb-3"><label>Platillo</label><input type="text" id="re-nombre" class="form-control" required><div class="invalid-feedback">El nombre del platillo es obligatorio.</div></div><div class="mb-3"><label>Ingredientes</label><textarea id="re-ingredientes" class="form-control" rows="3" required></textarea><div class="invalid-feedback">Agrega al menos un ingrediente.</div></div><div class="mb-3"><label>Preparación</label><textarea id="re-preparacion" class="form-control" rows="3"></textarea></div><div class="row g-2 mb-3"><div class="col-md-4"><label>Porciones</label><input type="number" id="re-porciones" class="form-control" value="1"></div><div class="col-md-8"><label>Tiempo de comida sugerido <small class="text-muted">(para usarla en los menús generados)</small></label><select id="re-tiempo" class="form-select"><option value="">— Cualquiera —</option><option value="desayuno">Desayuno</option><option value="colacion">Colación</option><option value="comida">Comida</option><option value="cena">Cena</option></select></div></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-dark w-100">Guardar</button></div></form></div></div></div></div>
+<div class="modal fade" id="modalDieta" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Nueva Plantilla</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="form-dieta" novalidate><div class="mb-2"><label>Nombre del Plan</label><input type="text" id="d-nombre" class="form-control" required><div class="invalid-feedback">El nombre del plan es obligatorio.</div></div><div class="mb-2"><label>Kcal Objetivo</label><input type="number" id="d-kcal" class="form-control" required><div class="invalid-feedback">Indica las kcal objetivo.</div></div><div class="mb-2"><label>Tipo</label><input type="text" id="d-tipo" class="form-control"></div><div class="mb-2"><label>Notas</label><textarea id="d-notas" class="form-control" rows="3"></textarea></div><div class="modal-footer pb-0"><button type="submit" class="btn btn-secondary w-100">Guardar</button></div></form></div></div></div></div>
 
 <!-- WIDGET CHATBOT IA -->
 <button class="btn btn-primary rounded-circle shadow-lg" id="btn-toggle-chat" title="Asistente IA"><i class="fi fi-ss-brain"></i></button>
 <div class="card shadow-lg d-none" id="chat-window">
-    <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: var(--brand-secondary);">
+    <div class="card-header d-flex justify-content-between align-items-center" style="background-color: var(--brand-secondary); color: var(--on-secondary);">
         <h6 class="m-0"><i class="fi fi-ss-sparkles text-warning"></i> Copiloto <span id="brand-nombre-chat">NutriFit</span> IA</h6>
         <button type="button" class="btn-close btn-close-white btn-sm" id="btn-close-chat"></button>
     </div>
@@ -930,6 +1070,31 @@
 
   const getNumVal = (id) => parseFloat(document.getElementById(id).value) || 0;
   const getStrVal = (id) => document.getElementById(id).value || "";
+
+  // Validación visible de campos faltantes (Bootstrap 5 "was-validated"): en vez de
+  // depender del globo nativo del navegador, resalta en rojo los campos vacíos/ inválidos
+  // con el mensaje en español que ya está en el markup (.invalid-feedback) y enfoca el
+  // primero para que el nutriólogo lo vea de inmediato.
+  const validarForm = (form) => {
+      form.classList.add('was-validated');
+      if (!form.checkValidity()) {
+          const primerInvalido = form.querySelector(':invalid');
+          if (primerInvalido) { primerInvalido.focus(); primerInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+          return false;
+      }
+      return true;
+  };
+  // Para validaciones puntuales fuera de un <form> (botones "Generar…"): marca/limpia un
+  // campo suelto con el mismo lenguaje visual (borde rojo + mensaje) sin envolverlo en un form.
+  const marcarInvalido = (id, mensaje) => {
+      const el = document.getElementById(id); if (!el) return;
+      el.classList.add('is-invalid');
+      let fb = el.parentElement.querySelector('.invalid-feedback.dinamico');
+      if (!fb) { fb = document.createElement('div'); fb.className = 'invalid-feedback dinamico'; el.insertAdjacentElement('afterend', fb); }
+      fb.textContent = mensaje; fb.style.display = 'block';
+      el.focus();
+  };
+  const limpiarInvalido = (id) => { const el = document.getElementById(id); if (el) el.classList.remove('is-invalid'); };
   
   const showToast = (msg) => {
       document.getElementById('toast-msg').innerText = msg;
@@ -937,20 +1102,39 @@
   };
 
   // 0. CONFIGURACIÓN DE MARCA (WHITELABEL)
-  const APP_CONFIG_DEFAULT = { nombre: 'NutriFit', slogan: 'Plataforma de Nutrición Clínica', icono: 'fi-ss-apple-whole', primario: '#1abc9c', secundario: '#2c3e50', piePdf: '' };
+  const APP_CONFIG_DEFAULT = { nombre: 'NutriFit', slogan: 'Plataforma de Nutrición Clínica', icono: 'fi-ss-apple-whole', primario: '#00796b', secundario: '#2c3e50', piePdf: '', logo: '' };
   window.APP_CONFIG = { ...APP_CONFIG_DEFAULT };
+
+  // Calcula si el texto/ícono sobre un color de fondo debe ser blanco o tinta oscura,
+  // según el contraste real (luminancia relativa WCAG) — así, sin importar qué color de
+  // marca elija el nutriólogo (incluyendo el default), el texto encima nunca se pierde.
+  const luminanciaRelativa = (hex) => {
+      const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
+      if (!m) return 1;
+      const canal = (h) => { const c = parseInt(h, 16) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+      return 0.2126 * canal(m[1]) + 0.7152 * canal(m[2]) + 0.0722 * canal(m[3]);
+  };
+  const colorDeContraste = (hexFondo) => {
+      const L = luminanciaRelativa(hexFondo);
+      const contrasteConBlanco = 1.05 / (L + 0.05);
+      const contrasteConOscuro = (L + 0.05) / 0.05;
+      return contrasteConBlanco >= contrasteConOscuro ? '#ffffff' : '#1c1c1c';
+  };
 
   const aplicarConfig = (cfg) => {
       window.APP_CONFIG = { ...APP_CONFIG_DEFAULT, ...cfg };
       const c = window.APP_CONFIG;
       document.documentElement.style.setProperty('--brand-primary', c.primario);
       document.documentElement.style.setProperty('--brand-secondary', c.secundario);
-      const hexToRgb = (hex) => { const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || ''); return m ? `${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)}` : '26,188,156'; };
+      document.documentElement.style.setProperty('--on-primary', colorDeContraste(c.primario));
+      document.documentElement.style.setProperty('--on-secondary', colorDeContraste(c.secundario));
+      const hexToRgb = (hex) => { const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || ''); return m ? `${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)}` : '0,121,107'; };
       document.documentElement.style.setProperty('--brand-primary-rgb', hexToRgb(c.primario));
       document.documentElement.style.setProperty('--brand-secondary-rgb', hexToRgb(c.secundario));
 
       document.title = `${c.nombre} - Clinical Dashboard`;
-      const iconEl = document.getElementById('brand-icon'); if (iconEl) iconEl.className = `fi ${c.icono}`;
+      const iconEl = document.getElementById('brand-icon');
+      if (iconEl) { iconEl.className = c.logo ? '' : `fi ${c.icono}`; iconEl.style.backgroundImage = c.logo ? `url(${c.logo})` : ''; if (c.logo) { iconEl.style.backgroundSize = 'cover'; iconEl.style.backgroundPosition = 'center'; iconEl.style.display = 'inline-block'; iconEl.style.width = '1.4em'; iconEl.style.height = '1.4em'; iconEl.style.borderRadius = '4px'; iconEl.style.verticalAlign = 'middle'; } else { iconEl.style.width = ''; iconEl.style.height = ''; } }
       const nombreEl = document.getElementById('brand-nombre'); if (nombreEl) nombreEl.innerText = c.nombre;
       const sloganEl = document.getElementById('brand-slogan'); if (sloganEl) sloganEl.innerText = c.slogan || '';
       const chatNombreEl = document.getElementById('brand-nombre-chat'); if (chatNombreEl) chatNombreEl.innerText = c.nombre;
@@ -966,10 +1150,19 @@
       // Vista previa en vivo
       const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
       setTxt('cfg-preview-nombre', c.nombre); setTxt('cfg-preview-slogan', c.slogan || '');
-      const prevIcon = document.getElementById('cfg-preview-icon'); if (prevIcon) prevIcon.className = `fi ${c.icono}`;
-      const prevHeader = document.getElementById('cfg-preview-header'); if (prevHeader) prevHeader.style.backgroundColor = c.secundario;
+      const prevIcon = document.getElementById('cfg-preview-icon');
+      if (prevIcon) {
+          if (c.logo) { prevIcon.className = ''; prevIcon.style.cssText = `background-image:url(${c.logo}); background-size:cover; background-position:center; width:48px; height:48px; border-radius:8px; display:inline-block;`; }
+          else { prevIcon.className = `fi ${c.icono}`; prevIcon.style.cssText = ''; }
+      }
+      const prevHeader = document.getElementById('cfg-preview-header'); if (prevHeader) { prevHeader.style.backgroundColor = c.secundario; prevHeader.style.color = colorDeContraste(c.secundario); }
       const prevBtnP = document.getElementById('cfg-preview-btn-primary'); if (prevBtnP) prevBtnP.style.backgroundColor = c.primario;
       const prevBtnS = document.getElementById('cfg-preview-btn-secondary'); if (prevBtnS) prevBtnS.style.backgroundColor = c.secundario;
+      const logoPreviewImg = document.getElementById('cfg-logo-preview'); const logoPreviewEmpty = document.getElementById('cfg-logo-preview-vacio'); const btnQuitarLogo = document.getElementById('btn-quitar-logo');
+      if (logoPreviewImg) {
+          if (c.logo) { logoPreviewImg.src = c.logo; logoPreviewImg.classList.remove('d-none'); if (logoPreviewEmpty) logoPreviewEmpty.classList.add('d-none'); if (btnQuitarLogo) btnQuitarLogo.classList.remove('d-none'); }
+          else { logoPreviewImg.classList.add('d-none'); if (logoPreviewEmpty) logoPreviewEmpty.classList.remove('d-none'); if (btnQuitarLogo) btnQuitarLogo.classList.add('d-none'); }
+      }
 
       localStorage.setItem('app_config', JSON.stringify(c));
   };
@@ -989,6 +1182,38 @@
   syncColorPair('cfg-primario', 'cfg-primario-hex');
   syncColorPair('cfg-secundario', 'cfg-secundario-hex');
 
+  // Logo del nutriólogo: se redimensiona a un cuadrado pequeño en canvas (para no
+  // guardar imágenes pesadas en Firestore/localStorage) y se previsualiza al instante;
+  // la persistencia real ocurre al pulsar "Guardar Cambios", igual que el resto del formulario.
+  document.getElementById('cfg-logo-input').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.size > 8 * 1024 * 1024) { alert('La imagen es demasiado pesada (máx. 8 MB).'); e.target.value = ''; return; }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+              const tam = 256;
+              const canvas = document.createElement('canvas'); canvas.width = tam; canvas.height = tam;
+              const ctx = canvas.getContext('2d');
+              const lado = Math.min(img.width, img.height);
+              const sx = (img.width - lado) / 2, sy = (img.height - lado) / 2;
+              ctx.drawImage(img, sx, sy, lado, lado, 0, 0, tam, tam);
+              const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+              aplicarConfig({ ...window.APP_CONFIG, logo: dataUrl });
+              showToast('Logo cargado — pulsa "Guardar Cambios" para conservarlo.');
+          };
+          img.onerror = () => alert('No se pudo leer esa imagen. Intenta con otro archivo.');
+          img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+  });
+  document.getElementById('btn-quitar-logo').addEventListener('click', () => {
+      aplicarConfig({ ...window.APP_CONFIG, logo: '' });
+      document.getElementById('cfg-logo-input').value = '';
+      showToast('Logo quitado — pulsa "Guardar Cambios" para confirmar.');
+  });
+
   document.getElementById('btn-guardar-config').addEventListener('click', async () => {
       const nuevaCfg = {
           nombre: getStrVal('cfg-nombre') || APP_CONFIG_DEFAULT.nombre,
@@ -996,7 +1221,8 @@
           icono: getStrVal('cfg-icono') || APP_CONFIG_DEFAULT.icono,
           primario: getStrVal('cfg-primario-hex') || APP_CONFIG_DEFAULT.primario,
           secundario: getStrVal('cfg-secundario-hex') || APP_CONFIG_DEFAULT.secundario,
-          piePdf: getStrVal('cfg-pie')
+          piePdf: getStrVal('cfg-pie'),
+          logo: window.APP_CONFIG.logo || ''
       };
       aplicarConfig(nuevaCfg);
       try { await setDoc(doc(db, 'config', 'app'), nuevaCfg, { merge: true }); } catch(e) { /* sigue funcionando solo con localStorage */ }
@@ -1005,6 +1231,7 @@
 
   document.getElementById('btn-reset-config').addEventListener('click', async () => {
       aplicarConfig(APP_CONFIG_DEFAULT);
+      document.getElementById('cfg-logo-input').value = '';
       try { await setDoc(doc(db, 'config', 'app'), APP_CONFIG_DEFAULT, { merge: true }); } catch(e) {}
       showToast('Se restablecieron los valores predeterminados.');
   });
@@ -1515,13 +1742,14 @@
 
   document.getElementById('form-pediatrico').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!validarForm(e.target)) return;
       const pId = document.getElementById('ped-paciente').value;
       if(!pId) return alert("Selecciona un paciente.");
       const edadMeses = getNumVal('ped-edad'), peso = getNumVal('ped-peso'), talla = getNumVal('ped-talla');
       const imc = parseFloat((peso / Math.pow(talla/100, 2)).toFixed(2));
       try {
           await addDoc(collection(db, "pacientes", pId, "mediciones_pediatricas"), { edadMeses, peso, talla, imc, fecha: serverTimestamp() });
-          document.getElementById('form-pediatrico').reset(); document.getElementById('ped-paciente').value = pId; showToast("Medición agregada a la curva.");
+          document.getElementById('form-pediatrico').reset(); document.getElementById('form-pediatrico').classList.remove('was-validated'); document.getElementById('ped-paciente').value = pId; showToast("Medición agregada a la curva.");
       } catch(err) { alert("Error: " + err.message); }
   });
 
@@ -1639,6 +1867,7 @@
 
   document.getElementById('form-evolucion').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!validarForm(e.target)) return;
       const pId = document.getElementById('ev-paciente-id').value;
       if(!pId) return;
 
@@ -1687,7 +1916,7 @@
               "antropometria.masaMagra": parseFloat(masaMagra.toFixed(2)),
               actualizado: serverTimestamp()
           });
-          document.getElementById('form-evolucion').reset();
+          document.getElementById('form-evolucion').reset(); document.getElementById('form-evolucion').classList.remove('was-validated');
           bootstrap.Collapse.getInstance(document.getElementById('collapseEvolucion')).hide();
           showToast("Avance registrado correctamente.");
       } catch(err) { alert("Error: " + err.message); }
@@ -1796,13 +2025,15 @@
   });
 
   document.getElementById('btn-nuevo-paciente').addEventListener('click', () => {
-      document.getElementById('form-paciente').reset(); document.getElementById('p-id').value = ""; document.getElementById('p-email').readOnly = false;
+      document.getElementById('form-paciente').reset(); document.getElementById('form-paciente').classList.remove('was-validated'); document.getElementById('p-id').value = ""; document.getElementById('p-email').readOnly = false;
       document.getElementById('resultados-clinicos').classList.add('d-none');
       document.getElementById('modalPacienteLabel').innerHTML = '<i class="fi fi-ss-user-add"></i> Nuevo Expediente Clínico';
   });
 
   document.getElementById('form-paciente').addEventListener('submit', async (e) => {
-      e.preventDefault(); const btn = document.getElementById('btn-guardar-paciente');
+      e.preventDefault();
+      if (!validarForm(e.target)) return;
+      const btn = document.getElementById('btn-guardar-paciente');
       const email = getStrVal('p-email').toLowerCase().trim(); const pId = document.getElementById('p-id').value;
       if(!email) return alert("El correo es obligatorio.");
       btn.disabled = true; btn.innerHTML = 'Procesando...';
@@ -1850,7 +2081,7 @@
               pData.historial_antropometrico = [antropoData];
               pData.registro = serverTimestamp(); await setDoc(docRef, pData);
           }
-          document.getElementById('form-paciente').reset(); document.getElementById('resultados-clinicos').classList.add('d-none');
+          document.getElementById('form-paciente').reset(); document.getElementById('form-paciente').classList.remove('was-validated'); document.getElementById('resultados-clinicos').classList.add('d-none');
           bootstrap.Modal.getInstance(document.getElementById('modalPaciente')).hide(); showToast("Expediente guardado.");
       } catch(err) { console.error(err); alert(`Error: ${err.message}`); } 
       finally { btn.disabled = false; btn.innerHTML = 'Guardar Expediente'; }
@@ -1885,8 +2116,10 @@
   document.getElementById('a-grupo').innerHTML += Object.entries(labelSMAE).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
 
   document.getElementById('form-alimento').addEventListener('submit', async (e) => {
-      e.preventDefault(); await addDoc(collection(db, "mis_alimentos"), { nombre: getStrVal('a-nombre'), porcion: getStrVal('a-porcion'), kcal: getNumVal('a-kcal'), prot: getNumVal('a-prot'), lip: getNumVal('a-lip'), hc: getNumVal('a-hc'), grupo: getStrVal('a-grupo') });
-      document.getElementById('form-alimento').reset(); bootstrap.Modal.getInstance(document.getElementById('modalAlimento')).hide(); showToast("Alimento guardado y disponible en los generadores de menú.");
+      e.preventDefault();
+      if (!validarForm(e.target)) return;
+      await addDoc(collection(db, "mis_alimentos"), { nombre: getStrVal('a-nombre'), porcion: getStrVal('a-porcion'), kcal: getNumVal('a-kcal'), prot: getNumVal('a-prot'), lip: getNumVal('a-lip'), hc: getNumVal('a-hc'), grupo: getStrVal('a-grupo') });
+      document.getElementById('form-alimento').reset(); document.getElementById('form-alimento').classList.remove('was-validated'); bootstrap.Modal.getInstance(document.getElementById('modalAlimento')).hide(); showToast("Alimento guardado y disponible en los generadores de menú.");
   });
   onSnapshot(collection(db, "mis_alimentos"), (snap) => {
       misAlimentosMemory = [];
@@ -1899,8 +2132,10 @@
   });
 
   document.getElementById('form-receta').addEventListener('submit', async (e) => {
-      e.preventDefault(); await addDoc(collection(db, "mis_recetas"), { nombre: getStrVal('re-nombre'), ingredientes: getStrVal('re-ingredientes'), prep: getStrVal('re-preparacion'), porciones: getNumVal('re-porciones'), tiempo: getStrVal('re-tiempo') });
-      document.getElementById('form-receta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalReceta')).hide(); showToast("Receta guardada y disponible en los generadores de menú.");
+      e.preventDefault();
+      if (!validarForm(e.target)) return;
+      await addDoc(collection(db, "mis_recetas"), { nombre: getStrVal('re-nombre'), ingredientes: getStrVal('re-ingredientes'), prep: getStrVal('re-preparacion'), porciones: getNumVal('re-porciones'), tiempo: getStrVal('re-tiempo') });
+      document.getElementById('form-receta').reset(); document.getElementById('form-receta').classList.remove('was-validated'); bootstrap.Modal.getInstance(document.getElementById('modalReceta')).hide(); showToast("Receta guardada y disponible en los generadores de menú.");
   });
   
   const TIEMPO_LABEL = { desayuno: 'Desayuno', colacion: 'Colación', comida: 'Comida', cena: 'Cena' };
@@ -1914,8 +2149,10 @@
   });
 
   document.getElementById('form-dieta').addEventListener('submit', async (e) => {
-      e.preventDefault(); await addDoc(collection(db, "mis_dietas"), { nombre: getStrVal('d-nombre'), kcal: getNumVal('d-kcal'), tipo: getStrVal('d-tipo'), notas: getStrVal('d-notas') });
-      document.getElementById('form-dieta').reset(); bootstrap.Modal.getInstance(document.getElementById('modalDieta')).hide(); showToast("Plantilla guardada.");
+      e.preventDefault();
+      if (!validarForm(e.target)) return;
+      await addDoc(collection(db, "mis_dietas"), { nombre: getStrVal('d-nombre'), kcal: getNumVal('d-kcal'), tipo: getStrVal('d-tipo'), notas: getStrVal('d-notas') });
+      document.getElementById('form-dieta').reset(); document.getElementById('form-dieta').classList.remove('was-validated'); bootstrap.Modal.getInstance(document.getElementById('modalDieta')).hide(); showToast("Plantilla guardada.");
   });
   onSnapshot(collection(db, "mis_dietas"), (snap) => {
       misDietasMemory = [];
@@ -1975,9 +2212,11 @@
   }
   
   document.getElementById('form-cita').addEventListener('submit', async (e) => {
-      e.preventDefault(); const pSel = document.getElementById('c-paciente');
+      e.preventDefault();
+      if (!validarForm(e.target)) return;
+      const pSel = document.getElementById('c-paciente');
       await addDoc(collection(db, "citas"), { pacienteId: pSel.value, title: `Consulta: ${pSel.options[pSel.selectedIndex].text}`, start: document.getElementById('c-fecha').value, meetLink: document.getElementById('c-link').value });
-      document.getElementById('form-cita').reset(); bootstrap.Modal.getInstance(document.getElementById('modalCita')).hide(); showToast("Cita agendada.");
+      document.getElementById('form-cita').reset(); document.getElementById('form-cita').classList.remove('was-validated'); bootstrap.Modal.getInstance(document.getElementById('modalCita')).hide(); showToast("Cita agendada.");
   });
   
   onSnapshot(collection(db, "citas"), (snap) => {
@@ -2019,21 +2258,39 @@
   // y arma el menú con el motor de alimentos (banco genérico + Mis Alimentos + Mis
   // Recetas), en vez del texto de 7 días fijo que había antes (idéntico sin importar
   // las kcal o el paciente elegido).
+  document.getElementById('dr-kcal-min').addEventListener('input', () => limpiarInvalido('dr-kcal-min'));
+  document.getElementById('dr-kcal-max').addEventListener('input', () => limpiarInvalido('dr-kcal-max'));
   document.getElementById('btn-generar-dieta').addEventListener('click', () => {
-      const minKcal = parseInt(document.getElementById('dr-kcal-min').value) || 1500;
-      const maxKcal = parseInt(document.getElementById('dr-kcal-max').value) || 1800;
+      limpiarInvalido('dr-kcal-min'); limpiarInvalido('dr-kcal-max');
+      const minKcalRaw = document.getElementById('dr-kcal-min').value;
+      const maxKcalRaw = document.getElementById('dr-kcal-max').value;
+      if (!minKcalRaw) return marcarInvalido('dr-kcal-min', 'Indica el mínimo de kcal.');
+      if (!maxKcalRaw) return marcarInvalido('dr-kcal-max', 'Indica el máximo de kcal.');
+      const minKcal = parseInt(minKcalRaw), maxKcal = parseInt(maxKcalRaw);
+      if (minKcal <= 0) return marcarInvalido('dr-kcal-min', 'Debe ser mayor a 0.');
+      if (maxKcal <= minKcal) return marcarInvalido('dr-kcal-max', 'Debe ser mayor al mínimo.');
       const kcalPromedio = (minKcal + maxKcal) / 2;
 
       const raciones = distribuirRaciones(kcalPromedio, 50, 20, 30, { verduras: 4, frutas: 3, leguminosas: 1, grupoLacteo: 'lecSemi', grupoAoa: 'aoaMod' });
       const filas = generarMenuSMAEsimple(raciones, dias, drExcludedTags);
       lastGeneratedMenu = filas;
 
+      const drPacienteId = document.getElementById('dr-paciente').value;
+      const drPacienteNombre = (drPacienteId && pacientesMemory[drPacienteId]) ? pacientesMemory[drPacienteId].personales?.nombre : 'Paciente sin asignar';
+
       let html = `<div id="tabla-dieta-render" class="bg-white p-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="pdf-title mb-0"><i class="fi ${APP_CONFIG.icono}"></i> ${APP_CONFIG.nombre}</h5>
-              <small class="text-muted">${new Date().toLocaleDateString('es-MX')}</small>
+          <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
+              <div class="pdf-header-avatar">${APP_CONFIG.logo ? `<img src="${APP_CONFIG.logo}" style="width:100%; height:100%; object-fit:cover;">` : `<i class="fi ${APP_CONFIG.icono}"></i>`}</div>
+              <div class="pdf-header-info">
+                  <strong style="font-weight:700; color: var(--brand-primary); font-size:1.1rem;">${APP_CONFIG.nombre}</strong>
+                  <span class="pdf-header-divider"></span>
+                  <span class="small text-muted">Paciente: <strong style="color:var(--ink);">${drPacienteNombre}</strong></span>
+                  <span class="pdf-header-divider"></span>
+                  <span class="small text-muted">${new Date().toLocaleDateString('es-MX')}</span>
+              </div>
           </div>
-          <h4 class="text-center mb-3">Menú Sugerido (${minKcal} - ${maxKcal} kcal)</h4><table class="table table-bordered menu-table text-center mt-3"><thead><tr><th>Día</th><th>Desayuno</th><th>Comida</th><th>Cena</th></tr></thead><tbody>`;
+          <div class="pdf-section-title mb-2 d-flex justify-content-between align-items-center"><span><i class="fi fi-ss-magic-wand"></i> Menú Sugerido</span><span class="pdf-count-pill" style="background-color: rgba(255,255,255,0.15); border-color: transparent; color: var(--on-secondary);">${minKcal} - ${maxKcal} kcal</span></div>
+          <table class="table table-bordered menu-table pdf-equiv-table text-center mt-3"><thead><tr><th>Día</th><th>Desayuno</th><th>Comida</th><th>Cena</th></tr></thead><tbody>`;
       lastGeneratedMenu.forEach(m => { html += `<tr><td class="fw-bold align-middle">${m.dia}</td><td>${m.desayuno}</td><td>${m.comida}</td><td>${m.cena}</td></tr>`; });
       html += `</tbody></table>${APP_CONFIG.piePdf ? `<div class="text-center text-muted small mt-2 pt-2 border-top">${APP_CONFIG.piePdf}</div>` : ''}</div>
       <div class="d-flex justify-content-end gap-2 mt-3">
@@ -2182,14 +2439,18 @@
   });
 
   // B. Generar Plan y PDF
+  document.getElementById('plan-kcal').addEventListener('input', () => limpiarInvalido('plan-kcal'));
   document.getElementById('btn-generar-plan').addEventListener('click', async () => {
+      limpiarInvalido('plan-kcal');
       const pId = document.getElementById('plan-paciente').value;
-      const kcalObj = parseInt(document.getElementById('plan-kcal').value) || 1800;
+      const kcalRaw = document.getElementById('plan-kcal').value;
       const duracion = parseInt(document.getElementById('plan-duracion').value) || 7;
-      
+
       if (!pId) return alert("Selecciona un paciente.");
       const d = pacientesMemory[pId];
       if (!d) return alert("Paciente no encontrado.");
+      if (!kcalRaw || parseInt(kcalRaw) <= 0) return marcarInvalido('plan-kcal', 'Indica el objetivo de kcal antes de generar el plan.');
+      const kcalObj = parseInt(kcalRaw);
 
       const nombre = d.personales?.nombre || "Paciente";
       const fecha = new Date().toLocaleDateString('es-MX');
@@ -2225,7 +2486,7 @@
       }
 
       const alertaExclusion = (advertenciasHtml !== '') ? `
-      <div style="background-color: #f8d7da; color: #842029; padding: 12px; border-radius: 5px; font-size: 0.85rem; margin-top: 15px; margin-bottom: 15px; border: 1px solid #f5c2c7;">
+      <div class="clinical-alert">
           ${advertenciasHtml}
       </div>` : '';
 
@@ -2235,18 +2496,20 @@
 
       const generarSemana = () => generarMenuSMAEdias(raciones, dias, window.planExcludedTags, true);
 
-      let menuBase = generarSemana();
-
       let menuHtml = '';
+      let seccionesTiempoHtml = '';
       if (duracion === 1) {
-          menuHtml = generarTablaMenu(menuBase.slice(0, 1), "Menú del Día");
+          const semana = generarSemana();
+          menuHtml = generarTablaMenu(semana.slice(0, 1), "Menú del Día");
+          seccionesTiempoHtml = generarSeccionTiempos(semana.slice(0, 1), "Menú del Día");
       } else if (duracion === 7) {
-          menuHtml = generarTablaMenu(menuBase, "Menú Semanal (7 Días)");
+          const semana = generarSemana();
+          menuHtml = generarTablaMenu(semana, "Menú Semanal (7 Días)");
+          seccionesTiempoHtml = generarSeccionTiempos(semana, "Semana");
       } else if (duracion === 30) {
-          menuHtml = generarTablaMenu(generarSemana(), "Semana 1") + 
-                     generarTablaMenu(generarSemana(), "Semana 2") + 
-                     generarTablaMenu(generarSemana(), "Semana 3") + 
-                     generarTablaMenu(generarSemana(), "Semana 4");
+          const semanas = [generarSemana(), generarSemana(), generarSemana(), generarSemana()];
+          menuHtml = semanas.map((s, i) => generarTablaMenu(s, `Semana ${i + 1}`)).join('');
+          seccionesTiempoHtml = semanas.map((s, i) => generarSeccionTiempos(s, `Semana ${i + 1}`)).join('');
       }
 
       function generarTablaMenu(dias, titulo) {
@@ -2260,23 +2523,23 @@
               </thead>
               <tbody>
                   <tr>
-                      <td class="fw-bold bg-light text-center">Colación Mañana<br><small class="text-muted">12:00 pm</small></td>
+                      <td class="text-center"><span class="pdf-time-pill">Colación Mañana<br>12:00 pm</span></td>
                       ${dias.map(d => `<td class="p-1">${d.cm}</td>`).join('')}
                   </tr>
                   <tr>
-                      <td class="fw-bold bg-light text-center">Desayuno<br><small class="text-muted">9:00 am</small></td>
+                      <td class="text-center"><span class="pdf-time-pill">Desayuno<br>9:00 am</span></td>
                       ${dias.map(d => `<td class="p-1">${d.des}</td>`).join('')}
                   </tr>
                   <tr>
-                      <td class="fw-bold bg-light text-center">Comida<br><small class="text-muted">3:00 pm</small></td>
+                      <td class="text-center"><span class="pdf-time-pill">Comida<br>3:00 pm</span></td>
                       ${dias.map(d => `<td class="p-1">${d.com}</td>`).join('')}
                   </tr>
                   <tr>
-                      <td class="fw-bold bg-light text-center">Colación Tarde<br><small class="text-muted">5:00 pm</small></td>
+                      <td class="text-center"><span class="pdf-time-pill">Colación Tarde<br>5:00 pm</span></td>
                       ${dias.map(d => `<td class="p-1">${d.ct}</td>`).join('')}
                   </tr>
                   <tr>
-                      <td class="fw-bold bg-light text-center">Cena<br><small class="text-muted">9:00 pm</small></td>
+                      <td class="text-center"><span class="pdf-time-pill">Cena<br>9:00 pm</span></td>
                       ${dias.map(d => `<td class="p-1">${d.cen}</td>`).join('')}
                   </tr>
               </tbody>
@@ -2284,24 +2547,77 @@
           return tabla;
       }
 
+      // Una "página" de detalle por cada tiempo de comida — igual que en los reportes de
+      // referencia: una tarjeta de receta por día, agrupadas bajo el tiempo correspondiente,
+      // para que el paciente pueda ver rápido "qué me toca hoy en la comida" sin escanear
+      // toda la tabla semanal.
+      function generarSeccionTiempos(dias, subtitulo) {
+          const tiempos = [
+              { campo: 'cm', label: 'Colación de la mañana', hora: '12:00 p.m.' },
+              { campo: 'des', label: 'Desayuno', hora: '9:00 a.m.' },
+              { campo: 'com', label: 'Comida', hora: '3:00 p.m.' },
+              { campo: 'ct', label: 'Colación de la tarde', hora: '5:00 p.m.' },
+              { campo: 'cen', label: 'Cena', hora: '9:00 p.m.' }
+          ];
+          return tiempos.map(t => `
+              <div class="pdf-subsection-title"><span><i class="fi fi-ss-utensils"></i> ${t.label} — ${subtitulo}</span><span class="pdf-time-pill">${t.hora}</span></div>
+              <div class="row g-2 mb-2">
+                  ${dias.map(d => `<div class="col-md-4 mb-2"><div class="small fw-bold mb-1" style="color: var(--muted);">${d.dia}</div>${d[t.campo]}</div>`).join('')}
+              </div>
+          `).join('');
+      }
+
+      // Apéndice "Ingredientes Equivalentes": por cada grupo activo en el plan, lista
+      // opciones intercambiables (banco genérico SMAE + alimentos propios del nutriólogo
+      // marcados con ese grupo) — para que el paciente pueda variar sin salirse de su
+      // ración, igual que el cuadro de sustituciones de un plan impreso tradicional.
+      function generarIngredientesEquivalentes(raciones) {
+          const gruposActivos = Object.entries(raciones).filter(([, cant]) => cant > 0).map(([g]) => g);
+          if (gruposActivos.length === 0) return '';
+          let totalOpciones = 0;
+          const secciones = gruposActivos.map(grupo => {
+              const propios = (misAlimentosMemory || []).filter(a => a.grupo === grupo).map(a => ({ nombre: a.nombre, cant: a.porcion }));
+              const genericos = (bancoAlimentosSMAE[grupo] || []).map(texto => ({ nombre: texto, cant: '1 ración' }));
+              const opciones = [...propios, ...genericos];
+              totalOpciones += opciones.length;
+              return { grupo, opciones };
+          }).filter(s => s.opciones.length > 0);
+
+          const bloques = secciones.map(s => `
+              <div class="pdf-subsection-title"><span><span class="pdf-group-dot"></span>${labelSMAE[s.grupo] || s.grupo}</span><span class="text-muted" style="font-weight:600;">${s.opciones.length} opc.</span></div>
+              <div class="row row-cols-2 g-0 mb-1">
+                  ${s.opciones.map(o => `<div class="col"><div class="pdf-swap-item"><span>${o.nombre}</span><span>${o.cant}</span></div></div>`).join('')}
+              </div>
+          `).join('');
+
+          return `
+          <div class="pdf-section-title mb-2 mt-4"><span><i class="fi fi-ss-shuffle"></i> Ingredientes Equivalentes</span><span class="pdf-count-pill" style="background-color: rgba(255,255,255,0.15); border-color: transparent; color: var(--on-secondary);">${totalOpciones} opciones · ${secciones.length} grupos</span></div>
+          <p class="text-muted small mb-2">Opciones equivalentes para intercambiar dentro del mismo grupo — no es una lista de compras.</p>
+          ${bloques}`;
+      }
+
       let html = `
       <div id="render-plan-pdf" class="bg-white p-4 m-auto" style="width: 1150px;">
-          <div class="d-flex justify-content-between align-items-end mb-3 border-bottom pb-2">
-              <div>
-                  <h3 class="pdf-title mb-0"><i class="fi ${APP_CONFIG.icono}"></i> ${APP_CONFIG.nombre}</h3>
-                  <p class="text-muted mb-0 small">Plan de Alimentación Personalizado Clínico</p>
-              </div>
-              <div class="text-end">
-                  <p class="mb-0 fw-bold">Paciente: <span class="fw-normal">${nombre}</span></p>
-                  <p class="mb-0 small text-muted">Plan asignado: ${fecha}</p>
-                  <p class="mb-0 small text-success fw-bold">Objetivo Energético: ${kcalObj} kcal</p>
+          <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
+              <div class="pdf-header-avatar">${APP_CONFIG.logo ? `<img src="${APP_CONFIG.logo}" style="width:100%; height:100%; object-fit:cover;">` : `<i class="fi ${APP_CONFIG.icono}"></i>`}</div>
+              <div class="pdf-header-info">
+                  <strong style="font-weight:700; color: var(--brand-primary); font-size:1.15rem;">${APP_CONFIG.nombre}</strong>
+                  <span class="pdf-header-divider"></span>
+                  <span class="small text-muted">Paciente: <strong style="color:var(--ink);">${nombre}</strong></span>
+                  <span class="pdf-header-divider"></span>
+                  <span class="small text-muted">Plan asignado: <strong style="color:var(--ink);">${fecha}</strong></span>
+                  <span class="pdf-header-divider"></span>
+                  <span class="small text-muted">Objetivo: <strong style="color: var(--brand-primary);">${kcalObj} kcal</strong></span>
               </div>
           </div>
           
           ${alertaExclusion}
           
-          <div class="pdf-section-title mb-2">Equivalentes por Día</div>
-          <table class="table table-bordered pdf-table text-center align-middle mb-4">
+          <div class="pdf-section-title mb-2 d-flex justify-content-between align-items-center">
+              <span><i class="fi fi-ss-apps"></i> Equivalentes por Día</span>
+              <span class="pdf-count-pill" style="background-color: rgba(255,255,255,0.15); border-color: transparent; color: var(--on-secondary);">${Object.values(raciones).filter(c => c > 0).length} grupos · 5 comidas</span>
+          </div>
+          <table class="table table-bordered pdf-table pdf-equiv-table text-center align-middle mb-4">
               <thead>
                   <tr>
                       <th class="text-start">GRUPO</th>
@@ -2316,12 +2632,16 @@
               <tbody>
                   ${Object.entries(raciones).filter(([g, cant]) => cant > 0).map(([grupo, cant]) => {
                       const reparto = repartirGrupoEnSlots(grupo, cant);
-                      return `<tr><td class="text-start fw-bold">${labelSMAE[grupo] || grupo}</td><td>${cant}</td><td>${reparto.desayuno || ''}</td><td>${reparto.colAM || ''}</td><td>${reparto.comida || ''}</td><td>${reparto.colPM || ''}</td><td>${reparto.cena || ''}</td></tr>`;
+                      return `<tr><td class="text-start fw-bold"><span class="pdf-group-dot"></span>${labelSMAE[grupo] || grupo}</td><td><span class="pdf-total-pill">${cant}</span></td><td>${reparto.desayuno || '—'}</td><td>${reparto.colAM || '—'}</td><td>${reparto.comida || '—'}</td><td>${reparto.colPM || '—'}</td><td>${reparto.cena || '—'}</td></tr>`;
                   }).join('')}
               </tbody>
           </table>
 
           ${menuHtml}
+
+          ${seccionesTiempoHtml}
+
+          ${generarIngredientesEquivalentes(raciones)}
 
           ${APP_CONFIG.piePdf ? `<div class="text-center text-muted small mt-3 pt-2 border-top">${APP_CONFIG.piePdf}</div>` : ''}
 
